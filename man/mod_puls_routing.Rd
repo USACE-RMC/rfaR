@@ -20,8 +20,10 @@ stage and discharge. If \code{TRUE}, returns the complete routing result.}
 }
 \value{
 If \code{full_results = FALSE}, a named numeric vector with
-\code{peak_stage_ft} and \code{peak_discharge_cfs}. If \code{full_results = TRUE},
-a data frame with columns: \code{time_hour}, \code{inflow_cfs}, \code{elevation_ft},
+\code{peak_stage_ft} and \code{peak_discharge_cfs}.
+
+If \code{full_results = TRUE},
+a data frame with columns: \code{time_hr}, \code{inflow_cfs}, \code{elevation_ft},
 \code{storage_acft}, and \code{outflow_cfs}.
 }
 \description{
@@ -30,10 +32,10 @@ a defined reservoir geometry (Stage (ft), Storage (ac-ft), Discharge (cfs))
 }
 \examples{
 # Peak values only
-mod_puls_routing(example_resmodel, example_inflow, initial_elev = 5565)
+mod_puls_routing(resmodel, inflow, initial_elev = 5565)
 
 # Full routing table
-mod_puls_routing(example_resmodel, example_inflow, initial_elev = 5565, full_results = TRUE)
+mod_puls_routing(resmodel, inflow, initial_elev = 5565, full_results = TRUE)
 }
 \references{
 Chow, V.T. (1959). Open-Channel Hydraulics. McGraw-Hill.

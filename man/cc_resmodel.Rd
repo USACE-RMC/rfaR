@@ -3,7 +3,7 @@
 \docType{data}
 \name{cc_resmodel}
 \alias{cc_resmodel}
-\title{Cherry Creek Reservoir Model}
+\title{Cherry Creek Dam Reservoir Model}
 \format{
 A data frame with 3 columns:
 \describe{

@@ -1,0 +1,5 @@
+param,value
+threshold_flow,5000
+critical_duration,3
+max_events_per_year,5
+min_days_between_events,7

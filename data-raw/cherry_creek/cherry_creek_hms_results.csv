@@ -1,4 +1,4 @@
-time_hr,inflow_cfs,elev_ft,storage_acft,outflow_cfs
+time_hr,inflow_cfs,elevation_ft,storage_acft,outflow_cfs
 0,15,5565,28347,750
 1,15,5564.9518,28286.4221,745.9841
 2,15,5564.9039,28226.1753,741.9902

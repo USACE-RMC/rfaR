@@ -3,7 +3,7 @@
 \docType{data}
 \name{cc_init_elev}
 \alias{cc_init_elev}
-\title{Cherry Creek Initial Elevation}
+\title{Cherry Creek Dam Initial Elevation}
 \format{
 A single numeric value representing the initial reservoir elevation (FT-NAVD88).
 }

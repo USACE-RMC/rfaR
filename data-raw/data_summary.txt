@@ -1,0 +1,72 @@
+File: data-raw/JMD/discharge_gage/jmd_por_inflow.csv - Daily inflow at John Martin Dam for the available period of record (POR), 1943 - 2024.cols = timestep, date, time, and daily average inflow (cfs)
+Columns: timestep, date, time, flow_cfs
+Rows: 40908
+
+File: data-raw/JMD/empirical_freq/empirical_stage_por.csv - empirical stage-frequency results for jmd_full POR
+Columns: wy, stage_ft, plot_posit
+Rows: 82
+
+File: data-raw/JMD/empirical_freq/empirical_stage_wy1980-2024.csv - empirical stage-frequency results for jmd_wy1980-2024_stage
+Columns: wy, stage_ft, plot_posit
+Rows: 45
+
+File: data-raw/JMD/empirical_freq/empirical_stage_wy1980-2024_PT.csv - empirical stage-frequency results for jmd_wy1980-2024_stage with a perception threshold
+Columns: wy, stage_ft, plot_posit
+Rows: 54
+
+File: data-raw/JMD/hms_routing/jmd_hms_pmf.csv - HEC-HMS routing results of PMH Hydrograpgh. Used for Mod-Puls validation. Do not use for Hydrograph scaling
+Columns: time_hr, inflow_cfs, elevation_ft, storage_acft, outflow_cfs
+Rows: 193
+
+File: data-raw/JMD/hydrographs/April_1999.csv - inflow hydrograph shape
+Columns: time_hr, inflow_cfs
+Rows: 241
+
+File: data-raw/JMD/hydrographs/June_1921.csv - inflow hydrograph shape
+Columns: time_hr, inflow_cfs
+Rows: 169
+
+File: data-raw/JMD/hydrographs/June_1965_HMS.csv - inflow hydrograph shape
+Columns: time_hr, inflow_cfs
+Rows: 241
+
+File: data-raw/JMD/hydrographs/May_1955.csv - inflow hydrograph shape
+Columns: time_hr, inflow_cfs
+Rows: 121
+
+File: data-raw/JMD/hydrographs/PMF.csv - inflow hydrograph shape
+Columns: time_hr, inflow_cfs
+Rows: 192
+
+File: data-raw/JMD/hydrographs/SDF.csv - inflow hydrograph shape
+Columns: time_hr, inflow_cfs
+Rows: 337
+
+File: data-raw/JMD/res_model/jmd_resmodel_best_est.csv - Best estimate reservoir model for John Martin Dam. Elevations in FT NAVD88. Assumes a 6hr forecast which allows for enough time to open all spillway gates fully. Outlets are shutdown once spillway is activated.
+Columns: stage_ft, stor_acft, discharge_cfs
+Rows: 116
+
+File: data-raw/JMD/seasonality/seasonality_full_por.csv - results of flood seasonality analysis (from the full JMD POR). Determined using: threshold flow of 5,000 cfs, critical duration of 2 days, max events per year of 5, minimum days between events = 7
+Columns: month, frequency, relative_frequency, cume_rel_frequency
+Rows: 12
+
+File: data-raw/JMD/stage_duration/stage_duration_monthly_1980-2024.csv - Monthly stage duration curves from Water Year 1980 - 2024. Probability is prob of exceedance, months are corresponding stages to prob
+Columns: Probability, January, February, March, April, May, June, July, August, September, October, November, December
+Rows: 45
+
+File: data-raw/JMD/stage_gage/jmd_por_stage.csv - Daily stage data from the full JMD Peroid of Record (POR) 1943 - 2024. cols = timestep, date, time, and reservoir stage (ft-NAVD88)
+Columns: timestep, date, time, stage_ft
+Rows: 29858
+
+File: data-raw/JMD/stage_gage/jmd_wy1980-2024_stage.csv - Daily stage data from Water Year 1980 - 2024. cols = timestep, date, time, and reservoir stage (ft-NAVD88)
+Columns: timestep, date, time, stage_ft
+Rows: 29858
+
+File: data-raw/JMD/vfc/final_2day_parameters.csv - LP3 distribution parameters of volume-frequency curve results from RMC-BestFit 2.0. cols = mean (of log), SD (of log), skew (of log), estimated effective record length (ERL), and inflow-volume duration in days
+Columns: mean_log, sd_log, skew_log, erl, duration
+Rows: 1
+
+File: data-raw/JMD/vfc/final_2day_vfc.csv - - tabular volume-frequency curve results from RMC-BestFit 2.0. cols = AEP, 95% credible interval (CI), 5% CI, Posterior Predictive, Posterior Mode
+Columns: aep, ci_95, ci_5, posterior_predictive, posterior_mode
+Rows: 25
+

@@ -3,7 +3,7 @@
 \docType{data}
 \name{cc_inflowhydro}
 \alias{cc_inflowhydro}
-\title{Cherry Creek Inflow Hydrograph}
+\title{Cherry Creek Dam Inflow Hydrograph}
 \format{
 A data frame with 2 columns:
 \describe{

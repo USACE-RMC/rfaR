@@ -12,18 +12,20 @@
 #'   stage and discharge. If `TRUE`, returns the complete routing result.
 #'
 #' @return If `full_results = FALSE`, a named numeric vector with
-#'   `peak_stage_ft` and `peak_discharge_cfs`. If `full_results = TRUE`,
-#'   a data frame with columns: `time_hour`, `inflow_cfs`, `elevation_ft`,
+#'   `peak_stage_ft` and `peak_discharge_cfs`.
+#'
+#'   If `full_results = TRUE`,
+#'   a data frame with columns: `time_hr`, `inflow_cfs`, `elevation_ft`,
 #'   `storage_acft`, and `outflow_cfs`.
 #'
 #' @export
 #'
 #' @examples
 #' # Peak values only
-#' mod_puls_routing(example_resmodel, example_inflow, initial_elev = 5565)
+#' mod_puls_routing(resmodel, inflow, initial_elev = 5565)
 #'
 #' # Full routing table
-#' mod_puls_routing(example_resmodel, example_inflow, initial_elev = 5565, full_results = TRUE)
+#' mod_puls_routing(resmodel, inflow, initial_elev = 5565, full_results = TRUE)
 #' @references
 #' Chow, V.T. (1959). Open-Channel Hydraulics. McGraw-Hill.
 mod_puls_routing <- function(resmodel_df,inflow_df, initial_elev, full_results = FALSE){
@@ -146,7 +148,7 @@ mod_puls_routing <- function(resmodel_df,inflow_df, initial_elev, full_results =
   if (full_results) {
     # Return the full data frame
     results <- data.frame(
-      time_hour = time_vec,
+      time_hr = time_vec,
       inflow_cfs = I_vec,
       elevation_ft = elev_vec,
       storage_acft = S_vec/SQFT_PER_ACRE,

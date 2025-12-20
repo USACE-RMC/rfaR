@@ -1,6 +1,6 @@
 # Mod-Puls Routing Routine for rfaR
 # This will use the Cherry Creek Example from the excel sheet as the example
-# Secondary Example Could be JMD and Thurmond (use PMF)
+# Secondary Example Could be JMD
 # Validate against HMS Results
 #
 # DM - 12/11/2025
@@ -95,5 +95,62 @@ metrics <- routing_results |>
   )
 
 
+# =============================================================================
+# JMD
+# =============================================================================
+
+jmd_routing <- mod_puls_routing(resmodel_df = jmd_resmodel,
+                                         inflow_df = jmd_inflowhydro,
+                                         initial_elev = jmd_init_elev,
+                                         full_results = TRUE)
+
+# Add Source Field
+jmd_routing$source <- "rfaR"
+jmd_hms <- jmd_hms_results
+jmd_hms$source <- "HMS"
+
+# Bind Rows
+jmd_comp_df_long <- rbind(jmd_routing,jmd_hms)
+
+ggplot(jmd_comp_df_long) +
+  geom_line(aes(x = time_hr,
+                y = inflow_cfs,
+                color = "Inflow"),
+            linewidth = 0.75) +
+  geom_line(aes(x = time_hr,
+                y = outflow_cfs,
+                color = "Outflow"),
+            linewidth = 0.75) +
+  scale_x_continuous(breaks = seq(0,960,24)) +
+  scale_y_continuous(labels = scales::comma) +
+  scale_color_manual(values = c("Inflow" = "#3B4992FF",
+                                "Outflow" = "#EE0000FF"),
+                     breaks = c("Inflow", "Outflow"))+
+  facet_wrap(vars(source)) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time (hr)",
+       y = "Flow (cfs)",
+       title = "Cherry Creek Validation Routing",
+       color = NULL) +
+  coord_cartesian(xlim = c(0,144))
 
 
+jmd_comp_df_wide <- pivot_wider(jmd_comp_df_long,
+                               names_from = source,
+                               values_from = c(inflow_cfs, elevation_ft, storage_acft, outflow_cfs))
+
+jmd_comp_df_wide |>
+  mutate(delta_elev = elevation_ft_rfaR - elevation_ft_HMS,
+         delta_outflow = outflow_cfs_rfaR - outflow_cfs_HMS,
+         pdiff_elev = ((delta_elev)/elevation_ft_HMS)*100,
+         pdiff_outflow = ((delta_outflow)/outflow_cfs_HMS)*100) |>
+  summarize(mean_pdiff_elev = mean(pdiff_elev),
+            mean_pdiff_outflow = mean(pdiff_outflow),
+            sd_pdiff_elev = sd(pdiff_elev),
+            sd_pdiff_outflow = sd(pdiff_outflow))
+
+jmd_comp_df_wide <- jmd_comp_df_wide |>
+  mutate(delta_elev = elevation_ft_rfaR - elevation_ft_HMS,
+         delta_outflow = outflow_cfs_rfaR - outflow_cfs_HMS,
+         pdiff_elev = ((delta_elev)/elevation_ft_HMS)*100,
+         pdiff_outflow = ((delta_outflow)/outflow_cfs_HMS)*100)
