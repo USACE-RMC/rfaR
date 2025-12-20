@@ -1,0 +1,2698 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Modified Puls Routing Validation</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Modified Puls Routing Validation</h1>
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>This document serves as the validation of the Modified Puls routing
+method implemented in <code>rfaR</code>. The validation compares results
+from the R implementation against established spreadsheet-based
+calculations to ensure computational accuracy and reliability.</p>
+</div>
+<div id="modified-puls-routing" class="section level2">
+<h2>Modified Puls Routing</h2>
+<p>The Modified Puls routing method, also known as storage routing or
+level-pool routing, is based upon a finite difference approximation of
+the continuity equation, coupled with an empirical representation of the
+momentum equation (Chow, 1964; Henderson, 1966; HEC, 2025).</p>
+<p>The continuity equation for a control volume is:</p>
+<p><span class="math display">\[\frac{\partial Q}{\partial x} +
+\frac{\partial A}{\partial t} = 0\]</span></p>
+<p>where <em>Q</em> is discharge, <em>A</em> is cross-sectional area,
+<em>x</em> is distance, and <em>t</em> is time. For reservoir routing,
+this is expressed using average inflow and outflow over a time step:</p>
+<p><span class="math display">\[\bar{I_t} - \bar{O_t} = \frac{\Delta
+S_t}{\Delta t}\]</span></p>
+<p>where <span class="math inline">\(\bar{I_t}\)</span> is the average
+inflow, <span class="math inline">\(\bar{O_t}\)</span> is the average
+outflow, and <span class="math inline">\(\Delta S_t\)</span> is the
+change in storage over the time interval <span class="math inline">\(\Delta t\)</span>.</p>
+<p>Rearranging and expressing in finite difference form yields the
+Modified Puls routing equation:</p>
+<p><span class="math display">\[\left(\frac{S_t}{\Delta t} +
+\frac{O_t}{2}\right) = \frac{I_{t-1} + I_t}{2} +
+\left(\frac{S_{t-1}}{\Delta t} - \frac{O_{t-1}}{2}\right)\]</span></p>
+<p>The method introduces a “storage indication” term:</p>
+<p><span class="math display">\[SI_t = \frac{S_t}{\Delta t} +
+\frac{O_t}{2}\]</span></p>
+<p>Substituting this into the routing equation:</p>
+<p><span class="math display">\[SI_t = \frac{I_{t-1} + I_t}{2} +
+\left(\frac{S_{t-1}}{\Delta t} - \frac{O_{t-1}}{2}\right)\]</span></p>
+<p>The left side represents the storage indication at time <em>t</em>,
+which can be computed from known values on the right side. This value is
+then used with the storage-outflow relationship to determine the outflow
+at time <em>t</em>.</p>
+</div>
+<div id="validation-approach" class="section level2">
+<h2>Validation Approach</h2>
+<p>The validation of the <code>modpuls()</code> function routes three
+example flood events that have been previously modeled and routed in
+HEC-HMS using the same reservoir geometry (stage-storage-discharge
+relationship) and the Modified Puls routing routine in HMS. By comparing
+the R implementation results against the HEC-HMS output, we can verify
+that the <code>modpuls()</code> function produces accurate and reliable
+results consistent with industry-standard hydrologic modeling software.
+The validation events represent a hypothetical PMF event at Cherry Creek
+Dam and a hypothetical PMF event at John Martin Dam.</p>
+</div>
+<div id="validation-criteria" class="section level2">
+<h2>Validation Criteria</h2>
+<p>Three quantitative metrics were used to assess the accuracy of the
+<code>modpuls()</code> function against HEC-HMS benchmark results. Mean
+percent difference quantifies the average relative error between the two
+implementations across all time steps, providing an overall measure of
+systematic bias. Root Mean Square Error (RMSE) measures the magnitude of
+differences between predicted and observed values, giving greater weight
+to larger errors and providing results in the original units (cfs for
+discharge, feet for elevation). The Nash-Sutcliffe Efficiency (NSE)
+coefficient (Nash &amp; Sutcliffe, 1970) evaluates the predictive skill
+of the model relative to the mean of observations, ranging from -∞ to 1,
+where values approaching 1 indicate near-perfect agreement, values above
+0.75 indicate acceptable performance, and negative values suggest the
+mean of observations is a better predictor than the model. Together,
+these metrics provide a comprehensive assessment of both the magnitude
+and pattern of differences between the R implementation and the
+established HEC-HMS routing routine.</p>
+<div id="ceftevxwmh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ceftevxwmh table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#ceftevxwmh thead, #ceftevxwmh tbody, #ceftevxwmh tfoot, #ceftevxwmh tr, #ceftevxwmh td, #ceftevxwmh th {
+border-style: none;
+}
+#ceftevxwmh p {
+margin: 0;
+padding: 0;
+}
+#ceftevxwmh .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 11px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #4A5F4A;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #4A5F4A;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#ceftevxwmh .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#ceftevxwmh .gt_title {
+color: #FFFFFF;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#ceftevxwmh .gt_subtitle {
+color: #FFFFFF;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#ceftevxwmh .gt_heading {
+background-color: #4A5F4A;
+text-align: left;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#ceftevxwmh .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#ceftevxwmh .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#ceftevxwmh .gt_col_heading {
+color: #333333;
+background-color: #E8E8E8;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 8px;
+padding-bottom: 9px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#ceftevxwmh .gt_column_spanner_outer {
+color: #333333;
+background-color: #E8E8E8;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#ceftevxwmh .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#ceftevxwmh .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#ceftevxwmh .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 8px;
+padding-bottom: 8px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#ceftevxwmh .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#ceftevxwmh .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#ceftevxwmh .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#ceftevxwmh .gt_from_md > :first-child {
+margin-top: 0;
+}
+#ceftevxwmh .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#ceftevxwmh .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#ceftevxwmh .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#ceftevxwmh .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#ceftevxwmh .gt_row_group_first td {
+border-top-width: 2px;
+}
+#ceftevxwmh .gt_row_group_first th {
+border-top-width: 2px;
+}
+#ceftevxwmh .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#ceftevxwmh .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#ceftevxwmh .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#ceftevxwmh .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#ceftevxwmh .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#ceftevxwmh .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#ceftevxwmh .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#ceftevxwmh .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#ceftevxwmh .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#ceftevxwmh .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#ceftevxwmh .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#ceftevxwmh .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#ceftevxwmh .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#ceftevxwmh .gt_left {
+text-align: left;
+}
+#ceftevxwmh .gt_center {
+text-align: center;
+}
+#ceftevxwmh .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#ceftevxwmh .gt_font_normal {
+font-weight: normal;
+}
+#ceftevxwmh .gt_font_bold {
+font-weight: bold;
+}
+#ceftevxwmh .gt_font_italic {
+font-style: italic;
+}
+#ceftevxwmh .gt_super {
+font-size: 65%;
+}
+#ceftevxwmh .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#ceftevxwmh .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#ceftevxwmh .gt_indent_1 {
+text-indent: 5px;
+}
+#ceftevxwmh .gt_indent_2 {
+text-indent: 10px;
+}
+#ceftevxwmh .gt_indent_3 {
+text-indent: 15px;
+}
+#ceftevxwmh .gt_indent_4 {
+text-indent: 20px;
+}
+#ceftevxwmh .gt_indent_5 {
+text-indent: 25px;
+}
+#ceftevxwmh .katex-display {
+display: inline-flex !important;
+margin-bottom: 0.75em !important;
+}
+#ceftevxwmh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="5" class="gt_heading gt_title gt_font_normal" style>Validation Metrics and Performance Criteria</td>
+    </tr>
+    <tr class="gt_heading">
+      <td colspan="5" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Thresholds for Assessing Modified Puls Routing Accuracy</td>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Metric">Performance Metric</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Excellent">Excellent</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Good">Good</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Acceptable">Acceptable</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Poor">Poor</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="Metric" class="gt_row gt_left" style="font-weight: bold;">Mean % Difference</td>
+<td headers="Excellent" class="gt_row gt_center" style="background-color: #2E7D32; color: #FFFFFF; font-weight: bold;">&lt; 0.1%</td>
+<td headers="Good" class="gt_row gt_center" style="background-color: #7CB342; color: #FFFFFF; font-weight: bold;">0.1% - 1%</td>
+<td headers="Acceptable" class="gt_row gt_center" style="background-color: #F57C00; color: #FFFFFF; font-weight: bold;">1% - 5%</td>
+<td headers="Poor" class="gt_row gt_center" style="background-color: #C62828; color: #FFFFFF; font-weight: bold;">&gt; 5%</td></tr>
+    <tr><td headers="Metric" class="gt_row gt_left" style="font-weight: bold;">RMSE</td>
+<td headers="Excellent" class="gt_row gt_center" style="background-color: #2E7D32; color: #FFFFFF; font-weight: bold;">&lt; 1.0</td>
+<td headers="Good" class="gt_row gt_center" style="background-color: #7CB342; color: #FFFFFF; font-weight: bold;">1.0 - 5.0</td>
+<td headers="Acceptable" class="gt_row gt_center" style="background-color: #F57C00; color: #FFFFFF; font-weight: bold;">5.0 - 10.0</td>
+<td headers="Poor" class="gt_row gt_center" style="background-color: #C62828; color: #FFFFFF; font-weight: bold;">&gt; 10.0</td></tr>
+    <tr><td headers="Metric" class="gt_row gt_left" style="font-weight: bold;">Nash-Sutcliffe Efficiency (NSE)</td>
+<td headers="Excellent" class="gt_row gt_center" style="background-color: #2E7D32; color: #FFFFFF; font-weight: bold;">&gt; 0.95</td>
+<td headers="Good" class="gt_row gt_center" style="background-color: #7CB342; color: #FFFFFF; font-weight: bold;">0.90 - 0.95</td>
+<td headers="Acceptable" class="gt_row gt_center" style="background-color: #F57C00; color: #FFFFFF; font-weight: bold;">0.75 - 0.90</td>
+<td headers="Poor" class="gt_row gt_center" style="background-color: #C62828; color: #FFFFFF; font-weight: bold;">&lt; 0.75</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+<div id="cherry-creek-dam-routing-validation" class="section level2">
+<h2>Cherry Creek Dam Routing Validation</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">#library(rfaR)</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">load_all</span>()</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; ℹ Loading rfaR</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>cherry_creek_routing <span class="ot">&lt;-</span> <span class="fu">mod_puls_routing</span>(<span class="at">resmodel_df =</span> cc_resmodel, </span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                                      <span class="at">inflow_df =</span> cc_inflowhydro, </span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>                                      <span class="at">initial_elev =</span> cc_init_elev, </span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>                                      <span class="at">full_results =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div id="egirxmiqzb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#egirxmiqzb table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#egirxmiqzb thead, #egirxmiqzb tbody, #egirxmiqzb tfoot, #egirxmiqzb tr, #egirxmiqzb td, #egirxmiqzb th {
+border-style: none;
+}
+#egirxmiqzb p {
+margin: 0;
+padding: 0;
+}
+#egirxmiqzb .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 11px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #4A5F4A;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #4A5F4A;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#egirxmiqzb .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#egirxmiqzb .gt_title {
+color: #FFFFFF;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#egirxmiqzb .gt_subtitle {
+color: #FFFFFF;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#egirxmiqzb .gt_heading {
+background-color: #4A5F4A;
+text-align: left;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#egirxmiqzb .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#egirxmiqzb .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#egirxmiqzb .gt_col_heading {
+color: #333333;
+background-color: #E8E8E8;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 8px;
+padding-bottom: 9px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#egirxmiqzb .gt_column_spanner_outer {
+color: #333333;
+background-color: #E8E8E8;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#egirxmiqzb .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#egirxmiqzb .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#egirxmiqzb .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 8px;
+padding-bottom: 8px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#egirxmiqzb .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#egirxmiqzb .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#egirxmiqzb .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#egirxmiqzb .gt_from_md > :first-child {
+margin-top: 0;
+}
+#egirxmiqzb .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#egirxmiqzb .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#egirxmiqzb .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#egirxmiqzb .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#egirxmiqzb .gt_row_group_first td {
+border-top-width: 2px;
+}
+#egirxmiqzb .gt_row_group_first th {
+border-top-width: 2px;
+}
+#egirxmiqzb .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#egirxmiqzb .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#egirxmiqzb .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#egirxmiqzb .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#egirxmiqzb .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#egirxmiqzb .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#egirxmiqzb .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#egirxmiqzb .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#egirxmiqzb .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#egirxmiqzb .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#egirxmiqzb .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#egirxmiqzb .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#egirxmiqzb .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#egirxmiqzb .gt_left {
+text-align: left;
+}
+#egirxmiqzb .gt_center {
+text-align: center;
+}
+#egirxmiqzb .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#egirxmiqzb .gt_font_normal {
+font-weight: normal;
+}
+#egirxmiqzb .gt_font_bold {
+font-weight: bold;
+}
+#egirxmiqzb .gt_font_italic {
+font-style: italic;
+}
+#egirxmiqzb .gt_super {
+font-size: 65%;
+}
+#egirxmiqzb .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#egirxmiqzb .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#egirxmiqzb .gt_indent_1 {
+text-indent: 5px;
+}
+#egirxmiqzb .gt_indent_2 {
+text-indent: 10px;
+}
+#egirxmiqzb .gt_indent_3 {
+text-indent: 15px;
+}
+#egirxmiqzb .gt_indent_4 {
+text-indent: 20px;
+}
+#egirxmiqzb .gt_indent_5 {
+text-indent: 25px;
+}
+#egirxmiqzb .katex-display {
+display: inline-flex !important;
+margin-bottom: 0.75em !important;
+}
+#egirxmiqzb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="4" class="gt_heading gt_title gt_font_normal" style>Cherry Creek Dam Mod-Puls Routing Results</td>
+    </tr>
+    <tr class="gt_heading">
+      <td colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Summary of Percent Difference between rfaR and HMS Routing</td>
+    </tr>
+    <tr class="gt_col_headings gt_spanner_row">
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" style="font-weight: bold;" scope="colgroup" id="Elevation (ft-NAVD88)">
+        <div class="gt_column_spanner">Elevation (ft-NAVD88)</div>
+      </th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" style="font-weight: bold;" scope="colgroup" id="Outflow (cfs)">
+        <div class="gt_column_spanner">Outflow (cfs)</div>
+      </th>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="mean_pdiff_elev">Mean %Diff</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="sd_pdiff_elev">SD %Diff</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="mean_pdiff_outflow">Mean %Diff</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="sd_pdiff_outflow">SD %Diff</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="mean_pdiff_elev" class="gt_row gt_center">1.78E−08</td>
+<td headers="sd_pdiff_elev" class="gt_row gt_center">5.13E−07</td>
+<td headers="mean_pdiff_outflow" class="gt_row gt_center">1.36E−07</td>
+<td headers="sd_pdiff_outflow" class="gt_row gt_center">6.85E−06</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>The Cherry Creek Dam validation demonstrates exceptional agreement
+between the <code>modpuls()</code> function and HEC-HMS routing results.
+Mean percent differences were negligible (1.78E-08% for elevation,
+1.36E-08% for outflow) with standard deviations of 5.13E-07% and
+6.85E-06%, respectively. Peak outflow matched within 2.85E-06% (4.61E-05
+cfs absolute difference).</p>
+<div id="yexqbgkjtw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#yexqbgkjtw table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#yexqbgkjtw thead, #yexqbgkjtw tbody, #yexqbgkjtw tfoot, #yexqbgkjtw tr, #yexqbgkjtw td, #yexqbgkjtw th {
+border-style: none;
+}
+#yexqbgkjtw p {
+margin: 0;
+padding: 0;
+}
+#yexqbgkjtw .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 11px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #4A5F4A;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #4A5F4A;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#yexqbgkjtw .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#yexqbgkjtw .gt_title {
+color: #FFFFFF;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#yexqbgkjtw .gt_subtitle {
+color: #FFFFFF;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#yexqbgkjtw .gt_heading {
+background-color: #4A5F4A;
+text-align: left;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#yexqbgkjtw .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#yexqbgkjtw .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#yexqbgkjtw .gt_col_heading {
+color: #333333;
+background-color: #E8E8E8;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 8px;
+padding-bottom: 9px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#yexqbgkjtw .gt_column_spanner_outer {
+color: #333333;
+background-color: #E8E8E8;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#yexqbgkjtw .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#yexqbgkjtw .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#yexqbgkjtw .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 8px;
+padding-bottom: 8px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#yexqbgkjtw .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#yexqbgkjtw .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#yexqbgkjtw .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#yexqbgkjtw .gt_from_md > :first-child {
+margin-top: 0;
+}
+#yexqbgkjtw .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#yexqbgkjtw .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#yexqbgkjtw .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#yexqbgkjtw .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#yexqbgkjtw .gt_row_group_first td {
+border-top-width: 2px;
+}
+#yexqbgkjtw .gt_row_group_first th {
+border-top-width: 2px;
+}
+#yexqbgkjtw .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#yexqbgkjtw .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#yexqbgkjtw .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#yexqbgkjtw .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#yexqbgkjtw .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#yexqbgkjtw .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#yexqbgkjtw .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#yexqbgkjtw .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#yexqbgkjtw .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#yexqbgkjtw .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#yexqbgkjtw .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#yexqbgkjtw .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#yexqbgkjtw .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#yexqbgkjtw .gt_left {
+text-align: left;
+}
+#yexqbgkjtw .gt_center {
+text-align: center;
+}
+#yexqbgkjtw .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#yexqbgkjtw .gt_font_normal {
+font-weight: normal;
+}
+#yexqbgkjtw .gt_font_bold {
+font-weight: bold;
+}
+#yexqbgkjtw .gt_font_italic {
+font-style: italic;
+}
+#yexqbgkjtw .gt_super {
+font-size: 65%;
+}
+#yexqbgkjtw .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#yexqbgkjtw .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#yexqbgkjtw .gt_indent_1 {
+text-indent: 5px;
+}
+#yexqbgkjtw .gt_indent_2 {
+text-indent: 10px;
+}
+#yexqbgkjtw .gt_indent_3 {
+text-indent: 15px;
+}
+#yexqbgkjtw .gt_indent_4 {
+text-indent: 20px;
+}
+#yexqbgkjtw .gt_indent_5 {
+text-indent: 25px;
+}
+#yexqbgkjtw .katex-display {
+display: inline-flex !important;
+margin-bottom: 0.75em !important;
+}
+#yexqbgkjtw div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="5" class="gt_heading gt_title gt_font_normal" style>Summary of Validation Metrics for Cherry Creek Dam Routing</td>
+    </tr>
+    <tr class="gt_heading">
+      <td colspan="5" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Validation of rfaR Mod-Puls Routing</td>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="Metric">Metric</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="rfaR">rfaR</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="HMS">HMS</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="Difference">Difference</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="Pct_Diff">%Diff</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="Metric" class="gt_row gt_center">Peak Outflow (cfs)</td>
+<td headers="rfaR" class="gt_row gt_center">1,617.82</td>
+<td headers="HMS" class="gt_row gt_center">1,617.82</td>
+<td headers="Difference" class="gt_row gt_center">4.61E−05</td>
+<td headers="Pct_Diff" class="gt_row gt_center">2.85E−06</td></tr>
+    <tr><td headers="Metric" class="gt_row gt_center">Peak Elevation (ft)</td>
+<td headers="rfaR" class="gt_row gt_center">5,572.94</td>
+<td headers="HMS" class="gt_row gt_center">5,572.94</td>
+<td headers="Difference" class="gt_row gt_center">−4.36E−05</td>
+<td headers="Pct_Diff" class="gt_row gt_center">−7.83E−07</td></tr>
+    <tr><td headers="Metric" class="gt_row gt_center">RMSE Outflow (cfs)</td>
+<td headers="rfaR" class="gt_row gt_center">0.00</td>
+<td headers="HMS" class="gt_row gt_center">NA</td>
+<td headers="Difference" class="gt_row gt_center">NA</td>
+<td headers="Pct_Diff" class="gt_row gt_center">NA</td></tr>
+    <tr><td headers="Metric" class="gt_row gt_center">RMSE Elevation (ft)</td>
+<td headers="rfaR" class="gt_row gt_center">0.00</td>
+<td headers="HMS" class="gt_row gt_center">NA</td>
+<td headers="Difference" class="gt_row gt_center">NA</td>
+<td headers="Pct_Diff" class="gt_row gt_center">NA</td></tr>
+    <tr><td headers="Metric" class="gt_row gt_center">NSE Outflow</td>
+<td headers="rfaR" class="gt_row gt_center">1.00</td>
+<td headers="HMS" class="gt_row gt_center">NA</td>
+<td headers="Difference" class="gt_row gt_center">NA</td>
+<td headers="Pct_Diff" class="gt_row gt_center">NA</td></tr>
+    <tr><td headers="Metric" class="gt_row gt_center">Max Abs Diff Outflow (cfs)</td>
+<td headers="rfaR" class="gt_row gt_center">0.00</td>
+<td headers="HMS" class="gt_row gt_center">NA</td>
+<td headers="Difference" class="gt_row gt_center">NA</td>
+<td headers="Pct_Diff" class="gt_row gt_center">NA</td></tr>
+    <tr><td headers="Metric" class="gt_row gt_center">Max Abs Diff Elevation (ft)</td>
+<td headers="rfaR" class="gt_row gt_center">0.00</td>
+<td headers="HMS" class="gt_row gt_center">NA</td>
+<td headers="Difference" class="gt_row gt_center">NA</td>
+<td headers="Pct_Diff" class="gt_row gt_center">NA</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>Performance metrics confirm computational equivalence between
+implementations. RMSE values were 2.82E-05 ft for elevation and 2.82E-05
+cfs for outflow. The Nash-Sutcliffe Efficiency coefficient achieved 1.0,
+indicating perfect model performance. Maximum absolute differences were
+4.95E-05 cfs for outflow and 4.99E-05 ft for elevation.</p>
+</div>
+<div id="john-martin-dam-routing-validation" class="section level2">
+<h2>John Martin Dam Routing Validation</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>jmd_routing <span class="ot">&lt;-</span> <span class="fu">mod_puls_routing</span>(<span class="at">resmodel_df =</span> jmd_resmodel, </span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>                                      <span class="at">inflow_df =</span> jmd_inflowhydro, </span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>                                      <span class="at">initial_elev =</span> jmd_init_elev, </span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>                                      <span class="at">full_results =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div id="zqxqzrrwpf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#zqxqzrrwpf table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#zqxqzrrwpf thead, #zqxqzrrwpf tbody, #zqxqzrrwpf tfoot, #zqxqzrrwpf tr, #zqxqzrrwpf td, #zqxqzrrwpf th {
+border-style: none;
+}
+#zqxqzrrwpf p {
+margin: 0;
+padding: 0;
+}
+#zqxqzrrwpf .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 11px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #4A5F4A;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #4A5F4A;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#zqxqzrrwpf .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#zqxqzrrwpf .gt_title {
+color: #FFFFFF;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#zqxqzrrwpf .gt_subtitle {
+color: #FFFFFF;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#zqxqzrrwpf .gt_heading {
+background-color: #4A5F4A;
+text-align: left;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#zqxqzrrwpf .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#zqxqzrrwpf .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#zqxqzrrwpf .gt_col_heading {
+color: #333333;
+background-color: #E8E8E8;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 8px;
+padding-bottom: 9px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#zqxqzrrwpf .gt_column_spanner_outer {
+color: #333333;
+background-color: #E8E8E8;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#zqxqzrrwpf .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#zqxqzrrwpf .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#zqxqzrrwpf .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 8px;
+padding-bottom: 8px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#zqxqzrrwpf .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#zqxqzrrwpf .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#zqxqzrrwpf .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#zqxqzrrwpf .gt_from_md > :first-child {
+margin-top: 0;
+}
+#zqxqzrrwpf .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#zqxqzrrwpf .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#zqxqzrrwpf .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#zqxqzrrwpf .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#zqxqzrrwpf .gt_row_group_first td {
+border-top-width: 2px;
+}
+#zqxqzrrwpf .gt_row_group_first th {
+border-top-width: 2px;
+}
+#zqxqzrrwpf .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#zqxqzrrwpf .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#zqxqzrrwpf .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#zqxqzrrwpf .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#zqxqzrrwpf .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#zqxqzrrwpf .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#zqxqzrrwpf .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#zqxqzrrwpf .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#zqxqzrrwpf .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#zqxqzrrwpf .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#zqxqzrrwpf .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#zqxqzrrwpf .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#zqxqzrrwpf .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#zqxqzrrwpf .gt_left {
+text-align: left;
+}
+#zqxqzrrwpf .gt_center {
+text-align: center;
+}
+#zqxqzrrwpf .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#zqxqzrrwpf .gt_font_normal {
+font-weight: normal;
+}
+#zqxqzrrwpf .gt_font_bold {
+font-weight: bold;
+}
+#zqxqzrrwpf .gt_font_italic {
+font-style: italic;
+}
+#zqxqzrrwpf .gt_super {
+font-size: 65%;
+}
+#zqxqzrrwpf .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#zqxqzrrwpf .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#zqxqzrrwpf .gt_indent_1 {
+text-indent: 5px;
+}
+#zqxqzrrwpf .gt_indent_2 {
+text-indent: 10px;
+}
+#zqxqzrrwpf .gt_indent_3 {
+text-indent: 15px;
+}
+#zqxqzrrwpf .gt_indent_4 {
+text-indent: 20px;
+}
+#zqxqzrrwpf .gt_indent_5 {
+text-indent: 25px;
+}
+#zqxqzrrwpf .katex-display {
+display: inline-flex !important;
+margin-bottom: 0.75em !important;
+}
+#zqxqzrrwpf div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="4" class="gt_heading gt_title gt_font_normal" style>John Martin Dam Mod-Puls Routing Results</td>
+    </tr>
+    <tr class="gt_heading">
+      <td colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Summary of Percent Difference between rfaR and HMS Routing</td>
+    </tr>
+    <tr class="gt_col_headings gt_spanner_row">
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" style="font-weight: bold;" scope="colgroup" id="Elevation (ft-NAVD88)">
+        <div class="gt_column_spanner">Elevation (ft-NAVD88)</div>
+      </th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" style="font-weight: bold;" scope="colgroup" id="Outflow (cfs)">
+        <div class="gt_column_spanner">Outflow (cfs)</div>
+      </th>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="mean_pdiff_elev">Mean %Diff</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="sd_pdiff_elev">SD %Diff</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="mean_pdiff_outflow">Mean %Diff</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="sd_pdiff_outflow">SD %Diff</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="mean_pdiff_elev" class="gt_row gt_center">3.90E−05</td>
+<td headers="sd_pdiff_elev" class="gt_row gt_center">7.38E−04</td>
+<td headers="mean_pdiff_outflow" class="gt_row gt_center">8.47E−06</td>
+<td headers="sd_pdiff_outflow" class="gt_row gt_center">1.36E−04</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>John Martin Dam validation similarly showed negligible differences,
+with mean percent differences of 3.90E-05% for elevation and 8.47E-06%
+for outflow. Standard deviations were 7.38E-04% and 1.36E-04%,
+respectively. Peak outflow agreement was within 2.92E-07% (0.0046 cfs
+absolute difference).</p>
+<div id="cgzidsgbew" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#cgzidsgbew table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#cgzidsgbew thead, #cgzidsgbew tbody, #cgzidsgbew tfoot, #cgzidsgbew tr, #cgzidsgbew td, #cgzidsgbew th {
+border-style: none;
+}
+#cgzidsgbew p {
+margin: 0;
+padding: 0;
+}
+#cgzidsgbew .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 11px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #4A5F4A;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #4A5F4A;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#cgzidsgbew .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#cgzidsgbew .gt_title {
+color: #FFFFFF;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#cgzidsgbew .gt_subtitle {
+color: #FFFFFF;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#cgzidsgbew .gt_heading {
+background-color: #4A5F4A;
+text-align: left;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#cgzidsgbew .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#cgzidsgbew .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#cgzidsgbew .gt_col_heading {
+color: #333333;
+background-color: #E8E8E8;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 8px;
+padding-bottom: 9px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#cgzidsgbew .gt_column_spanner_outer {
+color: #333333;
+background-color: #E8E8E8;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#cgzidsgbew .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#cgzidsgbew .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#cgzidsgbew .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 8px;
+padding-bottom: 8px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#cgzidsgbew .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#cgzidsgbew .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#cgzidsgbew .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#cgzidsgbew .gt_from_md > :first-child {
+margin-top: 0;
+}
+#cgzidsgbew .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#cgzidsgbew .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#cgzidsgbew .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cgzidsgbew .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#cgzidsgbew .gt_row_group_first td {
+border-top-width: 2px;
+}
+#cgzidsgbew .gt_row_group_first th {
+border-top-width: 2px;
+}
+#cgzidsgbew .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cgzidsgbew .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#cgzidsgbew .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#cgzidsgbew .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#cgzidsgbew .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cgzidsgbew .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#cgzidsgbew .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#cgzidsgbew .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#cgzidsgbew .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#cgzidsgbew .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#cgzidsgbew .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cgzidsgbew .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#cgzidsgbew .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cgzidsgbew .gt_left {
+text-align: left;
+}
+#cgzidsgbew .gt_center {
+text-align: center;
+}
+#cgzidsgbew .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#cgzidsgbew .gt_font_normal {
+font-weight: normal;
+}
+#cgzidsgbew .gt_font_bold {
+font-weight: bold;
+}
+#cgzidsgbew .gt_font_italic {
+font-style: italic;
+}
+#cgzidsgbew .gt_super {
+font-size: 65%;
+}
+#cgzidsgbew .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#cgzidsgbew .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#cgzidsgbew .gt_indent_1 {
+text-indent: 5px;
+}
+#cgzidsgbew .gt_indent_2 {
+text-indent: 10px;
+}
+#cgzidsgbew .gt_indent_3 {
+text-indent: 15px;
+}
+#cgzidsgbew .gt_indent_4 {
+text-indent: 20px;
+}
+#cgzidsgbew .gt_indent_5 {
+text-indent: 25px;
+}
+#cgzidsgbew .katex-display {
+display: inline-flex !important;
+margin-bottom: 0.75em !important;
+}
+#cgzidsgbew div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="5" class="gt_heading gt_title gt_font_normal" style>Summary of Validation Metrics for John Martin Dam Routing</td>
+    </tr>
+    <tr class="gt_heading">
+      <td colspan="5" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Validation of rfaR Mod-Puls Routing</td>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="Metric">Metric</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="rfaR">rfaR</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="HMS">HMS</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="Difference">Difference</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="Pct_Diff">%Diff</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="Metric" class="gt_row gt_center">Peak Outflow (cfs)</td>
+<td headers="rfaR" class="gt_row gt_center">1,585,117.90</td>
+<td headers="HMS" class="gt_row gt_center">1,585,117.90</td>
+<td headers="Difference" class="gt_row gt_center">4.63E−03</td>
+<td headers="Pct_Diff" class="gt_row gt_center">2.92E−07</td></tr>
+    <tr><td headers="Metric" class="gt_row gt_center">Peak Elevation (ft)</td>
+<td headers="rfaR" class="gt_row gt_center">3,889.14</td>
+<td headers="HMS" class="gt_row gt_center">5,572.94</td>
+<td headers="Difference" class="gt_row gt_center">3.87E−02</td>
+<td headers="Pct_Diff" class="gt_row gt_center">9.95E−04</td></tr>
+    <tr><td headers="Metric" class="gt_row gt_center">RMSE Outflow (cfs)</td>
+<td headers="rfaR" class="gt_row gt_center">0.03</td>
+<td headers="HMS" class="gt_row gt_center">NA</td>
+<td headers="Difference" class="gt_row gt_center">NA</td>
+<td headers="Pct_Diff" class="gt_row gt_center">NA</td></tr>
+    <tr><td headers="Metric" class="gt_row gt_center">RMSE Elevation (ft)</td>
+<td headers="rfaR" class="gt_row gt_center">0.03</td>
+<td headers="HMS" class="gt_row gt_center">NA</td>
+<td headers="Difference" class="gt_row gt_center">NA</td>
+<td headers="Pct_Diff" class="gt_row gt_center">NA</td></tr>
+    <tr><td headers="Metric" class="gt_row gt_center">NSE Outflow</td>
+<td headers="rfaR" class="gt_row gt_center">1.00</td>
+<td headers="HMS" class="gt_row gt_center">NA</td>
+<td headers="Difference" class="gt_row gt_center">NA</td>
+<td headers="Pct_Diff" class="gt_row gt_center">NA</td></tr>
+    <tr><td headers="Metric" class="gt_row gt_center">Max Abs Diff Outflow (cfs)</td>
+<td headers="rfaR" class="gt_row gt_center">0.10</td>
+<td headers="HMS" class="gt_row gt_center">NA</td>
+<td headers="Difference" class="gt_row gt_center">NA</td>
+<td headers="Pct_Diff" class="gt_row gt_center">NA</td></tr>
+    <tr><td headers="Metric" class="gt_row gt_center">Max Abs Diff Elevation (ft)</td>
+<td headers="rfaR" class="gt_row gt_center">0.05</td>
+<td headers="HMS" class="gt_row gt_center">NA</td>
+<td headers="Difference" class="gt_row gt_center">NA</td>
+<td headers="Pct_Diff" class="gt_row gt_center">NA</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>Performance metrics demonstrate excellent agreement across all
+measures. RMSE values were 0.028 ft for elevation and 0.031 cfs for
+outflow, with an NSE of 1.0. Maximum absolute differences were 9.81E-02
+cfs for outflow and 4.99E-02 ft for elevation. All validation metrics
+fall well within the “Excellent” performance category (&lt; 0.1%
+difference, RMSE &lt; 1.0, NSE &gt; 0.95), with differences attributable
+solely to floating-point precision and computational rounding rather
+than algorithmic discrepancies.</p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>The <code>modpuls()</code> function provides a faithful and accurate
+implementation of the Modified Puls routing method, producing results
+that are computationally equivalent to the established HEC-HMS routing
+routine. The observed differences are multiple orders of magnitude
+smaller than engineering tolerances and represent machine precision
+rather than methodological errors. The function is therefore considered
+validated and suitable for operational use in reservoir flood routing
+applications, providing users with confidence that results are identical
+to those obtained from industry-standard software. This implementation
+in R offers the advantages of open-source transparency, reproducibility,
+and integration within the broader reservoir frequency analysis workflow
+while maintaining the numerical accuracy of the original method.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>Chow, V. T. (1964). Handbook of Applied Hydrology. McGraw-Hill Book
+Company, New York.</p>
+<p>Henderson, F. M. (1966). Open Channel Flow. Macmillan Publishing Co.,
+Inc., New York.</p>
+<p>Nash, J. E., &amp; Sutcliffe, J. V. (1970). River flow forecasting
+through conceptual models part I — A discussion of principles. Journal
+of Hydrology, 10(3), 282-290. <a href="https://doi.org/10.1016/0022-1694(70)90255-6" class="uri">https://doi.org/10.1016/0022-1694(70)90255-6</a></p>
+<p>U.S. Army Corps of Engineers, Hydrologic Engineering Center. (n.d.).
+Modified Puls Model. HEC-HMS Technical Reference Manual. Retrieved
+December 18, 2025, from <a href="https://www.hec.usace.army.mil/confluence/hmsdocs/hmstrm/channel-flow/modified-puls-model" class="uri">https://www.hec.usace.army.mil/confluence/hmsdocs/hmstrm/channel-flow/modified-puls-model</a></p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

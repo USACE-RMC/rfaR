@@ -1,0 +1,591 @@
+---
+title: "Modified Puls Routing Validation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Modified Puls Routing Validation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+# call tidy 
+library(tidyverse)
+library(gt)
+theme_set(theme_bw())
+```
+
+## Overview
+
+This document serves as the validation of the Modified Puls routing method implemented in `rfaR`. The validation compares results from the R implementation against established spreadsheet-based calculations to ensure computational accuracy and reliability.
+
+## Modified Puls Routing
+
+The Modified Puls routing method, also known as storage routing or level-pool routing, is based upon a finite difference approximation of the continuity equation, coupled with an empirical representation of the momentum equation (Chow, 1964; Henderson, 1966; HEC, 2025).
+
+The continuity equation for a control volume is:
+
+$$\frac{\partial Q}{\partial x} + \frac{\partial A}{\partial t} = 0$$
+
+where *Q* is discharge, *A* is cross-sectional area, *x* is distance, and *t* is time. For reservoir routing, this is expressed using average inflow and outflow over a time step:
+
+$$\bar{I_t} - \bar{O_t} = \frac{\Delta S_t}{\Delta t}$$
+
+where $\bar{I_t}$ is the average inflow, $\bar{O_t}$ is the average outflow, and $\Delta S_t$ is the change in storage over the time interval $\Delta t$.
+
+Rearranging and expressing in finite difference form yields the Modified Puls routing equation:
+
+$$\left(\frac{S_t}{\Delta t} + \frac{O_t}{2}\right) = \frac{I_{t-1} + I_t}{2} + \left(\frac{S_{t-1}}{\Delta t} - \frac{O_{t-1}}{2}\right)$$
+
+The method introduces a "storage indication" term:
+
+$$SI_t = \frac{S_t}{\Delta t} + \frac{O_t}{2}$$
+
+Substituting this into the routing equation:
+
+$$SI_t = \frac{I_{t-1} + I_t}{2} + \left(\frac{S_{t-1}}{\Delta t} - \frac{O_{t-1}}{2}\right)$$
+
+The left side represents the storage indication at time *t*, which can be computed from known values on the right side. This value is then used with the storage-outflow relationship to determine the outflow at time *t*.
+
+## Validation Approach
+
+The validation of the `modpuls()` function routes three example flood events that have been previously modeled and routed in HEC-HMS using the same reservoir geometry (stage-storage-discharge relationship) and the Modified Puls routing routine in HMS. By comparing the R implementation results against the HEC-HMS output, we can verify that the `modpuls()` function produces accurate and reliable results consistent with industry-standard hydrologic modeling software. The validation events represent a hypothetical PMF event at Cherry Creek Dam and a hypothetical PMF event at John Martin Dam.
+
+## Validation Criteria
+
+Three quantitative metrics were used to assess the accuracy of the `modpuls()` function against HEC-HMS benchmark results. Mean percent difference quantifies the average relative error between the two implementations across all time steps, providing an overall measure of systematic bias. Root Mean Square Error (RMSE) measures the magnitude of differences between predicted and observed values, giving greater weight to larger errors and providing results in the original units (cfs for discharge, feet for elevation). The Nash-Sutcliffe Efficiency (NSE) coefficient (Nash & Sutcliffe, 1970) evaluates the predictive skill of the model relative to the mean of observations, ranging from -∞ to 1, where values approaching 1 indicate near-perfect agreement, values above 0.75 indicate acceptable performance, and negative values suggest the mean of observations is a better predictor than the model. Together, these metrics provide a comprehensive assessment of both the magnitude and pattern of differences between the R implementation and the established HEC-HMS routing routine.
+
+```{r validation metrics, echo = F, warning = F}
+# Define thresholds and create metrics table
+validation_metrics <- tibble(
+  Metric = c("Mean % Difference", "RMSE", "Nash-Sutcliffe Efficiency (NSE)"),
+  Excellent = c("< 0.1%", "< 1.0", "> 0.95"),
+  Good = c("0.1% - 1%", "1.0 - 5.0", "0.90 - 0.95"),
+  Acceptable = c("1% - 5%", "5.0 - 10.0", "0.75 - 0.90"),
+  Poor = c("> 5%", "> 10.0", "< 0.75")
+)
+
+# Create gt table
+metrics_table <- validation_metrics |> 
+  gt() |> 
+  # Header
+  tab_header(
+    title = "Validation Metrics and Performance Criteria",
+    subtitle = "Thresholds for Assessing Modified Puls Routing Accuracy"
+  ) |> 
+  # Column labels
+  cols_label(
+    Metric = "Performance Metric",
+    Excellent = "Excellent",
+    Good = "Good",
+    Acceptable = "Acceptable",
+    Poor = "Poor"
+  ) |> 
+  # Color coding - Excellent (green)
+  tab_style(
+    style = list(
+      cell_fill(color = "#2E7D32"),  # Dark green
+      cell_text(color = "white", weight = "bold")
+    ),
+    locations = cells_body(columns = Excellent)
+  ) |> 
+  # Color coding - Good (light green/yellow-green)
+  tab_style(
+    style = list(
+      cell_fill(color = "#7CB342"),  # Yellow-green
+      cell_text(color = "white", weight = "bold")
+    ),
+    locations = cells_body(columns = Good)
+  ) |> 
+  # Color coding - Acceptable (orange)
+  tab_style(
+    style = list(
+      cell_fill(color = "#F57C00"),  # Orange
+      cell_text(color = "white", weight = "bold")
+    ),
+    locations = cells_body(columns = Acceptable)
+  ) |> 
+  # Color coding - Poor (red)
+  tab_style(
+    style = list(
+      cell_fill(color = "#C62828"),  # Dark red
+      cell_text(color = "white", weight = "bold")
+    ),
+    locations = cells_body(columns = Poor)
+  ) |> 
+  # Bold metric names
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_body(columns = Metric)
+  ) |> 
+  # Center align all columns except Metric
+  cols_align(
+    align = "center",
+    columns = c(Excellent, Good, Acceptable, Poor)
+  ) |> 
+  cols_align(
+    align = "left",
+    columns = Metric
+  ) |> 
+  # Table styling
+  tab_options(
+    table.font.size = px(11),
+    table.border.top.style = "solid",
+    table.border.top.width = px(2),
+    table.border.top.color = "#4a5f4a",
+    table.border.bottom.style = "solid",
+    table.border.bottom.width = px(2),
+    table.border.bottom.color = "#4a5f4a",
+    heading.background.color = "#4a5f4a",
+    heading.align = "left",
+    column_labels.background.color = "#e8e8e8",
+    data_row.padding = px(8),
+    column_labels.padding = px(8)
+  )
+
+metrics_table
+```
+
+
+## Cherry Creek Dam Routing Validation
+
+```{r setup, warning = F}
+#library(rfaR)
+devtools::load_all()
+```
+
+```{r cherry creek routing}
+cherry_creek_routing <- mod_puls_routing(resmodel_df = cc_resmodel, 
+                                      inflow_df = cc_inflowhydro, 
+                                      initial_elev = cc_init_elev, 
+                                      full_results = TRUE)
+```
+
+```{r CC percent difference, echo = F, warning = F, message = F}
+# Add Source Field
+cherry_creek_routing$source <- "rfaR"
+cc_hms <- cc_hms_results
+cc_hms$source <- "HMS"
+
+# Bind Rows
+cc_comp_df_long <- rbind(cherry_creek_routing,cc_hms)
+
+# Pivot Wider for Validation
+cc_comp_df_wide <- pivot_wider(cc_comp_df_long, 
+            names_from = source, 
+            values_from = c(inflow_cfs, elevation_ft, storage_acft, outflow_cfs))
+
+cc_perdiff <- cc_comp_df_wide |> 
+  mutate(delta_elev = elevation_ft_rfaR - elevation_ft_HMS,
+         delta_outflow = outflow_cfs_rfaR - outflow_cfs_HMS,
+         pdiff_elev = ((delta_elev)/elevation_ft_HMS)*100,
+         pdiff_outflow = ((delta_outflow)/outflow_cfs_HMS)*100) |> 
+  summarize(mean_pdiff_elev = mean(pdiff_elev),
+            mean_pdiff_outflow = mean(pdiff_outflow),
+            sd_pdiff_elev = sd(pdiff_elev),
+            sd_pdiff_outflow = sd(pdiff_outflow)) |> 
+  gt() |> 
+  # Header
+  tab_header(
+    title = "Cherry Creek Dam Mod-Puls Routing Results",
+    subtitle = "Summary of Percent Difference between rfaR and HMS Routing"
+  ) |>
+  # Columns
+  tab_spanner(
+    label = "Elevation (ft-NAVD88)",
+    columns = c(mean_pdiff_elev, sd_pdiff_elev)
+  ) |> 
+  tab_spanner(
+    label = "Outflow (cfs)",
+    columns = c(mean_pdiff_outflow, sd_pdiff_outflow)
+  ) |> 
+  cols_label(
+    mean_pdiff_elev = "Mean %Diff",
+    sd_pdiff_elev = "SD %Diff",
+    mean_pdiff_outflow = "Mean %Diff",
+    sd_pdiff_outflow = "SD %Diff"
+  ) |> 
+  # Format
+  fmt_scientific(
+    columns = c(mean_pdiff_elev,sd_pdiff_elev,mean_pdiff_outflow,sd_pdiff_outflow),
+    decimals = 2,
+    exp_style = "E"
+  ) |> 
+  # Alignment
+  cols_align(
+    align = "center",
+    columns = everything()
+  ) |> 
+  # Make column headers bold
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  ) |> 
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_spanners(everything())
+  ) |> 
+  # Table styling
+  tab_options(
+    table.font.size = px(11),
+    table.border.top.style = "solid",
+    table.border.top.width = px(2),
+    table.border.top.color = "#4a5f4a",
+    table.border.bottom.style = "solid",
+    table.border.bottom.width = px(2),
+    table.border.bottom.color = "#4a5f4a",
+    heading.background.color = "#4a5f4a",
+    heading.align = "left",
+    column_labels.background.color = "#e8e8e8",
+    data_row.padding = px(8),
+    column_labels.padding = px(8)
+  )
+
+cc_perdiff  
+```
+
+The Cherry Creek Dam validation demonstrates exceptional agreement between the `modpuls()` function and HEC-HMS routing results. Mean percent differences were negligible (1.78E-08% for elevation, 1.36E-08% for outflow) with standard deviations of 5.13E-07% and 6.85E-06%, respectively. Peak outflow matched within 2.85E-06% (4.61E-05 cfs absolute difference).
+
+```{r CC validation summary, echo = F, warning = F}
+# Peak Flow Comparison
+peak_cc_rfaR <- max(cc_comp_df_wide$outflow_cfs_rfaR)
+peak_cc_HMS <- max(cc_comp_df_wide$outflow_cfs_HMS)
+peak_cc_diff_pct <- ((peak_cc_rfaR - peak_cc_HMS) / peak_cc_HMS) * 100
+
+# Peak Elevation Comparison
+peak_elev_cc_rfaR <- max(cc_comp_df_wide$elevation_ft_rfaR)
+peak_elev_cc_HMS <- max(cc_comp_df_wide$elevation_ft_HMS)
+peak_elev_cc_diff_pct <- ((peak_elev_cc_rfaR - peak_elev_cc_HMS) / peak_elev_cc_HMS) * 100
+
+# Root Mean Square Error (RMSE)
+rmse_cc_outflow <- sqrt(mean((cc_comp_df_wide$outflow_cfs_rfaR - cc_comp_df_wide$outflow_cfs_HMS)^2))
+rmse_cc_elevation <- sqrt(mean((cc_comp_df_wide$elevation_ft_rfaR - cc_comp_df_wide$elevation_ft_HMS)^2))
+
+# Nash-Sutcliffe Efficiency (NSE)
+nse_cc_outflow <- 1 - sum((cc_comp_df_wide$outflow_cfs_HMS - cc_comp_df_wide$outflow_cfs_rfaR)^2) / 
+                   sum((cc_comp_df_wide$outflow_cfs_HMS - mean(cc_comp_df_wide$outflow_cfs_HMS))^2)
+
+# Maximum Absolute Difference
+max_abs_diff_cc_outflow <- max(abs(cc_comp_df_wide$outflow_cfs_rfaR - cc_comp_df_wide$outflow_cfs_HMS))
+max_abs_diff_cc_elev <- max(abs(cc_comp_df_wide$elevation_ft_rfaR - cc_comp_df_wide$elevation_ft_HMS))
+
+
+cc_validation_summary <- data.frame(
+  Metric = c("Peak Outflow (cfs)", 
+             "Peak Elevation (ft)", 
+             "RMSE Outflow (cfs)", 
+             "RMSE Elevation (ft)",
+             "NSE Outflow",
+             "Max Abs Diff Outflow (cfs)",
+             "Max Abs Diff Elevation (ft)"),
+  rfaR = c(peak_cc_rfaR, peak_elev_cc_rfaR, rmse_cc_outflow, rmse_cc_elevation, 
+           nse_cc_outflow, max_abs_diff_cc_outflow, max_abs_diff_cc_elev),
+  HMS = c(peak_cc_HMS, peak_elev_cc_HMS, NA, NA, NA, NA, NA),
+  Difference = c(peak_cc_rfaR - peak_cc_HMS, peak_elev_cc_rfaR - peak_elev_cc_HMS,
+                 NA, NA, NA, NA, NA),
+  Pct_Diff = c(peak_cc_diff_pct, peak_elev_cc_diff_pct, NA, NA, NA, NA, NA)) |> 
+  gt() |> 
+  # Header
+  tab_header(
+    title = "Summary of Validation Metrics for Cherry Creek Dam Routing",
+    subtitle = "Validation of rfaR Mod-Puls Routing"
+  ) |>
+  # Columns
+  cols_label(
+    Metric = "Metric",
+    rfaR = "rfaR",
+    HMS = "HMS",
+    Difference  = "Difference",
+    Pct_Diff = "%Diff"
+  ) |> 
+  # Format
+  fmt_scientific(
+    columns = c(Difference,Pct_Diff),
+    decimals = 2,
+    exp_style = "E"
+  ) |> 
+  fmt_number(
+    columns = c(rfaR,HMS),
+    decimals = 2,
+    use_seps = T
+  ) |> 
+  # Alignment
+  cols_align(
+    align = "center",
+    columns = everything()
+  ) |> 
+  # Make column headers bold
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  ) |> 
+  # Table styling
+  tab_options(
+    table.font.size = px(11),
+    table.border.top.style = "solid",
+    table.border.top.width = px(2),
+    table.border.top.color = "#4a5f4a",
+    table.border.bottom.style = "solid",
+    table.border.bottom.width = px(2),
+    table.border.bottom.color = "#4a5f4a",
+    heading.background.color = "#4a5f4a",
+    heading.align = "left",
+    column_labels.background.color = "#e8e8e8",
+    data_row.padding = px(8),
+    column_labels.padding = px(8)
+  )
+
+cc_validation_summary
+```
+Performance metrics confirm computational equivalence between implementations. RMSE values were 2.82E-05 ft for elevation and 2.82E-05 cfs for outflow. The Nash-Sutcliffe Efficiency coefficient achieved 1.0, indicating perfect model performance. Maximum absolute differences were 4.95E-05 cfs for outflow and 4.99E-05 ft for elevation.
+
+```{r CC Results Figure, echo = F, warning = F, fig.cap = "Comparison of inflow and outflow hydrographs between rfaR and HEC-HMS Modified Puls routing for Cherry Creek Dam validation.", fig.width = 8, fig.height = 5}
+cc_routing <- ggplot(cc_comp_df_long) + 
+  geom_line(aes(x = time_hr,
+                y = inflow_cfs,
+                color = "Inflow"),
+            linewidth = 0.75) +
+    geom_line(aes(x = time_hr,
+                y = outflow_cfs,
+                color = "Outflow"),
+            linewidth = 0.75) +
+  scale_x_continuous(breaks = seq(0,960,24)) +
+  scale_y_continuous(labels = scales::comma) +
+  scale_color_manual(values = c("Inflow" = "#3B4992FF",
+                                "Outflow" = "#EE0000FF"),
+                     breaks = c("Inflow", "Outflow"))+
+  facet_wrap(vars(source)) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time (hr)", 
+       y = "Flow (cfs)",
+       title = "Cherry Creek Dam - Validation Routing", 
+       color = NULL) +
+  coord_cartesian(xlim = c(0,144))
+```
+
+## John Martin Dam Routing Validation
+
+```{r JMD routing}
+jmd_routing <- mod_puls_routing(resmodel_df = jmd_resmodel, 
+                                      inflow_df = jmd_inflowhydro, 
+                                      initial_elev = jmd_init_elev, 
+                                      full_results = TRUE)
+```
+
+```{r JMD percent diff, echo = F, warning = F}
+# Add Source Field
+jmd_routing$source <- "rfaR"
+jmd_hms <- jmd_hms_results
+jmd_hms$source <- "HMS"
+
+# Bind Rows
+jmd_comp_df_long <- rbind(jmd_routing,jmd_hms)
+
+# Pivot Wider for Validation
+jmd_comp_df_wide <- pivot_wider(jmd_comp_df_long, 
+            names_from = source, 
+            values_from = c(inflow_cfs, elevation_ft, storage_acft, outflow_cfs))
+
+jmd_validation <- jmd_comp_df_wide |> 
+  mutate(delta_elev = elevation_ft_rfaR - elevation_ft_HMS,
+         delta_outflow = outflow_cfs_rfaR - outflow_cfs_HMS,
+         pdiff_elev = ((delta_elev)/elevation_ft_HMS)*100,
+         pdiff_outflow = ((delta_outflow)/outflow_cfs_HMS)*100) |> 
+  summarize(mean_pdiff_elev = mean(pdiff_elev,na.rm = T),
+            mean_pdiff_outflow = mean(pdiff_outflow,na.rm = T),
+            sd_pdiff_elev = sd(pdiff_elev,na.rm = T),
+            sd_pdiff_outflow = sd(pdiff_outflow,na.rm = T)) |> 
+  gt() |> 
+  # Header
+  tab_header(
+    title = "John Martin Dam Mod-Puls Routing Results",
+    subtitle = "Summary of Percent Difference between rfaR and HMS Routing"
+  ) |>
+  # Columns
+  tab_spanner(
+    label = "Elevation (ft-NAVD88)",
+    columns = c(mean_pdiff_elev, sd_pdiff_elev)
+  ) |> 
+  tab_spanner(
+    label = "Outflow (cfs)",
+    columns = c(mean_pdiff_outflow, sd_pdiff_outflow)
+  ) |> 
+  cols_label(
+    mean_pdiff_elev = "Mean %Diff",
+    sd_pdiff_elev = "SD %Diff",
+    mean_pdiff_outflow = "Mean %Diff",
+    sd_pdiff_outflow = "SD %Diff"
+  ) |> 
+  # Format
+  fmt_scientific(
+    columns = c(mean_pdiff_elev,sd_pdiff_elev,mean_pdiff_outflow,sd_pdiff_outflow),
+    decimals = 2,
+    exp_style = "E"
+  ) |> 
+  # Alignment
+  cols_align(
+    align = "center",
+    columns = everything()
+  ) |> 
+  # Make column headers bold
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  ) |> 
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_spanners(everything())
+  ) |> 
+  # Table styling
+  tab_options(
+    table.font.size = px(11),
+    table.border.top.style = "solid",
+    table.border.top.width = px(2),
+    table.border.top.color = "#4a5f4a",
+    table.border.bottom.style = "solid",
+    table.border.bottom.width = px(2),
+    table.border.bottom.color = "#4a5f4a",
+    heading.background.color = "#4a5f4a",
+    heading.align = "left",
+    column_labels.background.color = "#e8e8e8",
+    data_row.padding = px(8),
+    column_labels.padding = px(8)
+  )
+
+jmd_validation  
+```
+
+John Martin Dam validation similarly showed negligible differences, with mean percent differences of 3.90E-05% for elevation and 8.47E-06% for outflow. Standard deviations were 7.38E-04% and 1.36E-04%, respectively. Peak outflow agreement was within 2.92E-07% (0.0046 cfs absolute difference).
+
+```{r JMD validation metrics, echo = F, warning = F}
+# Peak Flow Comparison
+peak_jmd_rfaR <- max(jmd_comp_df_wide$outflow_cfs_rfaR)
+peak_jmd_HMS <- max(jmd_comp_df_wide$outflow_cfs_HMS)
+peak_jmd_diff_pct <- ((peak_jmd_rfaR - peak_jmd_HMS) / peak_jmd_HMS) * 100
+
+# Peak Elevation Comparison
+peak_elev_jmd_rfaR <- max(jmd_comp_df_wide$elevation_ft_rfaR)
+peak_elev_jmd_HMS <- max(jmd_comp_df_wide$elevation_ft_HMS)
+peak_elev_jmd_diff_pct <- ((peak_elev_jmd_rfaR - peak_elev_jmd_HMS) / peak_elev_jmd_HMS) * 100
+
+# Root Mean Square Error (RMSE)
+rmse_jmd_outflow <- sqrt(mean((jmd_comp_df_wide$outflow_cfs_rfaR - jmd_comp_df_wide$outflow_cfs_HMS)^2))
+rmse_jmd_elevation <- sqrt(mean((jmd_comp_df_wide$elevation_ft_rfaR - jmd_comp_df_wide$elevation_ft_HMS)^2))
+
+# Nash-Sutcliffe Efficiency (NSE)
+nse_jmd_outflow <- 1 - sum((jmd_comp_df_wide$outflow_cfs_HMS - jmd_comp_df_wide$outflow_cfs_rfaR)^2) / 
+                   sum((jmd_comp_df_wide$outflow_cfs_HMS - mean(jmd_comp_df_wide$outflow_cfs_HMS))^2)
+
+# Maximum Absolute Difference
+max_abs_diff_jmd_outflow <- max(abs(jmd_comp_df_wide$outflow_cfs_rfaR - jmd_comp_df_wide$outflow_cfs_HMS))
+max_abs_diff_jmd_elev <- max(abs(jmd_comp_df_wide$elevation_ft_rfaR - jmd_comp_df_wide$elevation_ft_HMS))
+
+
+jmd_validation_summary <- data.frame(
+  Metric = c("Peak Outflow (cfs)", 
+             "Peak Elevation (ft)", 
+             "RMSE Outflow (cfs)", 
+             "RMSE Elevation (ft)",
+             "NSE Outflow",
+             "Max Abs Diff Outflow (cfs)",
+             "Max Abs Diff Elevation (ft)"),
+  rfaR = c(peak_jmd_rfaR, peak_elev_jmd_rfaR, rmse_jmd_outflow, rmse_jmd_elevation, 
+           nse_jmd_outflow, max_abs_diff_jmd_outflow, max_abs_diff_jmd_elev),
+  HMS = c(peak_jmd_HMS, peak_elev_cc_HMS, NA, NA, NA, NA, NA),
+  Difference = c(peak_jmd_rfaR - peak_jmd_HMS, peak_elev_jmd_rfaR - peak_elev_jmd_HMS,
+                 NA, NA, NA, NA, NA),
+  Pct_Diff = c(peak_jmd_diff_pct, peak_elev_jmd_diff_pct, NA, NA, NA, NA, NA)) |> 
+  gt() |> 
+  # Header
+  tab_header(
+    title = "Summary of Validation Metrics for John Martin Dam Routing",
+    subtitle = "Validation of rfaR Mod-Puls Routing"
+  ) |>
+  # Columns
+  cols_label(
+    Metric = "Metric",
+    rfaR = "rfaR",
+    HMS = "HMS",
+    Difference  = "Difference",
+    Pct_Diff = "%Diff"
+  ) |> 
+  # Format
+  fmt_scientific(
+    columns = c(Difference,Pct_Diff),
+    decimals = 2,
+    exp_style = "E"
+  ) |> 
+  fmt_number(
+    columns = c(rfaR,HMS),
+    decimals = 2,
+    use_seps = T
+  ) |> 
+  # Alignment
+  cols_align(
+    align = "center",
+    columns = everything()
+  ) |> 
+  # Make column headers bold
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  ) |> 
+  # Table styling
+  tab_options(
+    table.font.size = px(11),
+    table.border.top.style = "solid",
+    table.border.top.width = px(2),
+    table.border.top.color = "#4a5f4a",
+    table.border.bottom.style = "solid",
+    table.border.bottom.width = px(2),
+    table.border.bottom.color = "#4a5f4a",
+    heading.background.color = "#4a5f4a",
+    heading.align = "left",
+    column_labels.background.color = "#e8e8e8",
+    data_row.padding = px(8),
+    column_labels.padding = px(8)
+  )
+
+jmd_validation_summary
+```
+Performance metrics demonstrate excellent agreement across all measures. RMSE values were 0.028 ft for elevation and 0.031 cfs for outflow, with an NSE of 1.0. Maximum absolute differences were 9.81E-02 cfs for outflow and 4.99E-02 ft for elevation. All validation metrics fall well within the "Excellent" performance category (< 0.1% difference, RMSE < 1.0, NSE > 0.95), with differences attributable solely to floating-point precision and computational rounding rather than algorithmic discrepancies.
+
+```{r JMD Results Figure, echo = F, warning = F, fig.cap = "Comparison of inflow and outflow hydrographs between rfaR and HEC-HMS Modified Puls routing for John Martin Dam validation.", fig.width = 8, fig.height = 5}
+jmd_routing <- ggplot(jmd_comp_df_long) + 
+  geom_line(aes(x = time_hr,
+                y = inflow_cfs,
+                color = "Inflow"),
+            linewidth = 0.75) +
+    geom_line(aes(x = time_hr,
+                y = outflow_cfs,
+                color = "Outflow"),
+            linewidth = 0.75) +
+  scale_x_continuous(breaks = seq(0,960,24)) +
+  scale_y_continuous(labels = scales::comma) +
+  scale_color_manual(values = c("Inflow" = "#3B4992FF",
+                                "Outflow" = "#EE0000FF"),
+                     breaks = c("Inflow", "Outflow"))+
+  facet_wrap(vars(source)) +
+  theme(legend.position = "bottom") +
+  labs(x = "Time (hr)", 
+       y = "Flow (cfs)",
+       title = "John Martin Dam - Validation Routing", 
+       color = NULL) +
+  coord_cartesian(xlim = c(0,144))
+```
+
+## Conclusion
+The `modpuls()` function provides a faithful and accurate implementation of the Modified Puls routing method, producing results that are computationally equivalent to the established HEC-HMS routing routine. The observed differences are multiple orders of magnitude smaller than engineering tolerances and represent machine precision rather than methodological errors. The function is therefore considered validated and suitable for operational use in reservoir flood routing applications, providing users with confidence that results are identical to those obtained from industry-standard software. This implementation in R offers the advantages of open-source transparency, reproducibility, and integration within the broader reservoir frequency analysis workflow while maintaining the numerical accuracy of the original method.
+
+## References
+Chow, V. T. (1964). Handbook of Applied Hydrology. McGraw-Hill Book Company, New York.
+
+Henderson, F. M. (1966). Open Channel Flow. Macmillan Publishing Co., Inc., New York.
+
+Nash, J. E., & Sutcliffe, J. V. (1970). River flow forecasting through conceptual models part I — A discussion of principles. Journal of Hydrology, 10(3), 282-290. https://doi.org/10.1016/0022-1694(70)90255-6
+
+U.S. Army Corps of Engineers, Hydrologic Engineering Center. (n.d.). Modified Puls Model. HEC-HMS Technical Reference Manual. Retrieved December 18, 2025, from https://www.hec.usace.army.mil/confluence/hmsdocs/hmstrm/channel-flow/modified-puls-model
