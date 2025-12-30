@@ -139,6 +139,7 @@ delta = (maxZ - minZ)/Nbins
 zlower[1] = minZ
 zupper[1] = zlower[1] + delta
 weights[1] = pnorm(zupper[1])
+
 for (i in 2:Nbins)
 {
   zlower[i] = zupper[i-1]
