@@ -5,6 +5,12 @@ This package produces reservoir stage-frequency curves with uncertainty bounds b
 
 ## Installation
 ```r
+# Install dependencies first
+install.packages(c("zoo", "lubridate", "evd", "cli"))
+
+# Optional: for parallel processing
+install.packages(c("future", "future.apply"))
+
 # Install from GitHub
 devtools::install_github("USACE-RMC/rfaR")
 ```

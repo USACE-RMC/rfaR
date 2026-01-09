@@ -28,8 +28,16 @@ Depends:
     R (>= 3.5)
 LazyData: true
 Suggests: 
+    gt,
     knitr,
-    rmarkdown
+    rmarkdown,
+    scales,
+    tidyverse
 VignetteBuilder: knitr
 Imports: 
+    cli,
+    evd,
+    future,
+    future.apply,
+    lubridate,
     zoo

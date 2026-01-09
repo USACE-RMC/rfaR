@@ -1,4 +1,4 @@
-#' Hydrograph Scaling
+#' Scale Hydrograph
 #'
 #' Scales inflow hydrograph given a sampled inflow volume from the volume-frequency
 #' curve. Scale factor is defined by the sampled inflow volume and the maximum
@@ -36,7 +36,7 @@ scale_hydrograph <- function(hydrograph_shape, sampled_volume, critical_duration
   # Hard-coding for hourly routing
   routing_timestep_hrs <- 1
 
-  # Add functionality for dt (for non-hourly inflow timeseries)
+  # Add future functionality for dt (for non-hourly inflow timeseries)
   timestep_days <- 1/24
   critdur_hrs <- critical_duration/timestep_days
 
@@ -61,14 +61,17 @@ scale_hydrograph <- function(hydrograph_shape, sampled_volume, critical_duration
   # Scale hydro
   scaled_inflow <- hydrograph_shape[,2]*scale_factor
 
-  # Extend hydro to time series length
-  # Should this be a recession formula instead of just 0?
-  scaled_inflow <- c(scaled_inflow, numeric(length(scaled_hydro_time) - length(scaled_inflow)))
+  # Extend hydro to time series length - IF NEEDED
+  if(length(scaled_inflow) < length(scaled_hydro_time)){
+    scaled_inflow <- c(scaled_inflow, numeric(length(scaled_hydro_time) - length(scaled_inflow)))
+    scaled_hydrograph <- data.frame(time_hrs = scaled_hydro_time, inflow_cfs = scaled_inflow)
+  }else{
+    scaled_hydrograph <- data.frame(time_hrs = seq(1,length(scaled_inflow),routing_timestep_hrs), inflow_cfs = scaled_inflow)
+  }
 
   # ============================================================================
   # RETURN SCALED HYDROGRAPH
   # ============================================================================
-  scaled_hydrograph <- data.frame(time_hrs = scaled_hydro_time, inflow_cfs = scaled_inflow)
 
   return(scaled_hydrograph)
 

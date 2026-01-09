@@ -22,10 +22,10 @@
 #'
 #' @examples
 #' # Peak values only
-#' mod_puls_routing(resmodel, inflow, initial_elev = 5565)
+#' mod_puls_routing(jmd_resmodel, jmd_inflowhydro, initial_elev = 3830)
 #'
 #' # Full routing table
-#' mod_puls_routing(resmodel, inflow, initial_elev = 5565, full_results = TRUE)
+#' mod_puls_routing(jmd_resmodel, jmd_inflowhydro, initial_elev = 3830, full_results = TRUE)
 #' @references
 #' Chow, V.T. (1959). Open-Channel Hydraulics. McGraw-Hill.
 mod_puls_routing <- function(resmodel_df,inflow_df, initial_elev, full_results = FALSE){

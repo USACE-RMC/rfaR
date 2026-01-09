@@ -5,10 +5,12 @@
 \alias{jmd_hydro_apr1999}
 \title{John Martin Dam April 1999 Hydrograph}
 \format{
-A data frame with 241 rows and 2 columns:
+A data frame with 241 rows and 4 columns:
 \describe{
-\item{time_hr}{Time in hours}
-\item{inflow_cfs}{Inflow (cfs)}
+\item{Ordinate}{Timeseries Ordinate}
+\item{Date}{Date mm/dd/yyyy}
+\item{Time}{Time in 00:00}
+\item{Flow}{Inflow (cfs)}
 }
 }
 \usage{

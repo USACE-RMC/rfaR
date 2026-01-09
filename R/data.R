@@ -162,10 +162,12 @@
 #'
 #' Inflow hydrograph shape from April 1999 flood event.
 #'
-#' @format A data frame with 241 rows and 2 columns:
+#' @format A data frame with 241 rows and 4 columns:
 #' \describe{
-#'   \item{time_hr}{Time in hours}
-#'   \item{inflow_cfs}{Inflow (cfs)}
+#'   \item{Ordinate}{Timeseries Ordinate}
+#'   \item{Date}{Date mm/dd/yyyy}
+#'   \item{Time}{Time in 00:00}
+#'   \item{Flow}{Inflow (cfs)}
 #' }
 "jmd_hydro_apr1999"
 
@@ -173,10 +175,12 @@
 #'
 #' Inflow hydrograph shape from June 1921 flood event.
 #'
-#' @format A data frame with 169 rows and 2 columns:
+#' @format A data frame with 169 rows and 4 columns:
 #' \describe{
-#'   \item{time_hr}{Time in hours}
-#'   \item{inflow_cfs}{Inflow (cfs)}
+#'   \item{Ordinate}{Timeseries Ordinate}
+#'   \item{Date}{Date mm/dd/yyyy}
+#'   \item{Time}{Time in 00:00}
+#'   \item{Flow}{Inflow (cfs)}
 #' }
 "jmd_hydro_jun1921"
 
@@ -184,21 +188,38 @@
 #'
 #' Inflow hydrograph shape from June 1965 flood event (from HEC-HMS).
 #'
-#' @format A data frame with 241 rows and 2 columns:
+#' @format A data frame with 241 rows and 4 columns:
 #' \describe{
-#'   \item{time_hr}{Time in hours}
-#'   \item{inflow_cfs}{Inflow (cfs)}
+#'   \item{Ordinate}{Timeseries Ordinate}
+#'   \item{Date}{Date mm/dd/yyyy}
+#'   \item{Time}{Time in 00:00}
+#'   \item{Flow}{Inflow (cfs)}
 #' }
 "jmd_hydro_jun1965"
+
+#' John Martin Dam June 1965 Hydrograph (15 minute intervals)
+#'
+#' Inflow hydrograph shape from June 1965 flood event (from HEC-HMS).
+#'
+#' @format A data frame with 481 rows and 4 columns:
+#' \describe{
+#'   \item{Ordinate}{Timeseries Ordinate}
+#'   \item{Date}{Date mm/dd/yyyy}
+#'   \item{Time}{Time in 00:00}
+#'   \item{Flow}{Inflow (cfs)}
+#' }
+"jmd_hydro_jun1965_15min"
 
 #' John Martin Dam May 1955 Hydrograph
 #'
 #' Inflow hydrograph shape from May 1955 flood event.
 #'
-#' @format A data frame with 121 rows and 2 columns:
+#' @format A data frame with 241 rows and 2 columns:
 #' \describe{
-#'   \item{time_hr}{Time in hours}
-#'   \item{inflow_cfs}{Inflow (cfs)}
+#'   \item{Ordinate}{Timeseries Ordinate}
+#'   \item{Date}{Date mm/dd/yyyy}
+#'   \item{Time}{Time in 00:00}
+#'   \item{Flow}{Inflow (cfs)}
 #' }
 "jmd_hydro_may1955"
 
@@ -208,8 +229,10 @@
 #'
 #' @format A data frame with 192 rows and 2 columns:
 #' \describe{
-#'   \item{time_hr}{Time in hours}
-#'   \item{inflow_cfs}{Inflow (cfs)}
+#'   \item{Ordinate}{Timeseries Ordinate}
+#'   \item{Date}{Date mm/dd/yyyy}
+#'   \item{Time}{Time in 00:00}
+#'   \item{Flow}{Inflow (cfs)}
 #' }
 "jmd_hydro_pmf"
 
@@ -219,8 +242,10 @@
 #'
 #' @format A data frame with 337 rows and 2 columns:
 #' \describe{
-#'   \item{time_hr}{Time in hours}
-#'   \item{inflow_cfs}{Inflow (cfs)}
+#'   \item{Ordinate}{Timeseries Ordinate}
+#'   \item{Date}{Date mm/dd/yyyy}
+#'   \item{Time}{Time in 00:00}
+#'   \item{Flow}{Inflow (cfs)}
 #' }
 "jmd_hydro_sdf"
 
@@ -331,3 +356,33 @@
 #'   \item{posterior_mode}{Posterior mode value}
 #' }
 "jmd_vfc"
+
+#' John Martin Dam BestFit Parameter Sets
+#'
+#' LP3 distribution parameters sets of volume-frequency curve results from
+#' RMC-BestFit 2.0.
+#'
+#' @format A data frame with 10000 row and 3 columns:
+#' \describe{
+#'   \item{mean_log}{Mean of log-transformed values}
+#'   \item{sd_log}{Standard deviation of log-transformed values}
+#'   \item{skew_log}{Skewness of log-transformed values}
+#' }
+"jmd_bf_parameter_sets"
+
+#' JST HMS Results (Routing Validation)
+#' @format Data frame
+#' @name jst_hms_results
+"jst_hms_results"
+
+#' JST Inflow Hydrograph (Routing Validation)
+#' @format Data frame
+"jst_inflowhydro"
+
+#' JST Initial Elevation (Routing Validation)
+#' @format Numeric
+"jst_init_elev"
+
+#' JST Reservoir Model from HMS (Routing Validation)
+#' @format Data frame
+"jst_resmodel_hms"

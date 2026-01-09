@@ -7,8 +7,10 @@
 \format{
 A data frame with 337 rows and 2 columns:
 \describe{
-\item{time_hr}{Time in hours}
-\item{inflow_cfs}{Inflow (cfs)}
+\item{Ordinate}{Timeseries Ordinate}
+\item{Date}{Date mm/dd/yyyy}
+\item{Time}{Time in 00:00}
+\item{Flow}{Inflow (cfs)}
 }
 }
 \usage{

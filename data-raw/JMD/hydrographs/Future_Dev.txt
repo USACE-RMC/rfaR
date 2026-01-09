@@ -1,4 +1,0 @@
-1. Non-hourly hydrographs
-	1a. Create a function that converts them to hourly?
-	1b. Build functionality for various timesteps throughout package
-2. Load all hydrographs at once (long csv with name field to parse them out)
