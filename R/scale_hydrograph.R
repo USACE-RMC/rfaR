@@ -38,7 +38,9 @@ scale_hydrograph <- function(hydrograph_shape, observed_volume, sampled_volume){
 
   # SCALE HYDROGRAPH SHAPE =====================================================
   # Preallocate scaled hydrograph time
-  scaled_hydro_time <- seq(1,routing_hrs,routing_timestep_hrs)
+  scaled_hydro_time <- seq(1,
+                           length(hydrograph_shape[,1]),
+                           routing_timestep_hrs)
 
   # Scale hydro
   scaled_inflow <- hydrograph_shape[,2]*scale_factor

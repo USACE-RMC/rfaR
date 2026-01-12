@@ -24,17 +24,6 @@ hydrographs <- hydrograph_setup(jmd_hydro_apr1999,
 #   print(length(hydrographs[[i]]$inflow))
 # }
 
-hydrograph_shape <- hydrographs[[1]][,2:3]
-obs_hydrograph_vol <- attr(hydrographs[[1]],"obs_vol")
-
-scale_test <- scale_hydrograph(hydrograph_shape,
-                               obs_hydrograph_vol,
-                               100000,
-                               2,
-                               10)
-100000/obs_hydrograph_vol
-
-
 expected_test <- rfaR(jmd_bf_parameter_sets,
                       dist = "LP3",
                       jmd_por_stage,
@@ -45,15 +34,15 @@ expected_test <- rfaR(jmd_bf_parameter_sets,
                       routing_dur = 10,
                       expected_only = TRUE)
 
-full_test <- rfaR(jmd_bf_parameter_sets,
-                      dist = "LP3",
-                      jmd_por_stage,
-                      jmd_seasonality$relative_frequency,
-                      hydrographs,
-                      jmd_resmodel,
-                      critical_dur = 2,
-                      routing_dur = 10,
-                      expected_only = FALSE)
+# full_test <- rfaR(jmd_bf_parameter_sets,
+#                       dist = "LP3",
+#                       jmd_por_stage,
+#                       jmd_seasonality$relative_frequency,
+#                       hydrographs,
+#                       jmd_resmodel,
+#                       critical_dur = 2,
+#                       routing_dur = 10,
+#                       expected_only = FALSE)
 
 ## Test Plot
 library(tidyverse)
