@@ -26,9 +26,9 @@ For GEV: columns are location, scale, shape.}
 \item{dist}{Distribution type. Either \code{"LP3"} (default) or \code{"GEV"}.}
 
 \item{stage_ts}{Data frame of historical stage time series with columns
-\code{date} and \code{stage}.}
+\code{date} (m/d/yyyy) and \code{stage}.}
 
-\item{seasonality}{Vector of monthly flood probabilities (length 12).}
+\item{seasonality}{Vector of monthly relative flood probabilities (length 12).}
 
 \item{hydrographs}{List of hydrograph shapes. Each list item is a hydrograph data.frame. See: \code{\link[=hydrograph_setup]{hydrograph_setup()}}}
 

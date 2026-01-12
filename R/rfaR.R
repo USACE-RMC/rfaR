@@ -9,8 +9,8 @@
 #'   For GEV: columns are location, scale, shape.
 #' @param dist Distribution type. Either `"LP3"` (default) or `"GEV"`.
 #' @param stage_ts Data frame of historical stage time series with columns
-#'   `date` and `stage`.
-#' @param seasonality Vector of monthly flood probabilities (length 12).
+#'   `date` (m/d/yyyy) and `stage`.
+#' @param seasonality Vector of monthly relative flood probabilities (length 12).
 #' @param hydrographs List of hydrograph shapes. Each list item is a hydrograph data.frame. See: [hydrograph_setup()]
 #' @param resmodel Data frame with three columns: elevation (ft), storage (acre-feet),
 #'   and discharge (cfs). Must be in that order.
@@ -109,12 +109,18 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
       cli::cli_progress_update()
       for (j in 1:ncol(Q_samp$flow)) {
         realiz <- (i - 1) * n_inner + j
-        scaled_hydrograph <- scale_hydrograph(hydrographs[[hydroSamps[realiz]]][,2:3],
-                                              Q_samp$flow[i,j],
-                                              critical_dur,
-                                              routing_dur)
+        # Hydrograph shape
+        hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][,2:3]
+        # Hydrograph observed volume
+        obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]],"obs_vol")
+        # Scale hydrograph to sample volume
+        scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
+                                              obs_hydrograph_vol,
+                                              Q_samp$flow[i,j])
+        # Route scaled hydrograph
         tmpResults <- mod_puls_routing(resmodel_df = resmodel, inflow_df = scaled_hydrograph,
                                        initial_elev = InitStages[realiz], full_results = FALSE)
+        # Record results
         peakStage[i, j] <- tmpResults[1]
         peakFlow[i, j] <- tmpResults[2]
       }
@@ -131,17 +137,24 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
       stage_row <- numeric(n_inner)
       flow_row <- numeric(n_inner)
 
+      cli::cli_alert_success(paste0("Full Uncertainty Requires Parallel Processing. Running simulation using ", as.numeric(future::availableCores() - 1)," cores."))
+
       for (j in 1:n_inner) {
         realiz <- (i - 1) * n_inner + j
-        scaled_hydrograph <- scale_hydrograph(hydrographs[[hydroSamps[realiz]]][, 2:3],
-                                              Q_samp$flow[i, j],
-                                              critical_dur,
-                                              routing_dur)
-
+        # Hydrograph shape
+        hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][,2:3]
+        # Hydrograph observed volume
+        obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]],"obs_vol")
+        # Scale hydrograph to sample volume
+        scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
+                                              obs_hydrograph_vol,
+                                              Q_samp$flow[i,j])
+        # Route scaled hydrograph
         tmpResults <- mod_puls_routing(resmodel_df = resmodel,
                                        inflow_df = scaled_hydrograph,
                                        initial_elev = InitStages[realiz],
                                        full_results = FALSE)
+        # Record results
         stage_row[j] <- tmpResults[1]
         flow_row[j] <- tmpResults[2]
       }

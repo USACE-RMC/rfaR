@@ -4,22 +4,15 @@
 \alias{scale_hydrograph}
 \title{Scale Hydrograph}
 \usage{
-scale_hydrograph(
-  hydrograph_shape,
-  sampled_volume,
-  critical_duration,
-  routing_days
-)
+scale_hydrograph(hydrograph_shape, observed_volume, sampled_volume)
 }
 \arguments{
 \item{hydrograph_shape}{Data frame with two columns: time (hours) and
 inflow (cfs). Must be in that order.}
 
+\item{observed_volume}{Maximum n-day inflow volume from input hydrograph shape.}
+
 \item{sampled_volume}{Sampled inflow volume from volume-frequency curve.}
-
-\item{critical_duration}{Critical duration in days.}
-
-\item{routing_days}{Desired length of routing simulation in days.}
 }
 \value{
 A data frame with two columns: \code{time_hrs} and \code{inflow_cfs}.
@@ -31,6 +24,6 @@ volume of the corresponding duration.
 }
 \examples{
 # Scale example hydrograph
-scaled <- scale_hydrograph(cc_inflowhydro, sampled_volume = 5000,
+scaled <- scale_hydrograph(cc_inflowhydro, observed_vol = 2500, sampled_volume = 5000,
                            critical_duration = 2, routing_days = 10)
 }

@@ -4,11 +4,15 @@
 \alias{hydrograph_setup}
 \title{Hydrograph Setup for RFA Simulation}
 \usage{
-hydrograph_setup(...)
+hydrograph_setup(..., critical_duration = NULL, routing_days = NULL)
 }
 \arguments{
 \item{...}{Data frame representing an input hydrograph with columns: Ord, Date, Time, Flow (cfs).
 Copied directly from RMC-RFA.}
+
+\item{critical_duration}{Critical duration in days.}
+
+\item{routing_days}{Desired length of routing simulation in days.}
 }
 \value{
 A list of formatted hydrograph data frames, each containing:
@@ -17,6 +21,7 @@ A list of formatted hydrograph data frames, each containing:
 \item{hour}{Hours from start of event}
 \item{inflow}{Inflow (cfs)}
 \item{hydrograph_num}{Hydrograph ID number for sampling}
+\item{obs_vol}{Max n-day inflow volume (stored as an attribute of each dataframe)}
 }
 }
 \description{

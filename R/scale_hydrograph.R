@@ -6,9 +6,8 @@
 #'
 #' @param hydrograph_shape Data frame with two columns: time (hours) and
 #'   inflow (cfs). Must be in that order.
+#' @param observed_volume Maximum n-day inflow volume from input hydrograph shape.
 #' @param sampled_volume Sampled inflow volume from volume-frequency curve.
-#' @param critical_duration Critical duration in days.
-#' @param routing_days Desired length of routing simulation in days.
 #'
 #' @return A data frame with two columns: `time_hrs` and `inflow_cfs`.
 #'
@@ -16,63 +15,37 @@
 #'
 #' @examples
 #' # Scale example hydrograph
-#' scaled <- scale_hydrograph(cc_inflowhydro, sampled_volume = 5000,
+#' scaled <- scale_hydrograph(cc_inflowhydro, observed_vol = 2500, sampled_volume = 5000,
 #'                            critical_duration = 2, routing_days = 10)
 
-scale_hydrograph <- function(hydrograph_shape, sampled_volume, critical_duration, routing_days){
-  # ============================================================================
-  # CONVERT TO DF (TIBBLE HANDLING)
-  # ============================================================================
+scale_hydrograph <- function(hydrograph_shape, observed_volume, sampled_volume){
+
+  # CONVERT TO DF (TIBBLE HANDLING) ============================================
   hydrograph_shape <- as.data.frame(hydrograph_shape)
 
-  # ============================================================================
-  # ENUSRE NUMERIC DATA (NOT INTERGER)
-  # ============================================================================
+  # ENUSRE NUMERIC DATA (NOT INTERGER) =========================================
   hydrograph_shape[] <- lapply(hydrograph_shape, as.numeric)
 
-  # ============================================================================
-  # CONSTANTS
-  # ============================================================================
+  # CONSTANTS ==================================================================
   # Hard-coding for hourly routing
   routing_timestep_hrs <- 1
 
   # Add future functionality for dt (for non-hourly inflow timeseries)
   timestep_days <- 1/24
-  critdur_hrs <- critical_duration/timestep_days
 
-  routing_timestep_days <- routing_timestep_hrs/24
-  routing_hrs <- routing_days/routing_timestep_days
+  # SCALE FACTOR ===============================================================
+  scale_factor <- sampled_volume/observed_volume
 
-  # ============================================================================
-  # SCALE FACTOR
-  # ============================================================================
-  # Use rollmeanr (r for "right")
-  max_hydrograph_vol <- max(zoo::rollmeanr(hydrograph_shape[,2], k = critdur_hrs))
-
-  # Ratio to Sampled 2-day vol
-  scale_factor <- sampled_volume/max_hydrograph_vol
-
-  # ============================================================================
-  # SCALE HYDROGRAPH SHAPE
-  # ============================================================================
+  # SCALE HYDROGRAPH SHAPE =====================================================
   # Preallocate scaled hydrograph time
   scaled_hydro_time <- seq(1,routing_hrs,routing_timestep_hrs)
 
   # Scale hydro
   scaled_inflow <- hydrograph_shape[,2]*scale_factor
+  scaled_hydrograph <- data.frame(time_hrs = seq(1,length(scaled_inflow),routing_timestep_hrs),
+                                  inflow_cfs = scaled_inflow)
 
-  # Extend hydro to time series length - IF NEEDED
-  if(length(scaled_inflow) < length(scaled_hydro_time)){
-    scaled_inflow <- c(scaled_inflow, numeric(length(scaled_hydro_time) - length(scaled_inflow)))
-    scaled_hydrograph <- data.frame(time_hrs = scaled_hydro_time, inflow_cfs = scaled_inflow)
-  }else{
-    scaled_hydrograph <- data.frame(time_hrs = seq(1,length(scaled_inflow),routing_timestep_hrs), inflow_cfs = scaled_inflow)
-  }
-
-  # ============================================================================
-  # RETURN SCALED HYDROGRAPH
-  # ============================================================================
-
+  # RETURN SCALED HYDROGRAPH ===================================================
   return(scaled_hydrograph)
 
 }
