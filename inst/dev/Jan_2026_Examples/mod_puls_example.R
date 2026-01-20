@@ -47,6 +47,11 @@ routing_results <- bind_rows(cc_hms_results |> mutate(Source = "HMS"),
 
 colors_i_like <- c("#3B4992FF","#EE0000FF","#008B45FF","#631879FF","#008280FF","#BB0021FF","#5F559BFF","#A20056FF","#808180FF","#1B1919FF")
 
+# "#FF9900"
+# "#F28E2B"
+# "#0072B2"
+# "#0000FF"
+
 cc_flow <- ggplot(cherry_creek_full) +
   geom_line(aes(x = time_hr,
                 y = outflow_cfs,
@@ -138,7 +143,6 @@ jmd_routing <- mod_puls_routing(resmodel_df = jmd_resmodel,
                                          inflow_df = jmd_inflowhydro,
                                          initial_elev = jmd_init_elev,
                                          full_results = TRUE)
-
 # Add Source Field
 jmd_routing$source <- "rfaR"
 jmd_hms <- jmd_hms_results
@@ -189,3 +193,114 @@ jmd_comp_df_wide <- jmd_comp_df_wide |>
          delta_outflow = outflow_cfs_rfaR - outflow_cfs_HMS,
          pdiff_elev = ((delta_elev)/elevation_ft_HMS)*100,
          pdiff_outflow = ((delta_outflow)/outflow_cfs_HMS)*100)
+
+# JMD rfaR routing ===
+# Flow and Stage
+jmd_flow <- jmd_comp_df_long |>
+  filter(source == "rfaR") |>
+  ggplot() +
+  geom_line(aes(x = time_hr,
+                y = inflow_cfs,
+                color = "Inflow"),
+            linewidth = 0.75) +
+  geom_line(aes(x = time_hr,
+                y = outflow_cfs,
+                color = "Outflow"),
+            linewidth = 1) +
+  scale_x_continuous(breaks = seq(0,960,24)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 5),
+                     labels = scales::scientific) +
+  scale_color_manual(values = c("Inflow" = "#3B4992FF",
+                                "Outflow" = "#EE0000FF"),
+                     breaks = c("Inflow", "Outflow"))+
+  theme(legend.position = "inside",
+        legend.position.inside = c(0.8,0.8)) +
+  labs(x = NULL,
+       y = "Flow (cfs)",
+       #title = "JMD Validation Routing",
+       color = NULL) +
+  coord_cartesian(xlim = c(0,144))
+
+jmd_stage <- jmd_comp_df_long |>
+  filter(source == "rfaR") |>
+  ggplot() +
+  geom_line(aes(x = time_hr,
+                y = elevation_ft,
+                color = "Stage"),
+            linewidth = 1.25) +
+  scale_x_continuous(breaks = seq(0,960,24)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 5),
+                     labels = scales::comma) +
+  scale_color_manual(values = c("Stage" = "#008B45FF"))+
+  theme(legend.position = "none") +
+  labs(x = "Time (hr)",
+       y = "Stage (ft-NAVD88)",
+       #title = "JMD Validation Routing",
+       color = NULL) +
+  coord_cartesian(xlim = c(0,144))
+
+# Combined plot
+jmd_comb_routing <- (jmd_flow/jmd_stage) +
+  plot_annotation(title = "PMF Routing",
+                  subtitle = "Example Data from JMD",
+                  theme = theme(plot.title = element_text(face = "bold", size = 14)))
+
+ggsave("D:/0.RMC/Reefer/Flood_Haz_January_2026/figs/JMD_Routing.png",jmd_comb_routing, width = 8, height = 5, dpi = 400)
+
+# Try to show 100 example routings
+random_scales <- sample(runif(100, min = 0.1, max = 1.5), 100, replace = T)
+
+routing_list <- list()
+for (i in 1:length(random_scales)){
+  # Scale
+  scaled_hydro <- tibble(Time_hr = example_time,
+                         Inflow = jmd_inflowhydro$inflow_cfs*random_scales[i])
+  # Route
+  scaled_routing <- mod_puls_routing(resmodel_df = jmd_resmodel,
+                                    inflow_df = scaled_hydro,
+                                    initial_elev = jmd_init_elev,
+                                    full_results = TRUE)
+  # Add ID
+  scaled_routing$ID <- i
+
+  # Save Results
+  routing_list[[i]] <- scaled_routing
+}
+
+routing_df <- bind_rows(routing_list)
+
+# max points
+max_points <- routing_df |>
+  group_by(ID) |>
+  summarize(maxstage = max(elevation_ft),
+            maxstage_time = routing_df$time_hr[which.max(elevation_ft)])
+
+ggplot() +
+  geom_line(data = jmd_routing,
+            aes(x = time_hr,
+                y = elevation_ft,
+                color = "JMD PMF"),
+            linewidth = 0.8,
+            alpha = 0.8) +
+  geom_line(data = routing_df,
+            aes(x = time_hr,
+                y = elevation_ft,
+                group = ID,
+                color = "Scaled Inflow Hydrograph"),
+            linewidth = 0.5,
+            alpha = 0.2) +
+  geom_point(data = max_points,
+             aes(x = maxstage_time,
+                 y = maxstage),
+             size = 1.2,
+             alpha = 0.75) +
+  scale_color_manual(values = c("JMD PMF" = "#008B45FF",
+                                "Scaled Inflow Hydrograph" = "#808180FF"))+
+  scale_x_continuous(breaks = seq(0,24*10,24),
+                     minor_breaks = seq(0,24*10,6)) +
+  scale_y_continuous(breaks = seq(3800,3900,10),labels = scales::comma_format())+
+  labs(x = "Time (hour)",
+       y = "Stage (ft-NAVD88)",
+       color = NULL) +
+  theme(legend.position = "bottom")
+ggsave("D:/0.RMC/Reefer/Flood_Haz_January_2026/figs/JMD_MC_Routing_Example.png", width = 7, height = 5, dpi = 400)

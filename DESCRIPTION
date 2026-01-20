@@ -39,5 +39,6 @@ Imports:
     evd,
     future,
     future.apply,
+    lmom,
     lubridate,
     zoo

@@ -370,19 +370,28 @@
 #' }
 "jmd_bf_parameter_sets"
 
-#' JST HMS Results (Routing Validation)
-#' @format Data frame
-#' @name jst_hms_results
-"jst_hms_results"
+#' John Martin Dam RFA Results - Expected Only
+#'
+#' John Martin Dam, expected only stage-frequency results from RFA.
+#'
+#' @format A data frame with 10000 row and 3 columns:
+#' \describe{
+#'   \item{AEP}{Annual Exceedace Probabilities}
+#'   \item{Expected}{Expected stages corresponding to AEPs}
+#' }
+"jmd_rfa_expected"
 
-#' JST Inflow Hydrograph (Routing Validation)
-#' @format Data frame
-"jst_inflowhydro"
+#' John Martin Dam RFA Results - Full Uncertainty
+#'
+#' John Martin Dam, expected only stage-frequency results from RFA.
+#'
+#' @format A data frame with 10000 row and 3 columns:
+#' \describe{
+#'   \item{AEP}{Annual Exceedace Probabilities}
+#'   \item{Upper}{Annual Exceedace Probabilities}
+#'   \item{Lower}{Annual Exceedace Probabilities}
+#'   \item{Expected}{Expected stages corresponding to AEPs}
+#'   \item{Median}{Median stages corresponding to AEPs}
+#' }
+"jmd_rfa_full"
 
-#' JST Initial Elevation (Routing Validation)
-#' @format Numeric
-"jst_init_elev"
-
-#' JST Reservoir Model from HMS (Routing Validation)
-#' @format Data frame
-"jst_resmodel_hms"

@@ -35,7 +35,7 @@
 #' #                 critical_dur = 48,
 #' #                 routing_dur = 240)
 rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrographs,
-                 resmodel, critical_dur, routing_dur, expected_only = TRUE, Nbins = 50, events_per_bin = 20) {
+                 resmodel, critical_dur, routing_dur, expected_only = TRUE, Ncores = NULL, Nbins = 50, events_per_bin = 200) {
   cli::cli_h1("Running rfaR :)")
   if(expected_only){
     cli::cli_alert_success("Expected Only")
@@ -77,6 +77,7 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
     InitStages[sampleID] <- sample(stage_ts$stage[stage_ts$months %in% UniqMonths[i]],
                                    size = sum(InitMonths == UniqMonths[i]), replace = TRUE)
   }
+
   cli::cli_alert_success("Seasonality & Starting Pool Sampled")
 
   # ============================================================================
@@ -86,10 +87,10 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
   # Sample Order
   hydroSamps <- sample(1:length(hydrographs), size = Nsims, replace = TRUE)
 
-  # Duration of Hydrograph
+  # Duration of Hydrograph - This should be superseded by now
   hydroDur <- sapply(hydrographs, function(df) nrow(df))
 
-  # K-Day Max Observed of Hydrograph
+  # K-Day Max Observed of Hydrograph - This also should be superseded by now
   obsVol <- sapply(hydrographs, function(df) max(zoo::rollmean(df$inflow, k = critical_dur)))
   cli::cli_alert_success("Hydrograph Shape Sampled")
 
@@ -126,6 +127,7 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
       }
     }
     cli::cli_progress_done()
+    cli::cli_alert_success("Expected Only Simulation Complete")
   # FULL UNCERT ++++++
   }else{
     cli::cli_h1("Simulating Full Uncertainty Frequency Analysis - (no progress bar yet, assume 30 minutes)")
@@ -186,6 +188,7 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
     aepStages <- matrix(0, nrow = Sbins, ncol = ncol(peakStage))
     cli::cli_progress_bar("Calculating AEP (expected only)", total = ncol(peakStage))
     for (m in 1:ncol(peakStage)) {
+      cli::cli_progress_update()
       tmpStage <- matrix((peakStage[, m]), nrow = Mevents, ncol = Nbins)
       for (i in 1:Sbins) {
         for (j in 1:Nbins) {
@@ -198,9 +201,9 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
           aepStages[i, m] <- aepStages[i, m] + n / Mevents * Weights[j]
         }
       }
-      cli::cli_progress_update()
     }
     cli::cli_progress_done()
+    cli::cli_alert_success("Expected Only Post-Processing Complete")
     # FULL UNCERT ++++++
   } else{
     aepStages <- matrix(0, nrow = Sbins, ncol = ncol(peakStage))
@@ -214,7 +217,9 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
       cli::cli_progress_update()
     }
     cli::cli_progress_done()
+    cli::cli_alert_success("Full Uncert. Post-Processing Complete")
   }
+
 
   # ============================================================================
   # Create Result DF

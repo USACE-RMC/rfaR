@@ -31,7 +31,7 @@ flow_frequency_sampler <- function(bestfit_params, dist = "LP3", Nbin = NULL, Me
     Nbin = 50
   }
   if(is.null(Mevent)){
-    Mevent = 20
+    Mevent = 200
   }
 
   # ============================================================================
@@ -47,12 +47,26 @@ flow_frequency_sampler <- function(bestfit_params, dist = "LP3", Nbin = NULL, Me
     # LP3 DISTRIBUTION
     if (dist == "LP3") {
       for (i in 1:nrow(bestfit_params)) {
+        # Custom PE3 Function
         Q[i] <- 10^qp3(pnorm(ords$normOrd[i]), bestfit_params[i, 1], bestfit_params[i, 2], bestfit_params[i, 3])
+
+        # PE3 from lmom
+        # Q[i] <- 10^(lmom::quape3(pnorm(ords$normOrd[i]),
+        #                          c(bestfit_params[i, 1],
+        #                            bestfit_params[i, 2],
+        #                            bestfit_params[i, 3])))
       }
-    # ELSE USE GEV
+    # ELSE USE GEV (uses lmom) - additional distributions will come later
     } else {
       for (i in 1:nrow(bestfit_params)) {
-        Q[i] <- evd::qgev(pnorm(ords$normOrd[i]), bestfit_params[i, 1], bestfit_params[i, 2], bestfit_params[i, 3])
+        # evd package - requires sign switch on K
+        # Q[i] <- evd::qgev(pnorm(ords$normOrd), bestfit_params[i, 1], bestfit_params[i, 2], -bestfit_params[i, 3])
+
+        # lmom package
+        Q[i] <- lmom::quagev(pnorm(ords$normOrd[i]),
+                             c(bestfit_params[i, 1],
+                               bestfit_params[i, 2],
+                               bestfit_params[i, 3]))
       }
     }
     # SORT INFLOW VOLS
@@ -69,12 +83,27 @@ flow_frequency_sampler <- function(bestfit_params, dist = "LP3", Nbin = NULL, Me
     # LP3 DISTRIBUTION
     if (dist == "LP3") {
       for (i in 1:nrow(bestfit_params)) {
+
+        # Custom PE3 Function
         Q[, i] <- 10^qp3(pnorm(ords$normOrd), bestfit_params[i, 1], bestfit_params[i, 2], bestfit_params[i, 3])
+
+        # PE3 from lmom
+        # Q[, i] <- 10^(lmom::quape3(pnorm(ords$normOrd[i]),
+        #                          c(bestfit_params[i, 1],
+        #                            bestfit_params[i, 2],
+        #                            bestfit_params[i, 3])))
       }
     # ELSE USE GEV
     } else {
       for (i in 1:nrow(bestfit_params)) {
-        Q[, i] <- evd::qgev(pnorm(ords$normOrd), bestfit_params[i, 1], bestfit_params[i, 2], bestfit_params[i, 3])
+        # evd package - requires sign switch on K
+        # Q[, i] <- evd::qgev(pnorm(ords$normOrd), bestfit_params[i, 1], bestfit_params[i, 2], -bestfit_params[i, 3])
+
+        # lmom package
+        Q[,i] <- lmom::quagev(pnorm(ords$normOrd[i]),
+                              c(bestfit_params[i, 1],
+                                bestfit_params[i, 2],
+                                bestfit_params[i, 3]))
       }
     }
   }

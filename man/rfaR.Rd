@@ -14,8 +14,9 @@ rfaR(
   critical_dur,
   routing_dur,
   expected_only = TRUE,
+  Ncores = NULL,
   Nbins = 50,
-  events_per_bin = 20
+  events_per_bin = 200
 )
 }
 \arguments{

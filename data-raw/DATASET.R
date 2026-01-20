@@ -1,6 +1,4 @@
-# ==============================================================================
-# CHERRY CREEK EXAMPLE DATA
-# ==============================================================================
+# CHERRY CREEK EXAMPLE DATA ====================================================
 # Cherry Creek Reservoir Model ("reservoir geometry")
 cc_resmodel <- read.csv("data-raw/cherry_creek/cherry_creek_resmodel.csv")
 
@@ -19,9 +17,7 @@ usethis::use_data(cc_inflowhydro, overwrite = TRUE)
 usethis::use_data(cc_init_elev, overwrite = TRUE)
 usethis::use_data(cc_hms_results, overwrite = TRUE)
 
-# ==============================================================================
-# JOHN MARTIN DAM (JMD) CORE EXAMPLE DATA
-# ==============================================================================
+# JOHN MARTIN DAM (JMD) CORE EXAMPLE DATA ======================================
 # JMD Res Model
 jmd_resmodel <- read.csv("data-raw/JMD/res_model/jmd_resmodel_best_est.csv")
 
@@ -40,16 +36,12 @@ usethis::use_data(jmd_hms_results, overwrite = TRUE)
 usethis::use_data(jmd_inflowhydro, overwrite = TRUE)
 usethis::use_data(jmd_init_elev, overwrite = TRUE)
 
-# ==============================================================================
-# JOHN MARTIN DAM - DISCHARGE GAGE
-# ==============================================================================
+# JOHN MARTIN DAM - DISCHARGE GAGE =============================================
 jmd_por_inflow <- read.csv("data-raw/JMD/discharge_gage/jmd_por_inflow.csv")
 
 usethis::use_data(jmd_por_inflow, overwrite = TRUE)
 
-# ==============================================================================
-# JOHN MARTIN DAM - EMPIRICAL FREQUENCY
-# ==============================================================================
+# JOHN MARTIN DAM - EMPIRICAL FREQUENCY ========================================
 jmd_empirical_stage_por <- read.csv("data-raw/JMD/empirical_freq/empirical_stage_por.csv")
 jmd_empirical_stage_wy1980 <- read.csv("data-raw/JMD/empirical_freq/empirical_stage_wy1980-2024.csv")
 jmd_empirical_stage_wy1980_pt <- read.csv("data-raw/JMD/empirical_freq/empirical_stage_wy1980-2024_PT.csv")
@@ -58,9 +50,7 @@ usethis::use_data(jmd_empirical_stage_por, overwrite = TRUE)
 usethis::use_data(jmd_empirical_stage_wy1980, overwrite = TRUE)
 usethis::use_data(jmd_empirical_stage_wy1980_pt, overwrite = TRUE)
 
-# ==============================================================================
-# JOHN MARTIN DAM - HYDROGRAPHS
-# ==============================================================================
+# JOHN MARTIN DAM - HYDROGRAPHS ================================================
 jmd_hydro_apr1999 <- read.csv("data-raw/JMD/hydrographs/April_1999.csv")
 jmd_hydro_jun1921 <- read.csv("data-raw/JMD/hydrographs/June_1921.csv")
 jmd_hydro_jun1965 <- read.csv("data-raw/JMD/hydrographs/June_1965_HMS.csv")
@@ -77,32 +67,24 @@ usethis::use_data(jmd_hydro_may1955, overwrite = TRUE)
 usethis::use_data(jmd_hydro_pmf, overwrite = TRUE)
 usethis::use_data(jmd_hydro_sdf, overwrite = TRUE)
 
-# ==============================================================================
-# JOHN MARTIN DAM - SEASONALITY
-# ==============================================================================
+# JOHN MARTIN DAM - SEASONALITY ================================================
 jmd_seasonality <- read.csv("data-raw/JMD/seasonality/seasonality_full_por.csv")
 
 usethis::use_data(jmd_seasonality, overwrite = TRUE)
 
-# ==============================================================================
-# JOHN MARTIN DAM - STAGE DURATION
-# ==============================================================================
+# JOHN MARTIN DAM - STAGE DURATION =============================================
 jmd_stage_duration <- read.csv("data-raw/JMD/stage_duration/stage_duration_monthly_1980-2024.csv")
 
 usethis::use_data(jmd_stage_duration, overwrite = TRUE)
 
-# ==============================================================================
-# JOHN MARTIN DAM - STAGE GAGE
-# ==============================================================================
+# JOHN MARTIN DAM - STAGE GAGE =================================================
 jmd_por_stage <- read.csv("data-raw/JMD/stage_gage/jmd_por_stage.csv")
 jmd_wy1980_stage <- read.csv("data-raw/JMD/stage_gage/jmd_wy1980-2024_stage.csv")
 
 usethis::use_data(jmd_por_stage, overwrite = TRUE)
 usethis::use_data(jmd_wy1980_stage, overwrite = TRUE)
 
-# ==============================================================================
-# JOHN MARTIN DAM - VOLUME FREQUENCY CURVE
-# ==============================================================================
+# JOHN MARTIN DAM - VOLUME FREQUENCY CURVE =====================================
 jmd_vfc_parameters <- read.csv("data-raw/JMD/vfc/final_2day_parameters.csv")
 jmd_vfc <- read.csv("data-raw/JMD/vfc/final_2day_vfc.csv")
 jmd_bf_parameter_sets <- read.csv("data-raw/JMD/vfc/parameter_sets.csv")
@@ -110,3 +92,13 @@ jmd_bf_parameter_sets <- read.csv("data-raw/JMD/vfc/parameter_sets.csv")
 usethis::use_data(jmd_vfc_parameters, overwrite = TRUE)
 usethis::use_data(jmd_vfc, overwrite = TRUE)
 usethis::use_data(jmd_bf_parameter_sets, overwrite = TRUE)
+
+# JOHN MARTIN DAM - RFA RESULTS EXPECTED ONLY ==================================
+jmd_rfa_expected <- read.csv("data-raw/JMD/rfa_results/jmd_rfa_expected.csv")
+
+usethis::use_data(jmd_rfa_expected, overwrite = TRUE)
+
+# JOHN MARTIN DAM - RFA RESULTS FULL UNCERT ====================================
+jmd_rfa_full <- read.csv("data-raw/JMD/rfa_results/jmd_rfa_full.csv")
+
+usethis::use_data(jmd_rfa_full, overwrite = TRUE)

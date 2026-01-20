@@ -29,10 +29,10 @@
 #' strat <- stratified_sampler(minAEP = 1E-6, maxAEP = 0.5, Nbins = 10, Mevents = 100)
 stratified_sampler <- function(minAEP = 1E-8, maxAEP = 0.99, Nbins = NULL, Mevents = NULL){
   if(is.null(Nbins)){
-    Nbins = 200
+    Nbins = 50
   }
   if(is.null(Mevents)){
-    Mevents = 50
+    Mevents = 200
   }
 
   maxZ = qnorm(1-minAEP)
@@ -55,5 +55,10 @@ stratified_sampler <- function(minAEP = 1E-8, maxAEP = 0.99, Nbins = NULL, Meven
 
   z = seq(from=min(zlower), to=max(zupper), length.out=Nbins*Mevents)
 
-  return(list(normOrd = z, Weights = weights, Zlower=zlower, Zupper=zupper, Nbins=Nbins, Mevents=Mevents))
+  return(list(normOrd = z,
+              Weights = weights,
+              Zlower = zlower,
+              Zupper = zupper,
+              Nbins = Nbins,
+              Mevents = Mevents))
 }

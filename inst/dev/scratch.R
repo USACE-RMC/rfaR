@@ -3,12 +3,15 @@
 jmd_bf_parameter_sets
 
 # stage_ts
-jmd_por_stage
+# jmd_por_stage
+jmd_wy1980_stage
 
 # seasonality
 jmd_seasonality
 
 # hydrographs
+
+
 hydrographs <- hydrograph_setup(jmd_hydro_apr1999,
                          jmd_hydro_jun1921,
                          jmd_hydro_jun1965,
@@ -19,14 +22,9 @@ hydrographs <- hydrograph_setup(jmd_hydro_apr1999,
                          critical_duration = 2,
                          routing_days = 10)
 
-# for (i in 1:length(hydrographs)){
-#   print(attr(hydrographs[[i]],"obs_vol"))
-#   print(length(hydrographs[[i]]$inflow))
-# }
-
 expected_test <- rfaR(jmd_bf_parameter_sets,
                       dist = "LP3",
-                      jmd_por_stage,
+                      jmd_wy1980_stage,
                       jmd_seasonality$relative_frequency,
                       hydrographs,
                       jmd_resmodel,
@@ -44,8 +42,9 @@ expected_test <- rfaR(jmd_bf_parameter_sets,
 #                       routing_dur = 10,
 #                       expected_only = FALSE)
 
-## Test Plot
+# COMPARE WITH RFA RESULTS =====================================================
 library(tidyverse)
+
 # Critical Elevations ----------------------------------------------------------
 crit_elevs <- tibble(
   Name = c("Upper PMF", "Recommended PMF", "Top of Dam", "Record Pool", "Flood Control Pool", "Spillway Crest"),
@@ -57,6 +56,7 @@ crit_elevs <- crit_elevs %>%
 jmd_empirical_stage_wy1980_pt$Gumb <- -log(-log(1 - jmd_empirical_stage_wy1980_pt$plot_posit))
 
 # Plot by Sensitivity Group ----------------------------------------------------
+jmd_rfa_expected <- jmd_rfa_expected |> mutate(Gumb = -log(-log(1 - AEP)))
 
 # 1. AEP breaks for plotting -----
 aep_breaks <- c(9.9e-1, 9e-1, 5e-1, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10)
@@ -82,7 +82,12 @@ ggplot() +
 
   geom_line(
     data = expected_test,
-    aes(x = Gumb, y = Expected, color = "Expected"),
+    aes(x = Gumb, y = Expected, color = "rfaR"),
+    linewidth = 0.85) +
+
+  geom_line(
+    data = jmd_rfa_expected,
+    aes(x = Gumb, y = Expected, color = "RFA"),
     linewidth = 0.85) +
 
   # Add AAAS color scale
