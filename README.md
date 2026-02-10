@@ -1,4 +1,6 @@
-# rfaR
+# rfaR (Development)
+
+**This package is currently in development**
 
 An R implementation of the U.S. Army Corps of Engineers (USACE) Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software.
 This package produces reservoir stage-frequency curves with uncertainty bounds by combining deterministic flood routing (Modified Puls method) with a nested Monte Carlo framework.

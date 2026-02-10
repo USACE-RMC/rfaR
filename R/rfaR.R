@@ -130,6 +130,7 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
     cli::cli_alert_success("Expected Only Simulation Complete")
   # FULL UNCERT ++++++
   }else{
+
     cli::cli_h1("Simulating Full Uncertainty Frequency Analysis - (no progress bar yet, assume 30 minutes)")
     future::plan(future::multisession, workers = future::availableCores() - 1)
 
@@ -165,8 +166,10 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
       future.seed = TRUE,
       future.packages = c("rfaR", "zoo"))
 
+    # End Parallel
     future::plan(future::sequential)
 
+    # Peak Stage and Flow rbind
     peakStage <- do.call(rbind, lapply(results, `[[`, "stage"))
     peakFlow <- do.call(rbind, lapply(results, `[[`, "flow"))
     cli::cli_alert_success("Full Uncertainty Complete")
@@ -186,11 +189,11 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
   if(expected_only){
     # CALC WEIGHTED AEP FOR PEAK STAGES
     aepStages <- matrix(0, nrow = Sbins, ncol = ncol(peakStage))
-    cli::cli_progress_bar("Calculating AEP (expected only)", total = ncol(peakStage))
+    cli::cli_progress_bar("Calculating AEP (expected only)", total = Sbins)
     for (m in 1:ncol(peakStage)) {
-      cli::cli_progress_update()
       tmpStage <- matrix((peakStage[, m]), nrow = Mevents, ncol = Nbins)
       for (i in 1:Sbins) {
+        cli::cli_progress_update()
         for (j in 1:Nbins) {
           n <- 0
           for (k in 1:Mevents) {
@@ -225,14 +228,11 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
   # Create Result DF
   # ============================================================================
   cli::cli_h1("Finalizing Results Data Frame")
-  cli::cli_progress_bar(total = 100)
-  cli::cli_progress_update(25)
   # AEP Sequence
   aep_sequence <- function(from = 1e-1, to = 1e-8) {
     magnitudes <- 10^seq(log10(from), log10(to), by = -1)
     unlist(lapply(magnitudes, function(x) seq(9, 1) * x))
   }
-  cli::cli_progress_update(50)
   # EXPECTED ONLY ++++++
   if(expected_only){
     # Functions for Stages - Gumble
@@ -247,7 +247,6 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
     result_df$Z <- qnorm(1 - result_df$AEP)
     result_df$Gumb <- -log(-log(1 - result_df$AEP))
     result_df$Expected <- expected_fun(result_df$Gumb)
-    cli::cli_progress_update(75)
 
   # FULL UNCERT ++++++
   } else{
@@ -256,6 +255,7 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
     upper_95 <- apply(aepStages, 1, quantile, probs = 0.95)
 
     # Expected - Is this correct?
+    ##### "No" - Andrew
     expected <- apply(aepStages, 1, mean)
 
     # Functions for Stages - Gumble
@@ -280,9 +280,9 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
     result_df$Lower_95 <- lower_95_fun(result_df$Gumb)
     result_df$Median <- median_fun(result_df$Gumb)
     result_df$Expected <- expected_fun(result_df$Gumb)
-    cli::cli_progress_update(75)
   }
-  cli::cli_progress_update(100)
+
   cli::cli_alert_success("Returning Result Data Frame")
   return(result_df)
+  #return(peakStage)
 }

@@ -48,8 +48,8 @@ qp3 = function(p, mu, sigma, gamma)
   max = .Machine$double.xmax
   if(beta < 0) max = xi
   # check support
-  if (any(p == 0)) break# return(min)
-  if (any(p == 1)) break# return(max)
+  if (any(p == 0)) break # return(min)
+  if (any(p == 1)) break # return(max)
   # check if normal
   if (abs(gamma) < 1E-3)
   {

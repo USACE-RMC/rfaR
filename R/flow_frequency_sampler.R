@@ -41,6 +41,11 @@ flow_frequency_sampler <- function(bestfit_params, dist = "LP3", Nbin = NULL, Me
     # CREATE STRATIFIED SAMPLE OF Z ORDINATES TO EST. FLOW
     ords <- stratified_sampler(Nbins = Nbin,
                                Mevents = ceiling(nrow(bestfit_params)/Nbin))
+
+    # Trying less bins
+    # ords <- stratified_sampler(Nbins = 20,
+    #                            Mevents = 500)
+
     # EMPTY INFLOW VOL VECTOR
     Q <- numeric(nrow(bestfit_params))
 
@@ -117,3 +122,4 @@ flow_frequency_sampler <- function(bestfit_params, dist = "LP3", Nbin = NULL, Me
               events_per_bin = Mevents,
               weights = Weights))
 }
+
