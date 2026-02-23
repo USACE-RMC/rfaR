@@ -1,0 +1,72 @@
+Run: JMD - Low
+     Default Description: Yes
+     Log File: JMD___Low.log
+     DSS File: JMD___Low.dss
+     Is Save Spatial Results: No
+     Last Modified Date: 18 February 2026
+     Last Modified Time: 23:11:35
+     Last Execution Date: 18 February 2026
+     Last Execution Time: 23:11:32
+     Basin: JMD - Low
+     Precip: Empty MEt
+     Control: 10 Day Routing
+     Save State Type: None
+     Time-Series Output: Save All
+     Time Series Results Manager Start:
+     Time Series Results Manager End:
+End:
+
+Run: JMD - OT
+     Default Description: Yes
+     Log File: JMD___OT.log
+     DSS File: JMD___OT.dss
+     Is Save Spatial Results: No
+     Last Modified Date: 18 February 2026
+     Last Modified Time: 22:11:43
+     Last Execution Date: 18 February 2026
+     Last Execution Time: 22:39:07
+     Basin: JMD - OT Flow
+     Precip: Empty MEt
+     Control: 10 Day Routing
+     Save State Type: None
+     Time-Series Output: Save All
+     Time Series Results Manager Start:
+     Time Series Results Manager End:
+End:
+
+Run: JMD - Spillway
+     Default Description: Yes
+     Log File: JMD___Spillway.log
+     DSS File: JMD___Spillway.dss
+     Is Save Spatial Results: No
+     Last Modified Date: 19 February 2026
+     Last Modified Time: 18:22:39
+     Last Execution Date: 18 February 2026
+     Last Execution Time: 22:39:07
+     Basin: JMD - Spillway Flow
+     Precip: Empty MEt
+     Control: 10 Day Routing
+     Save State Type: None
+     Time-Series Output: Save All
+     Time Series Results Manager Start:
+     Time Series Results Manager End:
+End:
+
+Run: JMD - 1x
+     Default Description: Yes
+     Log File: JMD___1x.log
+     DSS File: JMD___1x.dss
+     Is Save Spatial Results: No
+     Last Modified Date: 19 February 2026
+     Last Modified Time: 18:22:46
+     Last Execution Date: 19 February 2026
+     Last Execution Time: 18:22:43
+     Basin: JMD - 1x
+     Precip: Empty MEt
+     Control: 10 Day Routing
+     Save State Type: None
+     Time-Series Output: Save All
+     Time Series Results Manager Start:
+     Time Series Results Manager End:
+End:
+

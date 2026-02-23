@@ -5,11 +5,11 @@
 \alias{jmd_rfa_full}
 \title{John Martin Dam RFA Results - Full Uncertainty}
 \format{
-A data frame with 10000 row and 3 columns:
+A data frame with 10000 rows and 3 columns:
 \describe{
 \item{AEP}{Annual Exceedace Probabilities}
-\item{Upper}{Annual Exceedace Probabilities}
-\item{Lower}{Annual Exceedace Probabilities}
+\item{Upper}{Upper 95\% CI of realizations}
+\item{Lower}{Lower 5\% CI of realizations}
 \item{Expected}{Expected stages corresponding to AEPs}
 \item{Median}{Median stages corresponding to AEPs}
 }

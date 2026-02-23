@@ -53,13 +53,14 @@ seasonality, hydrograph scaling, and Modified Puls routing.
 }
 \examples{
 # Example usage
-# results <- rfaR(jmd_vfc_parameters,
-#                 stage_ts = jmd_por_stage,
-#                 seasonality = jmd_seasonality$relative_frequency,
-#                 hydrographs = hydrograph_matrix,
-#                 resmodel = jmd_resmodel,
-#                 critical_dur = 48,
-#                 routing_dur = 240)
+results <- rfaR(jmd_vfc_parameters,
+                stage_ts = jmd_por_stage,
+                seasonality = jmd_seasonality$relative_frequency,
+                hydrographs = hydrograph_matrix,
+                resmodel = jmd_resmodel,
+                critical_dur = 48,
+                routing_dur = 240)
+
 }
 \seealso{
 \code{\link[=flow_frequency_sampler]{flow_frequency_sampler()}}, \code{\link[=mod_puls_routing]{mod_puls_routing()}}, \code{\link[=scale_hydrograph]{scale_hydrograph()}},\code{\link[=hydrograph_setup]{hydrograph_setup()}}

@@ -4,7 +4,12 @@
 \alias{scale_hydrograph}
 \title{Scale Hydrograph}
 \usage{
-scale_hydrograph(hydrograph_shape, observed_volume, sampled_volume)
+scale_hydrograph(
+  hydrograph_shape,
+  observed_volume,
+  sampled_volume,
+  routing_dt = 1
+)
 }
 \arguments{
 \item{hydrograph_shape}{Data frame with two columns: time (hours) and
@@ -13,17 +18,31 @@ inflow (cfs). Must be in that order.}
 \item{observed_volume}{Maximum n-day inflow volume from input hydrograph shape.}
 
 \item{sampled_volume}{Sampled inflow volume from volume-frequency curve.}
+
+\item{routing_dt}{Target routing timestep in hours. Supported values are
+\code{0.25} (15-min), \code{1} (1-hour, default), \code{6} (6-hour),
+and \code{24} (24-hour).}
 }
 \value{
-A data frame with two columns: \code{time_hrs} and \code{inflow_cfs}.
+A data frame with two columns: \code{time_hrs} and \code{inflow_cfs},
+at the target routing timestep, with time starting at hour 0.
 }
 \description{
 Scales inflow hydrograph given a sampled inflow volume from the volume-frequency
 curve. Scale factor is defined by the sampled inflow volume and the maximum
-volume of the corresponding duration.
+volume of the corresponding duration. If the native hydrograph timestep differs
+from the target routing timestep, resampling is applied prior to scaling:
+finer-to-coarser uses block averaging; coarser-to-finer uses linear interpolation.
 }
 \examples{
-# Scale example hydrograph
-scaled <- scale_hydrograph(cc_inflowhydro, observed_vol = 2500, sampled_volume = 5000,
-                           critical_duration = 2, routing_days = 10)
+# Default 1-hour routing timestep
+scaled <- scale_hydrograph(cc_inflowhydro, observed_volume = 2500, sampled_volume = 5000)
+
+# 15-min input hydrograph, 1-hour routing timestep
+scaled <- scale_hydrograph(cc_inflowhydro_15min, observed_volume = 2500,
+                           sampled_volume = 5000, routing_dt = 1)
+
+# 6-hour input hydrograph, 1-hour routing timestep
+scaled <- scale_hydrograph(cc_inflowhydro_6hr, observed_volume = 2500,
+                           sampled_volume = 5000, routing_dt = 1)
 }

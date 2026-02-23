@@ -44,7 +44,7 @@ ggsave("D:/0.RMC/Reefer/Flood_Haz_January_2026/figs/Parameter_Summary.png",combi
 
 # Q_Samp Plot ===
 Q_Samp <- flow_frequency_sampler(jmd_bf_parameter_sets,
-                                 dist = "LP3",
+                                 freq_dist = "LP3",
                                  ExpectedOnly = T)
 
 Q_samp_df <- tibble(Flow = Q_Samp$flow[,1])

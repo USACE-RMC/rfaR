@@ -10,7 +10,7 @@ mod_puls_routing(resmodel_df, inflow_df, initial_elev, full_results = FALSE)
 \item{resmodel_df}{Data frame with three columns: elevation/stage (ft),
 storage (acre-feet), and discharge (cfs). Must be in that order.}
 
-\item{inflow_df}{Data frame with two columns: time (hours - for now) and
+\item{inflow_df}{Data frame with two columns: time (hours) and
 inflow (cfs). Must be in that order.}
 
 \item{initial_elev}{Starting water surface elevation in feet.}
@@ -22,20 +22,23 @@ stage and discharge. If \code{TRUE}, returns the complete routing result.}
 If \code{full_results = FALSE}, a named numeric vector with
 \code{peak_stage_ft} and \code{peak_discharge_cfs}.
 
-If \code{full_results = TRUE},
-a data frame with columns: \code{time_hr}, \code{inflow_cfs}, \code{elevation_ft},
-\code{storage_acft}, and \code{outflow_cfs}.
+If \code{full_results = TRUE}, a data frame with columns: \code{time_hr},
+\code{inflow_cfs}, \code{elevation_ft}, \code{storage_acft}, and \code{outflow_cfs}.
 }
 \description{
 Performs Modified Puls (level pool) routing of inflow hydrograph given
-a defined reservoir geometry (Stage (ft), Storage (ac-ft), Discharge (cfs))
+a defined reservoir geometry (Stage (ft), Storage (ac-ft), Discharge (cfs)).
+The computation interval is inferred automatically from the time column of
+the inflow hydrograph — use \code{routable_hydrograph()} to resample to the
+desired computation interval before routing.
 }
 \examples{
 # Peak values only
-mod_puls_routing(jmd_resmodel, jmd_inflowhydro, initial_elev = 3830)
+mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830)
 
 # Full routing table
-mod_puls_routing(jmd_resmodel, jmd_inflowhydro, initial_elev = 3830, full_results = TRUE)
+mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830, full_results = TRUE)
+
 }
 \references{
 Chow, V.T. (1959). Open-Channel Hydraulics. McGraw-Hill.

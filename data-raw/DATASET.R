@@ -21,20 +21,7 @@ usethis::use_data(cc_hms_results, overwrite = TRUE)
 # JMD Res Model
 jmd_resmodel <- read.csv("data-raw/JMD/res_model/jmd_resmodel_best_est.csv")
 
-# JMD PMF HMS routing results
-jmd_hms_results <- read.csv("data-raw/JMD/hms_routing/jmd_hms_pmf.csv")
-
-# JMD PMF Inflow
-jmd_inflowhydro <- jmd_hms_results[,1:2]
-
-# JMD PMF Starting Elev
-jmd_init_elev <- jmd_hms_results[1,3]
-
-# Save to package
 usethis::use_data(jmd_resmodel, overwrite = TRUE)
-usethis::use_data(jmd_hms_results, overwrite = TRUE)
-usethis::use_data(jmd_inflowhydro, overwrite = TRUE)
-usethis::use_data(jmd_init_elev, overwrite = TRUE)
 
 # JOHN MARTIN DAM - DISCHARGE GAGE =============================================
 jmd_por_inflow <- read.csv("data-raw/JMD/discharge_gage/jmd_por_inflow.csv")
@@ -98,7 +85,59 @@ jmd_rfa_expected <- read.csv("data-raw/JMD/rfa_results/jmd_rfa_expected.csv")
 
 usethis::use_data(jmd_rfa_expected, overwrite = TRUE)
 
+# JOHN MARTIN DAM - RFA RESULTS MEDIAN ONLY ==================================
+jmd_rfa_median <- read.csv("data-raw/JMD/rfa_results/jmd_rfa_median.csv")
+
+usethis::use_data(jmd_rfa_median, overwrite = TRUE)
+
 # JOHN MARTIN DAM - RFA RESULTS FULL UNCERT ====================================
 jmd_rfa_full <- read.csv("data-raw/JMD/rfa_results/jmd_rfa_full.csv")
 
 usethis::use_data(jmd_rfa_full, overwrite = TRUE)
+
+# JOHN MARTIN DAM - RFA RESULTS MEDIAN ONLY STARTING STAGE =====================
+jmd_rfa_median_starting_stage <- read.csv("data-raw/JMD/rfa_results/jmd_rfa_median_starting_stage.csv")
+
+usethis::use_data(jmd_rfa_median_starting_stage, overwrite = TRUE)
+
+# STRATIFIED SAMPLING EXAMPLE BINS =============================================
+example_stratified <- read.csv("data-raw/stratified_sampling/stratified_bins_example.csv")
+
+usethis::use_data(example_stratified, overwrite = TRUE)
+
+# MOD-PULS VALIDATION - JMD MAY 1955 ===========================================
+hms_scaled_may1955 <- read.csv("data-raw/JMD/hms_routing/ModPuls_Validation_May1955.csv")
+
+usethis::use_data(hms_scaled_may1955, overwrite = TRUE)
+
+# THINK!!!! ====================================================================
+think <- r"{
+  _____   _   _   ___   _   _   _  __
+ |_   _| | | | | |_ _| | \ | | | |/ /
+   | |   | |_| |  | |  |  \| | | ' /
+   | |   |  _  |  | |  | |\  | | . \
+   |_|   |_| |_| |___| |_| \_| |_|\_\
+
+}"
+
+usethis::use_data(think, overwrite = TRUE)
+
+# USACE - RMC CASTLE ===========================================================
+castle <- r"{
+  _______________________________________
+ /                                       \
+/   _   _   _                 _   _   _   \
+|  | |_| |_| |   _   _   _   | |_| |_| |  |
+|   \   _   /   | |_| |_| |   \   _   /   |
+|    | | | |     \       /     | | | |    |
+|    | |_| |______|     |______| |_| |    |
+|    |              ___              |    |
+|    |  _    _    (     )    _    _  |    |
+|    | | |  |_|  (       )  |_|  | | |    |
+|    | |_|       |       |       |_| |    |
+|   /            |_______|            \   |
+|  |___________________________________|  |
+\       USACE RISK MANAGEMENT CENTER      /
+ \_______________________________________/
+}"
+usethis::use_data(castle, overwrite = TRUE)

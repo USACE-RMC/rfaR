@@ -1,31 +1,41 @@
 #' Flow Frequency Sampler
 #'
-#' Generates stratified samples of flow values from a fitted frequency distribution
-#' using parameters from RMC-BestFit.
+#' Generates a stratified matrix of flow values from a single set of frequency
+#' distribution parameters using stratified Monte Carlo sampling. Used internally
+#' by [rfa_simulate()] for median-only and full uncertainty modes.
 #'
-#' @param bestfit_params Data frame of distribution parameters from RMC-BestFit.
-#'   For LP3: columns are mean (log), sd (log), skew (log).
-#'   For GEV: columns are location, scale, shape.
-#' @param dist Distribution type. Either `"LP3"` (default) or `"GEV"`.
-#' @param ExpectedOnly Logical. If `TRUE` (default), returns expected value
-#'   samples only. If `FALSE`, returns full uncertainty ensemble.
+#' @param bestfit_params Numeric vector of length 3 containing distribution parameters.
+#'   For LP3: `c(mean_log, sd_log, skew_log)`.
+#'   For GEV: `c(location, scale, shape)`.
+#' @param freq_dist Character. Distribution type. Either `"LP3"` (default) or `"GEV"`.
+#' @param strat_dist Character. Probability space for stratification bins.
+#'   Passed to [stratified_sampler()]. One of `"ev1"` (default), `"normal"`,
+#'   or `"uniform"`. See [stratified_sampler()] for details.
+#' @param Nbin Integer. Number of stratified bins. Default is `50`.
+#' @param Mevent Integer. Number of events per bin. Default is `200`.
 #'
 #' @return A list containing:
 #' \describe{
-#'   \item{flow}{Matrix of sampled flow values}
+#'   \item{flow}{Matrix of sampled flow values `[Mevent x Nbin]`}
 #'   \item{nbins}{Number of stratified bins}
-#'   \item{events_per_bin}{Number of events per bin}
-#'   \item{weights}{Probability weights for each bin}
+#'   \item{mevents}{Number of events per bin}
+#'   \item{weights}{Probability weights for each bin from [stratified_sampler()]}
 #' }
 #'
 #' @export
 #'
-#' @seealso [stratified_sampler()], [qp3()]
+#' @seealso [stratified_sampler()], [qp3()], [rfa_simulate()]
 #'
 #' @examples
-#' # Sample using JMD VFC parameters
-#' # samples <- flow_frequency_sampler(jmd_vfc_parameters)
-flow_frequency_sampler <- function(bestfit_params, dist = "LP3", Nbin = NULL, Mevent = NULL, ExpectedOnly = TRUE) {
+#' # Single parameter set (posterior mode)
+#' params <- c(4.85, 0.39, -0.15)
+#' result <- flow_frequency_sampler(params, freq_dist = "LP3",
+#'                                  Nbin = 20, Mevent = 500)
+#' dim(result$flow)  # 500 x 20
+flow_frequency_sampler <- function(bestfit_params, freq_dist = "LP3",
+                                   strat_dist = "ev1",
+                                   Nbin = NULL, Mevent = NULL) {
+
   # IF NO BINS OR EVENTS ARE DEFINED
   if(is.null(Nbin)){
     Nbin = 50
@@ -35,91 +45,60 @@ flow_frequency_sampler <- function(bestfit_params, dist = "LP3", Nbin = NULL, Me
   }
 
   # ============================================================================
-  # EXPECTED ONLY
+  # PROCESS ONE PARAMETER SET
   # ============================================================================
-  if (ExpectedOnly) {
-    # CREATE STRATIFIED SAMPLE OF Z ORDINATES TO EST. FLOW
-    ords <- stratified_sampler(Nbins = Nbin,
-                               Mevents = ceiling(nrow(bestfit_params)/Nbin))
+  # CREATE STRATIFIED SAMPLE OF Z ORDINATES TO EST. FLOW
+  ords <- stratified_sampler(Nbins = Nbin,
+                             Mevents = Mevent,
+                             dist = strat_dist)
 
-    # Trying less bins
-    # ords <- stratified_sampler(Nbins = 20,
-    #                            Mevents = 500)
+  # Matrix with 20 bins of 500 events (represented by the z-variate)
+  z_matrix <- matrix(ncol = ords$Nbins, nrow = ords$Mevents)
 
-    # EMPTY INFLOW VOL VECTOR
-    Q <- numeric(nrow(bestfit_params))
+  for (i in 1:ords$Nbins){
+    # upper and lower
+    bin_lower <- ords$Zlower[i]
+    bin_upper <- ords$Zupper[i]
 
-    # LP3 DISTRIBUTION
-    if (dist == "LP3") {
-      for (i in 1:nrow(bestfit_params)) {
-        # Custom PE3 Function
-        Q[i] <- 10^qp3(pnorm(ords$normOrd[i]), bestfit_params[i, 1], bestfit_params[i, 2], bestfit_params[i, 3])
+    # Vector of random values
+    z_matrix[,i] <- (bin_lower + (runif(ords$Mevents, min = 0, max = 1)) * (bin_upper - bin_lower))
+  }
 
-        # PE3 from lmom
-        # Q[i] <- 10^(lmom::quape3(pnorm(ords$normOrd[i]),
-        #                          c(bestfit_params[i, 1],
-        #                            bestfit_params[i, 2],
-        #                            bestfit_params[i, 3])))
-      }
-    # ELSE USE GEV (uses lmom) - additional distributions will come later
-    } else {
-      for (i in 1:nrow(bestfit_params)) {
-        # evd package - requires sign switch on K
-        # Q[i] <- evd::qgev(pnorm(ords$normOrd), bestfit_params[i, 1], bestfit_params[i, 2], -bestfit_params[i, 3])
+  # ============================================================================
+  # DISTRIBUTION
+  # ============================================================================
+  # LP3 DISTRIBUTION
+  if (freq_dist == "LP3") {
+    # Params from vector
+    meanlog <- bestfit_params[1]
+    sdlog <- bestfit_params[2]
+    skewlog <- bestfit_params[3]
 
-        # lmom package
-        Q[i] <- lmom::quagev(pnorm(ords$normOrd[i]),
-                             c(bestfit_params[i, 1],
-                               bestfit_params[i, 2],
-                               bestfit_params[i, 3]))
-      }
-    }
-    # SORT INFLOW VOLS
-    Q <- matrix(sort(Q), ncol = 1)
+    # Entirely vectorized
+    Q_matrix <- 10^qp3(pnorm(z_matrix), meanlog, sdlog, skewlog)
+
   } else {
-  # ============================================================================
-  # FULL UNCERTAINTY
-  # ============================================================================
-    # CREATE STRATIFIED SAMPLE OF Z ORDINATES
-    ords <- stratified_sampler(Nbins = Nbin, Mevents = Mevent)
-    # EMPTY INFLOW VOL VECTOR
-    Q <- matrix(NA, nrow = length(ords$normOrd), ncol = nrow(bestfit_params))
 
-    # LP3 DISTRIBUTION
-    if (dist == "LP3") {
-      for (i in 1:nrow(bestfit_params)) {
+  #GEV DISTRIBUTION - additional distributions will come later
+    # Params from vector
+    xi <- bestfit_params[1]
+    alfa <- bestfit_params[2]
+    k <- bestfit_params[3]
 
-        # Custom PE3 Function
-        Q[, i] <- 10^qp3(pnorm(ords$normOrd), bestfit_params[i, 1], bestfit_params[i, 2], bestfit_params[i, 3])
+    # Uses lmom package
+    Q_matrix <- lmom::quagev(pnorm(z_matrix),c(xi, alfa, k))
 
-        # PE3 from lmom
-        # Q[, i] <- 10^(lmom::quape3(pnorm(ords$normOrd[i]),
-        #                          c(bestfit_params[i, 1],
-        #                            bestfit_params[i, 2],
-        #                            bestfit_params[i, 3])))
-      }
-    # ELSE USE GEV
-    } else {
-      for (i in 1:nrow(bestfit_params)) {
-        # evd package - requires sign switch on K
-        # Q[, i] <- evd::qgev(pnorm(ords$normOrd), bestfit_params[i, 1], bestfit_params[i, 2], -bestfit_params[i, 3])
-
-        # lmom package
-        Q[,i] <- lmom::quagev(pnorm(ords$normOrd[i]),
-                              c(bestfit_params[i, 1],
-                                bestfit_params[i, 2],
-                                bestfit_params[i, 3]))
-      }
-    }
   }
 
   # RETURN
   Nbins <- ords$Nbins
   Mevents <- ords$Mevents
   Weights <- ords$Weights
-  return(list(flow = Q,
+
+
+  return(list(flow = Q_matrix,
               nbins = Nbins,
-              events_per_bin = Mevents,
+              mevents = Mevents,
               weights = Weights))
 }
 

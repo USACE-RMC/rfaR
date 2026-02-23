@@ -27,212 +27,234 @@
 #'
 #' @examples
 #' # Example usage
-#' # results <- rfaR(jmd_vfc_parameters,
-#' #                 stage_ts = jmd_por_stage,
-#' #                 seasonality = jmd_seasonality$relative_frequency,
-#' #                 hydrographs = hydrograph_matrix,
-#' #                 resmodel = jmd_resmodel,
-#' #                 critical_dur = 48,
-#' #                 routing_dur = 240)
+#' results <- rfaR(jmd_vfc_parameters,
+#'                 stage_ts = jmd_por_stage,
+#'                 seasonality = jmd_seasonality$relative_frequency,
+#'                 hydrographs = hydrograph_matrix,
+#'                 resmodel = jmd_resmodel,
+#'                 critical_dur = 48,
+#'                 routing_dur = 240)
+#'
 rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrographs,
                  resmodel, critical_dur, routing_dur, expected_only = TRUE, Ncores = NULL, Nbins = 50, events_per_bin = 200) {
-  cli::cli_h1("Running rfaR :)")
-  if(expected_only){
-    cli::cli_alert_success("Expected Only")
-  } else{
-    cli::cli_alert_success("Full Uncertainty")
-  }
-
-  # ============================================================================
-  # FLOW FREQUENCY SAMPLER
-  # ============================================================================
-  cli::cli_h1("Generating Volume-Frequency Samples")
-  cli::cli_alert_info(paste0(dist," distribution"))
-
-  Q_samp <- flow_frequency_sampler(bestfit_params = bestfit_params, dist = dist, ExpectedOnly = expected_only)
-
-  cli::cli_alert_success("Stratified Samples of Volume-Frequency Created")
-
-  # ============================================================================
-  # SEASONALITY/STARTING POOL SAMPLER
-  # ============================================================================
-  cli::cli_h1("Pre-Allocating Seasonality & Starting Pool Sampling")
-  # Number of simulations
-  Nsims <- nrow(Q_samp$flow) * ncol(Q_samp$flow)
-
-  # Initialize vector of sampled months
-  InitMonths <- sample(1:12, size = Nsims, replace = TRUE, prob = seasonality)
-
-  # Initialize vector of sampled stages
-  InitStages <- numeric(Nsims)
-
-  # Use vector of sampled months to create sample of starting stages
-  stage_ts$months <- lubridate::month(lubridate::mdy(stage_ts$date))
-
-  # Extract unique months
-  UniqMonths <- sort(unique(InitMonths))
-
-  for (i in 1:length(UniqMonths)) {
-    sampleID <- which(InitMonths == UniqMonths[i])
-    InitStages[sampleID] <- sample(stage_ts$stage[stage_ts$months %in% UniqMonths[i]],
-                                   size = sum(InitMonths == UniqMonths[i]), replace = TRUE)
-  }
-
-  cli::cli_alert_success("Seasonality & Starting Pool Sampled")
-
-  # ============================================================================
-  # HYDROGRAPH SCALER/SAMPLER
-  # ============================================================================
-  cli::cli_h1("Pre-Allocating Hydrograph Shape Sampling")
-  # Sample Order
-  hydroSamps <- sample(1:length(hydrographs), size = Nsims, replace = TRUE)
-
-  # Duration of Hydrograph - This should be superseded by now
-  hydroDur <- sapply(hydrographs, function(df) nrow(df))
-
-  # K-Day Max Observed of Hydrograph - This also should be superseded by now
-  obsVol <- sapply(hydrographs, function(df) max(zoo::rollmean(df$inflow, k = critical_dur)))
-  cli::cli_alert_success("Hydrograph Shape Sampled")
-
-  # ============================================================================
-  # SIMULATING SAMPLES
-  # ============================================================================
-  peakStage <- peakFlow <- matrix(NA, nrow = nrow(Q_samp$flow), ncol = ncol(Q_samp$flow))
-  n_inner <- ncol(Q_samp$flow)
-
-  # EXPECTED ONLY ++++++
-  if(expected_only){
-    cli::cli_h1("Simulating Expected Only Frequency Analysis")
-
-    realiz <- 0
-    cli::cli_progress_bar("Expected Only Simulation", total = nrow(Q_samp$flow))
-    for (i in 1:nrow(Q_samp$flow)) {
-      cli::cli_progress_update()
-      for (j in 1:ncol(Q_samp$flow)) {
-        realiz <- (i - 1) * n_inner + j
-        # Hydrograph shape
-        hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][,2:3]
-        # Hydrograph observed volume
-        obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]],"obs_vol")
-        # Scale hydrograph to sample volume
-        scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
-                                              obs_hydrograph_vol,
-                                              Q_samp$flow[i,j])
-        # Route scaled hydrograph
-        tmpResults <- mod_puls_routing(resmodel_df = resmodel, inflow_df = scaled_hydrograph,
-                                       initial_elev = InitStages[realiz], full_results = FALSE)
-        # Record results
-        peakStage[i, j] <- tmpResults[1]
-        peakFlow[i, j] <- tmpResults[2]
-      }
-    }
-    cli::cli_progress_done()
-    cli::cli_alert_success("Expected Only Simulation Complete")
-  # FULL UNCERT ++++++
-  }else{
-
-    cli::cli_h1("Simulating Full Uncertainty Frequency Analysis - (no progress bar yet, assume 30 minutes)")
-    future::plan(future::multisession, workers = future::availableCores() - 1)
-
-    n_inner <- ncol(Q_samp$flow)
-
-    results <- future.apply::future_lapply(1:nrow(Q_samp$flow), function(i) {
-      stage_row <- numeric(n_inner)
-      flow_row <- numeric(n_inner)
-
-      cli::cli_alert_success(paste0("Full Uncertainty Requires Parallel Processing. Running simulation using ", as.numeric(future::availableCores() - 1)," cores."))
-
-      for (j in 1:n_inner) {
-        realiz <- (i - 1) * n_inner + j
-        # Hydrograph shape
-        hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][,2:3]
-        # Hydrograph observed volume
-        obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]],"obs_vol")
-        # Scale hydrograph to sample volume
-        scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
-                                              obs_hydrograph_vol,
-                                              Q_samp$flow[i,j])
-        # Route scaled hydrograph
-        tmpResults <- mod_puls_routing(resmodel_df = resmodel,
-                                       inflow_df = scaled_hydrograph,
-                                       initial_elev = InitStages[realiz],
-                                       full_results = FALSE)
-        # Record results
-        stage_row[j] <- tmpResults[1]
-        flow_row[j] <- tmpResults[2]
-      }
-      list(stage = stage_row, flow = flow_row)
-      },
-      future.seed = TRUE,
-      future.packages = c("rfaR", "zoo"))
-
-    # End Parallel
-    future::plan(future::sequential)
-
-    # Peak Stage and Flow rbind
-    peakStage <- do.call(rbind, lapply(results, `[[`, "stage"))
-    peakFlow <- do.call(rbind, lapply(results, `[[`, "flow"))
-    cli::cli_alert_success("Full Uncertainty Complete")
-  }
+  # Commented sections have been modified and brought into rfa_simulate
+  # cli::cli_h1("Running rfaR :)")
+  # if(expected_only){
+  #   cli::cli_alert_success("Expected Only")
+  # } else{
+  #   cli::cli_alert_success("Full Uncertainty")
+  # }
+  #
+  # # ============================================================================
+  # # FLOW FREQUENCY SAMPLER
+  # # ============================================================================
+  # cli::cli_h1("Generating Volume-Frequency Samples")
+  # cli::cli_alert_info(paste0(dist," distribution"))
+  #
+  #
+  # # Q_samp <- flow_frequency_sampler(bestfit_params = bestfit_params, dist = dist, ExpectedOnly = expected_only)
+  #
+  # cli::cli_alert_success("Stratified Samples of Volume-Frequency Created")
+  #
+  # # ============================================================================
+  # # SEASONALITY/STARTING POOL SAMPLER
+  # # ============================================================================
+  # cli::cli_h1("Pre-Allocating Seasonality & Starting Pool Sampling")
+  # # Number of simulations
+  # Nsims <- nrow(Q_samp$flow) * ncol(Q_samp$flow)
+  #
+  # # Initialize vector of sampled months
+  # InitMonths <- sample(1:12, size = Nsims, replace = TRUE, prob = seasonality)
+  #
+  # # Initialize vector of sampled stages
+  # InitStages <- numeric(Nsims)
+  #
+  # # Use vector of sampled months to create sample of starting stages
+  # stage_ts$months <- lubridate::month(lubridate::mdy(stage_ts$date))
+  #
+  # # Extract unique months
+  # UniqMonths <- sort(unique(InitMonths))
+  #
+  # for (i in 1:length(UniqMonths)) {
+  #   sampleID <- which(InitMonths == UniqMonths[i])
+  #   InitStages[sampleID] <- sample(stage_ts$stage[stage_ts$months %in% UniqMonths[i]],
+  #                                  size = sum(InitMonths == UniqMonths[i]), replace = TRUE)
+  # }
+  #
+  # cli::cli_alert_success("Seasonality & Starting Pool Sampled")
+  #
+  # # ============================================================================
+  # # HYDROGRAPH SCALER/SAMPLER
+  # # ============================================================================
+  # cli::cli_h1("Pre-Allocating Hydrograph Shape Sampling")
+  #
+  # # Sample Order with probs (normlized weights)
+  # hydroSamps <- sample(1:length(hydrographs), size = Nsims, replace = TRUE,
+  #                      prob = attr(hydrographs, "probs"))
+  #
+  # cli::cli_alert_success("Hydrograph Shape Sampled")
+  #
+  # # ============================================================================
+  # # SIMULATING SAMPLES
+  # # ============================================================================
+  # peakStage <- peakFlow <- matrix(NA, nrow = nrow(Q_samp$flow), ncol = ncol(Q_samp$flow))
+  # n_inner <- ncol(Q_samp$flow)
+  #
+  # # EXPECTED ONLY ++++++
+  # if(expected_only){
+  #   cli::cli_h1("Simulating Expected Only Frequency Analysis")
+  #
+  #   realiz <- 0
+  #   cli::cli_progress_bar("Expected Only Simulation", total = nrow(Q_samp$flow))
+  #   for (i in 1:nrow(Q_samp$flow)) {
+  #     cli::cli_progress_update()
+  #     for (j in 1:ncol(Q_samp$flow)) {
+  #       realiz <- (i - 1) * n_inner + j
+  #       # Hydrograph shape
+  #       hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][,2:3]
+  #       # Hydrograph observed volume
+  #       obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]],"obs_vol")
+  #       # Scale hydrograph to sample volume
+  #       scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
+  #                                             obs_hydrograph_vol,
+  #                                             Q_samp$flow[i,j])
+  #       # Route scaled hydrograph
+  #       tmpResults <- mod_puls_routing(resmodel_df = resmodel, inflow_df = scaled_hydrograph,
+  #                                      initial_elev = InitStages[realiz], full_results = FALSE)
+  #       # Record results
+  #       peakStage[i, j] <- tmpResults[1]
+  #       peakFlow[i, j] <- tmpResults[2]
+  #     }
+  #   }
+  #   cli::cli_progress_done()
+  #   cli::cli_alert_success("Expected Only Simulation Complete")
+  #   # FULL UNCERT ++++++
+  # }else{
+  #   cli::cli_h1("Simulating Full Uncertainty Frequency Analysis - (no progress bar yet, assume 30 minutes)")
+  #
+  #   num_cores <- future::availableCores(omit = 1)
+  #   if(num_cores >= 19){
+  #     use_cores <- 16
+  #   }else{
+  #     use_cores <- 12
+  #   }
+  #
+  #   future::plan(future::multisession, workers = future::availableCores() - 1)
+  #
+  #   round_to_16 <- function(x) {
+  #     round(x / 16) * 16
+  #   }
+  #
+  #   n_inner <- ncol(Q_samp$flow)
+  #
+  #   results <- future.apply::future_lapply(1:nrow(Q_samp$flow), function(i) {
+  #     stage_row <- numeric(n_inner)
+  #     flow_row <- numeric(n_inner)
+  #
+  #     cli::cli_alert_success(paste0("Full Uncertainty Requires Parallel Processing. Running simulation using ", as.numeric(future::availableCores() - 1)," cores."))
+  #
+  #     for (j in 1:n_inner) {
+  #       realiz <- (i - 1) * n_inner + j
+  #       # Hydrograph shape
+  #       hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][,2:3]
+  #       # Hydrograph observed volume
+  #       obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]],"obs_vol")
+  #       # Scale hydrograph to sample volume
+  #       scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
+  #                                             obs_hydrograph_vol,
+  #                                             Q_samp$flow[i,j])
+  #       # Route scaled hydrograph
+  #       tmpResults <- mod_puls_routing(resmodel_df = resmodel,
+  #                                      inflow_df = scaled_hydrograph,
+  #                                      initial_elev = InitStages[realiz],
+  #                                      full_results = FALSE)
+  #       # Record results
+  #       stage_row[j] <- tmpResults[1]
+  #       flow_row[j] <- tmpResults[2]
+  #     }
+  #     list(stage = stage_row, flow = flow_row)
+  #   },
+  #   future.seed = TRUE,
+  #   future.packages = c("rfaR", "zoo"))
+  #
+  #   future::plan(future::sequential)
+  #
+  #   peakStage <- do.call(rbind, lapply(results, `[[`, "stage"))
+  #   peakFlow <- do.call(rbind, lapply(results, `[[`, "flow"))
+  #   cli::cli_alert_success("Full Uncertainty Complete")
+  # }
 
   # ============================================================================
   # POST PROCESS
   # ============================================================================
-  cli::cli_h1("Post Processing")
-  Sbins = 1000
-  Nbins <- Q_samp$nbins
-  Mevents <- Q_samp$events_per_bin
-  Weights <- Q_samp$weights
-  peakStages <- seq(from = min(peakStage), to = max(peakStage), length.out = Sbins)
-
-  # EXPECTED ONLY ++++++
-  if(expected_only){
-    # CALC WEIGHTED AEP FOR PEAK STAGES
-    aepStages <- matrix(0, nrow = Sbins, ncol = ncol(peakStage))
-    cli::cli_progress_bar("Calculating AEP (expected only)", total = Sbins)
-    for (m in 1:ncol(peakStage)) {
-      tmpStage <- matrix((peakStage[, m]), nrow = Mevents, ncol = Nbins)
-      for (i in 1:Sbins) {
-        cli::cli_progress_update()
-        for (j in 1:Nbins) {
-          n <- 0
-          for (k in 1:Mevents) {
-            if (tmpStage[k, j] > peakStages[i]) {
-              n <- n + 1
-            }
-          }
-          aepStages[i, m] <- aepStages[i, m] + n / Mevents * Weights[j]
-        }
-      }
-    }
-    cli::cli_progress_done()
-    cli::cli_alert_success("Expected Only Post-Processing Complete")
-    # FULL UNCERT ++++++
-  } else{
-    aepStages <- matrix(0, nrow = Sbins, ncol = ncol(peakStage))
-    cli::cli_progress_bar("Calculating AEP (full uncertainty)", total = ncol(peakStage))
-    for (m in 1:ncol(peakStage)) {
-      tmpStage <- matrix(peakStage[, m], nrow = Mevents, ncol = Nbins)
-      for (i in 1:Sbins) {
-        exceed_prop <- colMeans(tmpStage > peakStages[i])
-        aepStages[i, m] <- sum(exceed_prop * Weights)
-      }
-      cli::cli_progress_update()
-    }
-    cli::cli_progress_done()
-    cli::cli_alert_success("Full Uncert. Post-Processing Complete")
-  }
+  # cli::cli_h1("Post Processing")
+  # Sbins = 1000
+  # Nbins <- Q_samp$nbins
+  # Mevents <- Q_samp$events_per_bin
+  # Weights <- Q_samp$weights
+  # peakStages <- seq(from = min(peakStage), to = max(peakStage), length.out = Sbins)
+  #
+  # # EXPECTED ONLY ++++++
+  # # expected only
+  # # curve <- create_frequency_curve(peakStage[, 1], Weights, Nbins, Mevents)
+  # # result_df <- interpolate_frequency_curve(target_aeps, curve)
+  #
+  # # Full uncert
+  # # Inside each parallel realization
+  # #curve_i <- create_frequency_curve(peak_stages_i, Weights, Nbins, Mevents)
+  # #result_i <- interpolate_frequency_curve(target_aeps, curve_i)
+  # # Return just result_i$stage — one vector per realization
+  #
+  # if(expected_only){
+  #   # CALC WEIGHTED AEP FOR PEAK STAGES
+  #   aepStages <- matrix(0, nrow = Sbins, ncol = ncol(peakStage))
+  #   cli::cli_progress_bar("Calculating AEP (expected only)", total = ncol(peakStage))
+  #   for (m in 1:ncol(peakStage)) {
+  #     cli::cli_progress_update()
+  #     tmpStage <- matrix((peakStage[, m]), nrow = Mevents, ncol = Nbins)
+  #     for (i in 1:Sbins) {
+  #       for (j in 1:Nbins) {
+  #         n <- 0
+  #         for (k in 1:Mevents) {
+  #           if (tmpStage[k, j] > peakStages[i]) {
+  #             n <- n + 1
+  #           }
+  #         }
+  #         aepStages[i, m] <- aepStages[i, m] + n / Mevents * Weights[j]
+  #       }
+  #     }
+  #   }
+  #   cli::cli_progress_done()
+  #   cli::cli_alert_success("Expected Only Post-Processing Complete")
+  #   # FULL UNCERT ++++++
+  # } else{
+  #   aepStages <- matrix(0, nrow = Sbins, ncol = ncol(peakStage))
+  #   cli::cli_progress_bar("Calculating AEP (full uncertainty)", total = ncol(peakStage))
+  #   for (m in 1:ncol(peakStage)) {
+  #     tmpStage <- matrix(peakStage[, m], nrow = Mevents, ncol = Nbins)
+  #     for (i in 1:Sbins) {
+  #       exceed_prop <- colMeans(tmpStage > peakStages[i])
+  #       aepStages[i, m] <- sum(exceed_prop * Weights)
+  #     }
+  #     cli::cli_progress_update()
+  #   }
+  #   cli::cli_progress_done()
+  #   cli::cli_alert_success("Full Uncert. Post-Processing Complete")
+  # }
 
 
   # ============================================================================
   # Create Result DF
   # ============================================================================
   cli::cli_h1("Finalizing Results Data Frame")
+  cli::cli_progress_bar(total = 100)
+  cli::cli_progress_update(25)
   # AEP Sequence
   aep_sequence <- function(from = 1e-1, to = 1e-8) {
     magnitudes <- 10^seq(log10(from), log10(to), by = -1)
     unlist(lapply(magnitudes, function(x) seq(9, 1) * x))
   }
+  cli::cli_progress_update(50)
   # EXPECTED ONLY ++++++
   if(expected_only){
     # Functions for Stages - Gumble
@@ -247,15 +269,15 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
     result_df$Z <- qnorm(1 - result_df$AEP)
     result_df$Gumb <- -log(-log(1 - result_df$AEP))
     result_df$Expected <- expected_fun(result_df$Gumb)
+    cli::cli_progress_update(75)
 
-  # FULL UNCERT ++++++
+    # FULL UNCERT ++++++
   } else{
     lower_05 <- apply(aepStages, 1, quantile, probs = 0.05)
     median_50 <- apply(aepStages, 1, quantile, probs = 0.50)
     upper_95 <- apply(aepStages, 1, quantile, probs = 0.95)
 
     # Expected - Is this correct?
-    ##### "No" - Andrew
     expected <- apply(aepStages, 1, mean)
 
     # Functions for Stages - Gumble
@@ -280,9 +302,9 @@ rfaR <- function(bestfit_params, dist = "LP3", stage_ts, seasonality, hydrograph
     result_df$Lower_95 <- lower_95_fun(result_df$Gumb)
     result_df$Median <- median_fun(result_df$Gumb)
     result_df$Expected <- expected_fun(result_df$Gumb)
+    cli::cli_progress_update(75)
   }
-
+  cli::cli_progress_update(100)
   cli::cli_alert_success("Returning Result Data Frame")
   return(result_df)
-  #return(peakStage)
 }

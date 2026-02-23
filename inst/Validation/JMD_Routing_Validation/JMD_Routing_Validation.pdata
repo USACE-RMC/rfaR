@@ -1,0 +1,41 @@
+Paired Data Manager: JMD_Routing_Validation
+     Version: 4.13
+     Filepath Separator: \
+End:
+
+Table: JMD Elev-Stor
+     Table Type: Elevation-Storage
+     Last Modified Date: 18 February 2026
+     Last Modified Time: 22:09:08
+     X-Units: FT
+     Y-Units: ACRE-FT
+     Use External DSS File: NO
+     DSS File: JMD_Routing_Validation.dss
+     Pathname: //JMD Elev-Stor/ELEVATION-STORAGE///TABLE/
+     Interpolation: Linear Interpolation
+End:
+
+Table: JMD Elev-Dis
+     Table Type: Stage-Flow
+     Last Modified Date: 18 February 2026
+     Last Modified Time: 22:07:27
+     X-Units: FT
+     Y-Units: CFS
+     Use External DSS File: NO
+     DSS File: JMD_Routing_Validation.dss
+     Pathname: //JMD Elev-Dis/STAGE-FLOW///TABLE/
+     Interpolation: Linear Interpolation
+End:
+
+Table: JMD Stor-Dis
+     Table Type: Storage-Outflow
+     Last Modified Date: 18 February 2026
+     Last Modified Time: 22:00:47
+     X-Units: ACRE-FT
+     Y-Units: CFS
+     Use External DSS File: NO
+     DSS File: JMD_Routing_Validation.dss
+     Pathname: //JMD Stor-Dis/STORAGE-FLOW///TABLE/
+     Interpolation: Linear Interpolation
+End:
+

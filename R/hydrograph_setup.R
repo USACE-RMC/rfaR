@@ -7,31 +7,63 @@
 #'   Copied directly from RMC-RFA.
 #' @param critical_duration Critical duration in days.
 #' @param routing_days Desired length of routing simulation in days.
+#' @param weights Optional numeric vector of sampling weights for each hydrograph.
+#'   Must be the same length as the number of input hydrographs. Weights are
+#'   normalized to probabilities internally. If NULL (default), all hydrographs
+#'   are weighted equally.
 #'
 #' @return A list of formatted hydrograph data frames, each containing:
 #' \describe{
-#'   \item{dt}{Date-time (POSIXct)}
+#'   \item{datetime}{Date-time (POSIXct)}
 #'   \item{hour}{Hours from start of event}
 #'   \item{inflow}{Inflow (cfs)}
 #'   \item{hydrograph_num}{Hydrograph ID number for sampling}
 #'   \item{obs_vol}{Max n-day inflow volume (stored as an attribute of each dataframe)}
+#'   \item{dt}{Hydrograph timestep (delta time, dt) in hours (stored as an attribute of each dataframe)}
 #' }
+#' The returned list also has a \code{probs} attribute containing the normalized
+#' sampling probabilities derived from \code{weights}.
 #'
 #' @export
 #'
 #' @examples
-#' # Setup multiple hydrographs for RFA
+#' # Setup with equal weights (default)
 #' # hydros <- hydrograph_setup(hydro_apr1999, hydro_jun1965, hydro_pmf)
-hydrograph_setup <- function(..., critical_duration = NULL, routing_days = NULL){
+#'
+#' # Setup with custom weights (PMF weighted higher)
+#' # hydros <- hydrograph_setup(hydro_apr1999, hydro_jun1965, hydro_pmf,
+#' #                            weights = c(1, 1, 3))
+#' # attr(hydros, "probs")  # view normalized probabilities
+hydrograph_setup <- function(..., critical_duration = NULL, routing_days = NULL, weights = NULL){
 
   # Collect Hydrographs ========================================================
   input_hydrographs <- list(...)
   hydrograph_ID <- seq(1,length(input_hydrographs),1)
 
+  # Set Sample Weights =========================================================
+  if(!is.null(weights) && length(weights) != length(hydrograph_ID)){
+    cli::cli_abort("Length of {.arg weights} must match number of input hydrographs.")
+  }
+
+  if(is.null(weights)){
+    # Defaults is 1
+    weights <- rep(1,length = length(hydrograph_ID))
+  }
+
+  sample_prob <- weights/sum(weights)
+
+  # Detect timesteps ===========================================================
+  timesteps <- sapply(input_hydrographs, function(h) {
+    as.numeric(difftime(
+      lubridate::mdy_hm(paste0(h[2, 2], " ", h[2, 3])),
+      lubridate::mdy_hm(paste0(h[1, 2], " ", h[1, 3])),
+      units = "hours"))
+  })
+
   # Create hydrograph from RFA input ===========================================
   export_list <- list()
   for(i in 1:length(input_hydrographs)) {
-    df <- data.frame(dt = lubridate::mdy_hm(paste0(input_hydrographs[[i]][,2]," ",input_hydrographs[[i]][,3])),
+    df <- data.frame(datetime = lubridate::mdy_hm(paste0(input_hydrographs[[i]][,2]," ",input_hydrographs[[i]][,3])),
                      hour = NA,
                      inflow = input_hydrographs[[i]][,4],
                      hydrograph_num = hydrograph_ID[i])
@@ -40,7 +72,7 @@ hydrograph_setup <- function(..., critical_duration = NULL, routing_days = NULL)
     timestep <- as.numeric(difftime(df[2,1],df[1,1], units = "hours"))
 
     # Add to df as hour ++++
-    df$hour <- seq(0,nrow(df)-1,timestep)
+    df$hour <- seq(0, (nrow(df)-1) * timesteps[i], by = timesteps[i])
 
     # Ensure inflow is numeric (remove 1k commas) ++++
     if(!is.numeric(df$inflow)){
@@ -49,9 +81,10 @@ hydrograph_setup <- function(..., critical_duration = NULL, routing_days = NULL)
 
     # Max n-day inflow (critical duration, in hours) ++++
     critdur_hrs <- critical_duration*24
-    max_hydrograph_vol <- max(zoo::rollmeanr(df$inflow, k = critdur_hrs))
+    k_steps <- critdur_hrs / timesteps[i]
+    max_hydrograph_vol <- max(zoo::rollmeanr(df$inflow, k = k_steps))
 
-    # Has a routing duration been speficied ++++
+    # Has a routing duration been specified ++++
     if(!is.null(routing_days)){
       routing_days_hrs <- routing_days*24
 
@@ -60,10 +93,14 @@ hydrograph_setup <- function(..., critical_duration = NULL, routing_days = NULL)
         full_hydrograph <- df
       } else {
         hour_diff <- routing_days_hrs - max(df$hour)
-        extended_df <- data.frame(dt = seq(df$dt[nrow(df)] + lubridate::hours(timestep),df$dt[nrow(df)] + lubridate::hours(hour_diff),by = "hour"),
-                                  hour = seq(max(df$hour) + timestep, max(df$hour) + hour_diff, by = timestep),
-                                  inflow = rep(0,hour_diff),
-                                  hydrograph_num = 1)
+        ts_minutes <- timesteps[i] * 60
+        extended_df <- data.frame(
+          datetime = seq(df$datetime[nrow(df)] + lubridate::minutes(ts_minutes),
+                         df$datetime[nrow(df)] + lubridate::minutes(hour_diff * 60),
+                         by = paste0(ts_minutes, " min")),
+          hour = seq(max(df$hour) + timesteps[i], max(df$hour) + hour_diff, by = timesteps[i]),
+          inflow = 0,
+          hydrograph_num = hydrograph_ID[i])
         full_hydrograph <- rbind(df,extended_df)
       }
     # If there was no routing time, just leave it ++++
@@ -71,11 +108,17 @@ hydrograph_setup <- function(..., critical_duration = NULL, routing_days = NULL)
       full_hydrograph <- df
     }
 
-    # Set an attribute to the observed max n-day inflow volume =================
+    # Set an attribute of the observed max n-day inflow volume =================
     attr(full_hydrograph,"obs_vol") <- max_hydrograph_vol
 
-    # Add to list ==============================================================
+    # Set an attribute of delta time (dt) ======================================
+    attr(full_hydrograph, "dt") <- timesteps[i]
+
+    # Add to list
     export_list[[i]] <- full_hydrograph
   }
+  # Set an attribute of the weights ============================================
+  attr(export_list, "probs") <- sample_prob
+
   return(export_list)
 }

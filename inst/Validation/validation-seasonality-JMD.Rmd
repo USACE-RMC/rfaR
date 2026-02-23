@@ -1,0 +1,83 @@
+---
+title: "Validation: Seasonality Sampling — John Martin Dam"
+author: "rfaR Package Validation"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(rfaR)
+library(dplyr)
+```
+
+## Purpose
+
+Verify that sampling from the John Martin Dam (JMD) seasonality distribution reproduces the input relative frequencies within expected Monte Carlo variability.
+
+The seasonality module assigns each simulation realization to a calendar month based on the historical relative frequency of flood events. This test validates that `sample()` with the JMD seasonality probabilities produces a sampled distribution consistent with the input.
+
+## Input Data
+
+The input seasonality distribution is stored in `jmd_seasonality$relative_frequency`, a vector of 12 monthly probabilities that sum to 1.
+
+```{r input-data}
+seasonality_prob <- jmd_seasonality$relative_frequency
+
+input_df <- data.frame(
+  Month = month.abb,
+  Relative_Frequency = seasonality_prob
+)
+
+knitr::kable(input_df, digits = 4, col.names = c("Month", "Relative Frequency"),
+             caption = "JMD Seasonality Input Distribution")
+```
+
+## Test
+
+Sample 100,000 months using the input probabilities, then compare the sampled relative frequencies to the input.
+
+```{r sampling}
+set.seed(42)
+Nsims <- 100000
+
+InitMonths <- sample(1:12, size = Nsims, replace = TRUE, prob = seasonality_prob)
+sample_freq <- tabulate(InitMonths, nbins = 12) / Nsims
+```
+
+```{r results-table}
+results_df <- data.frame(
+  Month = month.abb,
+  Input = seasonality_prob,
+  Sampled = sample_freq,
+  Difference = sample_freq - seasonality_prob
+)
+
+knitr::kable(results_df, digits = 4,
+             col.names = c("Month", "Input Frequency", "Sampled Frequency", "Difference"),
+             caption = "Input vs. Sampled Seasonality Frequencies (N = 100,000)")
+```
+
+```{r results-plot, fig.width=8, fig.height=5}
+barplot(rbind(results_df$Input, results_df$Sampled),
+        beside = TRUE, names.arg = results_df$Month,
+        col = c("steelblue", "coral"),
+        ylab = "Relative Frequency", main = "Seasonality: Input vs. Sampled Frequencies",
+        legend.text = c("Input", "Sampled"),
+        args.legend = list(x = "topright"))
+```
+
+## Acceptance Criterion
+
+Sampled relative frequencies must be within 1% relative tolerance of the input probabilities, consistent with `expect_equal(sample_freq, seasonality_prob, tolerance = 0.01)`.
+
+```{r acceptance}
+max_rel_diff <- max(abs((sample_freq - seasonality_prob) / seasonality_prob), na.rm = TRUE)
+pass <- max_rel_diff < 0.01
+```
+
+| Metric | Value |
+|--------|-------|
+| Maximum Relative Difference | `r round(max_rel_diff, 6)` |
+| Tolerance | 0.01 (1% relative) |
+| **Result** | **`r ifelse(pass, "PASS", "FAIL")`** |

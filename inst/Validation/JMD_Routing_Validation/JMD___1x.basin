@@ -1,0 +1,90 @@
+Basin: JMD - 1x
+     Last Modified Date: 18 February 2026
+     Last Modified Time: 22:12:27
+     Version: 4.13
+     Filepath Separator: \
+     Unit System: English
+     Missing Flow To Zero: No
+     Enable Flow Ratio: Yes
+     Compute Local Flow At Junctions: No
+     Unregulated Output Required: No
+
+     Enable Sediment Routing: No
+End:
+
+Source: JMD Inflow
+     Last Modified Date: 19 February 2026
+     Last Modified Time: 18:22:31
+     Canvas X: -8965.870307167235
+     Canvas Y: 4331.058020477815
+     From Canvas X: -561.4334470989761
+     From Canvas Y: 1651.877133105802
+     Downstream: JMD
+
+     Flow Method: GAGE_FLOW
+     Flow Gage: JMD 1955 Hourly Inflow
+     End Flow Method:
+End:
+
+Reservoir: JMD
+     Description: John Martin Dam
+     Last Modified Date: 18 February 2026
+     Last Modified Time: 22:11:27
+     Canvas X: -6645.051194539249
+     Canvas Y: 3443.686006825938
+     From Canvas X: -6047.7815699658695
+     From Canvas Y: 1976.1092150170643
+     Downstream: Sink
+
+     Route: Modified Puls
+     Routing Curve: Elevation-Storage-Outflow
+     Initial Elevation: 3830
+     Storage-Outflow Table: JMD Stor-Dis
+     Elevation-Storage Table: JMD Elev-Stor
+     Primary Table: Storage-Outflow
+End:
+
+Sink: Sink
+     Last Modified Date: 18 February 2026
+     Last Modified Time: 21:59:07
+     Canvas X: -4529.010238907849
+     Canvas Y: 2078.4982935153575
+     From Canvas X: -4529.010238907849
+     From Canvas Y: 2078.4982935153575
+End:
+
+Basin Layer Properties:
+     Element Layer:
+          Name: Icons
+          Layer shown: Yes
+     End Layer:
+End:
+
+Basin Spatial Properties:
+End:
+
+Basin Schematic Properties:
+     Last View N: 4331.058020477815
+     Last View S: 2078.4982935153575
+     Last View W: -8965.870307167235
+     Last View E: -4529.010238907849
+     Maximum View N: 4331.058020477815
+     Maximum View S: 2078.4982935153575
+     Maximum View W: -8965.870307167235
+     Maximum View E: -4529.010238907849
+     Extent Method: Manual
+     Buffer: 0
+     Draw Icons: Yes
+     Draw Icon Labels: Name
+     Draw Map Objects: No
+     Draw Gridlines: No
+     Draw Flow Direction: No
+     Draw HillShade Layer: Yes
+     Draw Elevation Layer: Yes
+     Elevation Layer Color Palette: Gray Scale
+     Ignore Elevation Color Ramp Scale: No
+     Use Interpolated Color Ramp for Elevation Layer: Yes
+     Color Ramp Opacity Level for Elevation Layer: 33.0
+     Fix Element Locations: No
+     Fix Hydrologic Order: No
+End:

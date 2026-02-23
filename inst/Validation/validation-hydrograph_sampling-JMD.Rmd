@@ -1,0 +1,100 @@
+---
+title: "Validation: Hydrograph Shape Sampling — John Martin Dam"
+author: "rfaR Package Validation"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(rfaR)
+library(dplyr)
+```
+
+## Purpose
+
+Verify that the hydrograph shape sampling module correctly applies user-specified weights when selecting hydrograph shapes during simulation. This test validates that `hydrograph_setup()` correctly normalizes weights to probabilities and that `sample()` using those probabilities reproduces the expected distribution.
+
+## Input Data
+
+Seven JMD hydrographs are loaded via `hydrograph_setup()` with the following user-specified weights:
+
+```{r input-data}
+hydrograph_names <- c("April 1999", "June 1921", "June 1965 (1hr)",
+                      "June 1965 (15min)", "May 1955", "PMF", "SDF")
+weights <- c(0.5, 1, 1, 2, 2, 2, 4)
+expected_probs <- weights / sum(weights)
+
+input_df <- data.frame(
+  Hydrograph = hydrograph_names,
+  Weight = weights,
+  Expected_Probability = expected_probs
+)
+
+knitr::kable(input_df, digits = 4,
+             col.names = c("Hydrograph", "Weight", "Expected Probability"),
+             caption = "Hydrograph Sampling Weights and Normalized Probabilities")
+```
+
+## Test
+
+Set up hydrographs with weights, then sample 100,000 times and compare the sampled frequencies to the expected probabilities.
+
+```{r sampling}
+set.seed(42)
+
+hydrographs <- hydrograph_setup(jmd_hydro_apr1999,
+                                jmd_hydro_jun1921,
+                                jmd_hydro_jun1965,
+                                jmd_hydro_jun1965_15min,
+                                jmd_hydro_may1955,
+                                jmd_hydro_pmf,
+                                jmd_hydro_sdf,
+                                critical_duration = 2,
+                                routing_days = 10,
+                                weights = weights)
+
+Nsims <- 100000
+hydro_probs <- attr(hydrographs, "probs")
+hydroSamps <- sample(1:length(hydrographs), size = Nsims, replace = TRUE,
+                     prob = hydro_probs)
+sample_freq <- tabulate(hydroSamps, nbins = length(hydro_probs)) / Nsims
+```
+
+```{r results-table}
+results_df <- data.frame(
+  Hydrograph = hydrograph_names,
+  Weight = weights,
+  Expected = expected_probs,
+  Sampled = sample_freq,
+  Difference = sample_freq - expected_probs
+)
+
+knitr::kable(results_df, digits = 4,
+             col.names = c("Hydrograph", "Weight", "Expected Prob.", "Sampled Freq.", "Difference"),
+             caption = "Expected vs. Sampled Hydrograph Frequencies (N = 100,000)")
+```
+
+```{r results-plot, fig.width=8, fig.height=5}
+barplot(rbind(results_df$Expected, results_df$Sampled),
+        beside = TRUE, names.arg = hydrograph_names,
+        col = c("steelblue", "coral"), las = 2, cex.names = 0.8,
+        ylab = "Probability", main = "Hydrograph Sampling: Expected vs. Sampled Frequencies",
+        legend.text = c("Expected", "Sampled"),
+        args.legend = list(x = "topright"))
+```
+
+## Acceptance Criterion
+
+Sampled frequencies must be within 1% relative tolerance of the expected probabilities, consistent with `expect_equal(sample_freq, hydro_probs, tolerance = 0.01)`.
+
+```{r acceptance}
+max_rel_diff <- max(abs((sample_freq - expected_probs) / expected_probs), na.rm = TRUE)
+pass <- max_rel_diff < 0.01
+```
+
+| Metric | Value |
+|--------|-------|
+| Maximum Relative Difference | `r round(max_rel_diff, 6)` |
+| Tolerance | 0.01 (1% relative) |
+| **Result** | **`r ifelse(pass, "PASS", "FAIL")`** |

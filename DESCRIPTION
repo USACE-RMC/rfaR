@@ -1,13 +1,19 @@
 Package: rfaR
 Title: RMC Reservoir Frequency Analysis in R
-Version: 0.0.1
+Version: 0.0.9
 Authors@R: c(
-    person("Daniel", "McGraw", , "daniel.e.mcgraw@usace.army.mil", 
-           role = c("aut", "cre"), comment = "P.E., USACE RMC"),
-    person("Andrew", "Verdin", , "andrew.p.verdin@usace.army.mil", 
-           role = "aut", comment = "PhD, P.H., USACE RMC"),
-    person("C. Haden", "Smith", , "cole.h.smith@usace.army.mil", 
-           role = c("aut", "ctb"), comment = "P.E., USACE RMC; Implemented Monte Carlo framework for RMC-RFA; Provided guidance for R package development"))
+    person("Daniel", "McGraw, P.E.", , "daniel.e.mcgraw@usace.army.mil", 
+           role = c("aut", "cre"), comment = "USACE RMC"),
+    person("Andrew", "Verdin, PhD, P.H.", , "andrew.p.verdin@usace.army.mil", 
+           role = "aut", comment = "USACE RMC"),
+    person("C. Haden", "Smith, P.E.", , "cole.h.smith@usace.army.mil", 
+           role = c("aut"), comment = "USACE RMC"),
+    person("Allen", "Avance, P.E.", , "allen.avance@usace.army.mil",
+           role = "ctb", comment = "USACE RMC"),
+    person("Samantha", "Hartke, PhD", , "samantha.h.hartke@usace.army.mil",
+           role = "ctb", comment = "USACE RMC"),
+    person("Julian", "Gonzalez", , "julian.t.gonzalez@usace.army.mil",
+           role = "ctb", comment = "USACE RMC"))
 Description: An R implementation of the U.S. Army Corps of Engineers (USACE) 
     Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software. 
     This package produces reservoir stage-frequency curves with uncertainty bounds 
@@ -32,6 +38,7 @@ Suggests:
     knitr,
     rmarkdown,
     scales,
+    testthat (>= 3.0.0),
     tidyverse
 VignetteBuilder: knitr
 Imports: 
@@ -42,3 +49,4 @@ Imports:
     lmom,
     lubridate,
     zoo
+Config/testthat/edition: 3

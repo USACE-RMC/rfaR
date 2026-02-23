@@ -63,39 +63,6 @@
 #' }
 "jmd_resmodel"
 
-#' John Martin Dam HEC-HMS Routing Results
-#'
-#' Routing results from HEC-HMS using the JMD reservoir model/geometry, inflow hydrograph, and initial reservoir elevation.
-#'
-#' @format A data frame with 5 columns:
-#' \describe{
-#'   \item{time_hr}{Time in hours (integer)}
-#'   \item{inflow_cfs}{Inflow in cubic-feet per second (CFS)}
-#'   \item{elev_ft}{Routed reservoir stage/elevation data in FT-NAVD88}
-#'   \item{stor_acft}{Routed reservoir storage (ACRE-FT) corresponding to reservoir elevation (elev_ft).}
-#'   \item{outflow_cfs}{Routed discharge/outflow (CFS) corresponding to reservoir elevation (elev_ft).}
-#' }
-"jmd_hms_results"
-
-#' John Martin Dam Inflow Hydrograph
-#'
-#' Inflow hydrograph for hypothetical PMF flood event at John Martin Dam.
-#'
-#' @format A data frame with 2 columns:
-#' \describe{
-#'   \item{time_hr}{Time in hours (integer)}
-#'   \item{inflow_cfs}{Inflow in cubic-feet per second (CFS)}
-#' }
-"jmd_inflowhydro"
-
-#' John Martin Dam Initial Elevation
-#'
-#' Initial/starting elevation (FT-NAVD88) for JMD reservoir routing.
-#' This elevation was used in HEC-HMS.
-#'
-#' @format A single numeric value representing the initial reservoir elevation (FT-NAVD88).
-"jmd_init_elev"
-
 # ==============================================================================
 # JOHN MARTIN DAM - DISCHARGE GAGE
 # ==============================================================================
@@ -362,11 +329,12 @@
 #' LP3 distribution parameters sets of volume-frequency curve results from
 #' RMC-BestFit 2.0.
 #'
-#' @format A data frame with 10000 row and 3 columns:
+#' @format A data frame with 10000 rows and 3 columns:
 #' \describe{
 #'   \item{mean_log}{Mean of log-transformed values}
 #'   \item{sd_log}{Standard deviation of log-transformed values}
 #'   \item{skew_log}{Skewness of log-transformed values}
+#'   \item{log-likelihood}{Log-likelihood of parameter set}
 #' }
 "jmd_bf_parameter_sets"
 
@@ -385,13 +353,36 @@
 #'
 #' John Martin Dam, expected only stage-frequency results from RFA.
 #'
-#' @format A data frame with 10000 row and 3 columns:
+#' @format A data frame with 10000 rows and 3 columns:
 #' \describe{
 #'   \item{AEP}{Annual Exceedace Probabilities}
-#'   \item{Upper}{Annual Exceedace Probabilities}
-#'   \item{Lower}{Annual Exceedace Probabilities}
+#'   \item{Upper}{Upper 95% CI of realizations}
+#'   \item{Lower}{Lower 5% CI of realizations}
 #'   \item{Expected}{Expected stages corresponding to AEPs}
 #'   \item{Median}{Median stages corresponding to AEPs}
 #' }
 "jmd_rfa_full"
+
+#' Stratified Sampling - Example Data
+#'
+#' Example stratification of probability space into 20 bins using three
+#' distribution transformations: Uniform, Normal, and Extreme Value Type I (EV1/Gumbel).
+#' Demonstrates how different transformations allocate sampling effort across
+#' the probability range, with EV1 concentrating more bins in the rare event
+#' tail critical for dam safety analysis.
+#'
+#' @format A data frame with 60 rows and 5 columns:
+#' \describe{
+#'   \item{distribution}{Stratification distribution type: "uniform", "normal", or "ev1"}
+#'   \item{bin}{Bin number (1-20), ordered from most frequent to most rare events}
+#'   \item{lower}{Lower bound of the bin in the distribution's transformed space
+#'     (probability for Uniform, z-score for Normal, Gumbel reduced variate for EV1)}
+#'   \item{upper}{Upper bound of the bin in the distribution's transformed space}
+#'   \item{weight}{Probability weight of the bin, representing the fraction of the
+#'     total probability captured by each bin. Weights sum to approximately 1
+#'     within each distribution.}
+#' }
+#'
+#' @seealso [stratified_sampler()]
+"example_stratified"
 

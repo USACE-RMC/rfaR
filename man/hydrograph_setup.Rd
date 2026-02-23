@@ -4,7 +4,12 @@
 \alias{hydrograph_setup}
 \title{Hydrograph Setup for RFA Simulation}
 \usage{
-hydrograph_setup(..., critical_duration = NULL, routing_days = NULL)
+hydrograph_setup(
+  ...,
+  critical_duration = NULL,
+  routing_days = NULL,
+  weights = NULL
+)
 }
 \arguments{
 \item{...}{Data frame representing an input hydrograph with columns: Ord, Date, Time, Flow (cfs).
@@ -13,22 +18,35 @@ Copied directly from RMC-RFA.}
 \item{critical_duration}{Critical duration in days.}
 
 \item{routing_days}{Desired length of routing simulation in days.}
+
+\item{weights}{Optional numeric vector of sampling weights for each hydrograph.
+Must be the same length as the number of input hydrographs. Weights are
+normalized to probabilities internally. If NULL (default), all hydrographs
+are weighted equally.}
 }
 \value{
 A list of formatted hydrograph data frames, each containing:
 \describe{
-\item{dt}{Date-time (POSIXct)}
+\item{datetime}{Date-time (POSIXct)}
 \item{hour}{Hours from start of event}
 \item{inflow}{Inflow (cfs)}
 \item{hydrograph_num}{Hydrograph ID number for sampling}
 \item{obs_vol}{Max n-day inflow volume (stored as an attribute of each dataframe)}
+\item{dt}{Hydrograph timestep (delta time, dt) in hours (stored as an attribute of each dataframe)}
 }
+The returned list also has a \code{probs} attribute containing the normalized
+sampling probabilities derived from \code{weights}.
 }
 \description{
 Prepares hydrograph data frames copied from RMC-RFA for use in RFA simulation.
 Converts date/time columns and adds sequential hour and hydrograph ID columns.
 }
 \examples{
-# Setup multiple hydrographs for RFA
+# Setup with equal weights (default)
 # hydros <- hydrograph_setup(hydro_apr1999, hydro_jun1965, hydro_pmf)
+
+# Setup with custom weights (PMF weighted higher)
+# hydros <- hydrograph_setup(hydro_apr1999, hydro_jun1965, hydro_pmf,
+#                            weights = c(1, 1, 3))
+# attr(hydros, "probs")  # view normalized probabilities
 }

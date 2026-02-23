@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RunResults>
+  <RunName>JMD - Low</RunName>
+  <Description>Basin: JMD - Low , Meteorology: Empty MEt , Control: 10 Day Routing</Description>
+  <ExecutionTime>18Feb2026, 23:11:32</ExecutionTime>
+  <StartTime>18May1955, 24:00</StartTime>
+  <EndTime>28May1955, 24:00</EndTime>
+  <BasinElement name="JMD Inflow" type="Source">
+    <ExecutionTime>18Feb2026, 23:11:32</ExecutionTime>
+    <UnitSystem>English</UnitSystem>
+    <IsComputationPoint>No</IsComputationPoint>
+    <DrainageArea area="" units="MI2" />
+    <Hydrology>
+      <TimeSeries>
+        <TimeSeriesType type="Outflow" displayString="Outflow" />
+        <DssFileName>JMD___Low.dss</DssFileName>
+        <DssPathname>//JMD Inflow/FLOW//1HOUR/RUN:JMD - Low/</DssPathname>
+      </TimeSeries>
+      <TimeSeries>
+        <TimeSeriesType type="Cumulative Outflow" displayString="Cumulative Outflow" />
+        <DssFileName>JMD___Low.dss</DssFileName>
+        <DssPathname>//JMD Inflow/FLOW-CUMULATIVE//1HOUR/RUN:JMD - Low/</DssPathname>
+      </TimeSeries>
+    </Hydrology>
+    <Sediment />
+    <Statistics>
+      <StatisticMeasure type="Outflow Minimum" displayString="Minimum Outflow" value="0.0000000" units="CFS" />
+      <StatisticMeasure type="Outflow Minimum Time" displayString="Time of Minimum Outflow" value="18May1955, 24:00" />
+      <StatisticMeasure type="Outflow Maximum" displayString="Maximum Outflow" value="134184.0000000" units="CFS" />
+      <StatisticMeasure type="Outflow Maximum Time" displayString="Time of Maximum Outflow" value="20May1955, 08:00" />
+      <StatisticMeasure type="Outflow Volume" displayString="Outflow Volume" value="382364.7520661" units="AC-FT" />
+      <StatisticMeasure type="Outflow Average" displayString="Outflow Average" value="19197.5663900" units="CFS" />
+    </Statistics>
+  </BasinElement>
+  <BasinElement name="JMD" type="Reservoir">
+    <ExecutionTime>18Feb2026, 23:11:32</ExecutionTime>
+    <UnitSystem>English</UnitSystem>
+    <IsComputationPoint>No</IsComputationPoint>
+    <DrainageArea area="" units="MI2" />
+    <FlowLink upstreamName="JMD Inflow" />
+    <Hydrology>
+      <TimeSeries>
+        <TimeSeriesType type="Outflow" displayString="Outflow" />
+        <DssFileName>JMD___Low.dss</DssFileName>
+        <DssPathname>//JMD/FLOW//1HOUR/RUN:JMD - Low/</DssPathname>
+      </TimeSeries>
+      <TimeSeries>
+        <TimeSeriesType type="Cumulative Outflow" displayString="Cumulative Outflow" />
+        <DssFileName>JMD___Low.dss</DssFileName>
+        <DssPathname>//JMD/FLOW-CUMULATIVE//1HOUR/RUN:JMD - Low/</DssPathname>
+      </TimeSeries>
+      <TimeSeries>
+        <TimeSeriesType type="Combined Inflow" displayString="Combined Inflow" />
+        <DssFileName>JMD___Low.dss</DssFileName>
+        <DssPathname>//JMD/FLOW-COMBINE//1HOUR/RUN:JMD - Low/</DssPathname>
+      </TimeSeries>
+      <TimeSeries>
+        <TimeSeriesType type="Storage" displayString="Storage" />
+        <DssFileName>JMD___Low.dss</DssFileName>
+        <DssPathname>//JMD/STORAGE//1HOUR/RUN:JMD - Low/</DssPathname>
+      </TimeSeries>
+      <TimeSeries>
+        <TimeSeriesType type="Reservoir Elevation" displayString="Pool Elevation" />
+        <DssFileName>JMD___Low.dss</DssFileName>
+        <DssPathname>//JMD/ELEVATION//1HOUR/RUN:JMD - Low/</DssPathname>
+      </TimeSeries>
+    </Hydrology>
+    <Sediment />
+    <Statistics>
+      <StatisticMeasure type="Inflow Minimum" displayString="Minimum Inflow" value="0.0000000" units="CFS" />
+      <StatisticMeasure type="Inflow Minimum Time" displayString="Time of Minimum Inflow" value="18May1955, 24:00" />
+      <StatisticMeasure type="Inflow Maximum" displayString="Maximum Inflow" value="134184.0000000" units="CFS" />
+      <StatisticMeasure type="Inflow Maximum Time" displayString="Time of Maximum Inflow" value="20May1955, 08:00" />
+      <StatisticMeasure type="Inflow Volume" displayString="Inflow Volume" value="382364.7520661" units="AC-FT" />
+      <StatisticMeasure type="Inflow Average" displayString="Inflow Average" value="19197.5663900" units="CFS" />
+      <StatisticMeasure type="Outflow Minimum" displayString="Minimum Outflow" value="0.0000000" units="CFS" />
+      <StatisticMeasure type="Outflow Minimum Time" displayString="Time of Minimum Outflow" value="18May1955, 24:00" />
+      <StatisticMeasure type="Outflow Maximum" displayString="Maximum Outflow" value="3008.4081061" units="CFS" />
+      <StatisticMeasure type="Outflow Maximum Time" displayString="Time of Maximum Outflow" value="23May1955, 24:00" />
+      <StatisticMeasure type="Outflow Volume" displayString="Outflow Volume" value="46529.6531165" units="AC-FT" />
+      <StatisticMeasure type="Outflow Average" displayString="Outflow Average" value="2342.3601772" units="CFS" />
+      <StatisticMeasure type="Storage Minimum" displayString="Minimum Storage" value="129749.3826446" units="AC-FT" />
+      <StatisticMeasure type="Storage Minimum Time" displayString="Time of Minimum Storage" value="18May1955, 24:00" />
+      <StatisticMeasure type="Storage Maximum" displayString="Maximum Storage" value="495166.2373289" units="AC-FT" />
+      <StatisticMeasure type="Storage Maximum Time" displayString="Time of Maximum Storage" value="23May1955, 23:00" />
+      <StatisticMeasure type="Pool Elevation Minimum" displayString="Minimum Pool Elevation" value="3830.0019155" units="FT" />
+      <StatisticMeasure type="Pool Elevation Minimum Time" displayString="Time of Minimum Pool Elevation" value="18May1955, 24:00" />
+      <StatisticMeasure type="Pool Elevation Maximum" displayString="Maximum Pool Elevation" value="3865.2816212" units="FT" />
+      <StatisticMeasure type="Pool Elevation Maximum Time" displayString="Time of Maximum Pool Elevation" value="23May1955, 23:00" />
+    </Statistics>
+  </BasinElement>
+  <BasinElement name="Sink" type="Sink">
+    <ExecutionTime>18Feb2026, 23:11:32</ExecutionTime>
+    <UnitSystem>English</UnitSystem>
+    <IsComputationPoint>No</IsComputationPoint>
+    <DrainageArea area="" units="MI2" />
+    <FlowLink upstreamName="JMD" />
+    <Hydrology>
+      <TimeSeries>
+        <TimeSeriesType type="Outflow" displayString="Outflow" />
+        <DssFileName>JMD___Low.dss</DssFileName>
+        <DssPathname>//Sink/FLOW//1HOUR/RUN:JMD - Low/</DssPathname>
+      </TimeSeries>
+      <TimeSeries>
+        <TimeSeriesType type="Cumulative Outflow" displayString="Cumulative Outflow" />
+        <DssFileName>JMD___Low.dss</DssFileName>
+        <DssPathname>//Sink/FLOW-CUMULATIVE//1HOUR/RUN:JMD - Low/</DssPathname>
+      </TimeSeries>
+      <TimeSeries>
+        <TimeSeriesType type="Combined Inflow" displayString="Combined Inflow" />
+        <DssFileName>JMD___Low.dss</DssFileName>
+        <DssPathname>//Sink/FLOW-COMBINE//1HOUR/RUN:JMD - Low/</DssPathname>
+      </TimeSeries>
+    </Hydrology>
+    <Sediment />
+    <Statistics>
+      <StatisticMeasure type="Inflow Minimum" displayString="Minimum Inflow" value="0.0000000" units="CFS" />
+      <StatisticMeasure type="Inflow Minimum Time" displayString="Time of Minimum Inflow" value="18May1955, 24:00" />
+      <StatisticMeasure type="Inflow Maximum" displayString="Maximum Inflow" value="3008.4081061" units="CFS" />
+      <StatisticMeasure type="Inflow Maximum Time" displayString="Time of Maximum Inflow" value="23May1955, 24:00" />
+      <StatisticMeasure type="Inflow Volume" displayString="Inflow Volume" value="46529.6531165" units="AC-FT" />
+      <StatisticMeasure type="Inflow Average" displayString="Inflow Average" value="2342.3601772" units="CFS" />
+      <StatisticMeasure type="Outflow Minimum" displayString="Minimum Outflow" value="0.0000000" units="CFS" />
+      <StatisticMeasure type="Outflow Minimum Time" displayString="Time of Minimum Outflow" value="18May1955, 24:00" />
+      <StatisticMeasure type="Outflow Maximum" displayString="Maximum Outflow" value="3008.4081061" units="CFS" />
+      <StatisticMeasure type="Outflow Maximum Time" displayString="Time of Maximum Outflow" value="23May1955, 24:00" />
+      <StatisticMeasure type="Outflow Volume" displayString="Outflow Volume" value="46529.6531165" units="AC-FT" />
+      <StatisticMeasure type="Outflow Average" displayString="Outflow Average" value="2342.3601772" units="CFS" />
+    </Statistics>
+  </BasinElement>
+</RunResults>
+

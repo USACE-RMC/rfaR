@@ -5,11 +5,12 @@
 \alias{jmd_bf_parameter_sets}
 \title{John Martin Dam BestFit Parameter Sets}
 \format{
-A data frame with 10000 row and 3 columns:
+A data frame with 10000 rows and 3 columns:
 \describe{
 \item{mean_log}{Mean of log-transformed values}
 \item{sd_log}{Standard deviation of log-transformed values}
 \item{skew_log}{Skewness of log-transformed values}
+\item{log-likelihood}{Log-likelihood of parameter set}
 }
 }
 \usage{

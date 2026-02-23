@@ -6,39 +6,48 @@
 \usage{
 flow_frequency_sampler(
   bestfit_params,
-  dist = "LP3",
+  freq_dist = "LP3",
+  strat_dist = "ev1",
   Nbin = NULL,
-  Mevent = NULL,
-  ExpectedOnly = TRUE
+  Mevent = NULL
 )
 }
 \arguments{
-\item{bestfit_params}{Data frame of distribution parameters from RMC-BestFit.
-For LP3: columns are mean (log), sd (log), skew (log).
-For GEV: columns are location, scale, shape.}
+\item{bestfit_params}{Numeric vector of length 3 containing distribution parameters.
+For LP3: \code{c(mean_log, sd_log, skew_log)}.
+For GEV: \code{c(location, scale, shape)}.}
 
-\item{dist}{Distribution type. Either \code{"LP3"} (default) or \code{"GEV"}.}
+\item{freq_dist}{Character. Distribution type. Either \code{"LP3"} (default) or \code{"GEV"}.}
 
-\item{ExpectedOnly}{Logical. If \code{TRUE} (default), returns expected value
-samples only. If \code{FALSE}, returns full uncertainty ensemble.}
+\item{strat_dist}{Character. Probability space for stratification bins.
+Passed to \code{\link[=stratified_sampler]{stratified_sampler()}}. One of \code{"ev1"} (default), \code{"normal"},
+or \code{"uniform"}. See \code{\link[=stratified_sampler]{stratified_sampler()}} for details.}
+
+\item{Nbin}{Integer. Number of stratified bins. Default is \code{50}.}
+
+\item{Mevent}{Integer. Number of events per bin. Default is \code{200}.}
 }
 \value{
 A list containing:
 \describe{
-\item{flow}{Matrix of sampled flow values}
+\item{flow}{Matrix of sampled flow values \verb{[Mevent x Nbin]}}
 \item{nbins}{Number of stratified bins}
-\item{events_per_bin}{Number of events per bin}
-\item{weights}{Probability weights for each bin}
+\item{mevents}{Number of events per bin}
+\item{weights}{Probability weights for each bin from \code{\link[=stratified_sampler]{stratified_sampler()}}}
 }
 }
 \description{
-Generates stratified samples of flow values from a fitted frequency distribution
-using parameters from RMC-BestFit.
+Generates a stratified matrix of flow values from a single set of frequency
+distribution parameters using stratified Monte Carlo sampling. Used internally
+by \code{\link[=rfa_simulate]{rfa_simulate()}} for median-only and full uncertainty modes.
 }
 \examples{
-# Sample using JMD VFC parameters
-# samples <- flow_frequency_sampler(jmd_vfc_parameters)
+# Single parameter set (posterior mode)
+params <- c(4.85, 0.39, -0.15)
+result <- flow_frequency_sampler(params, freq_dist = "LP3",
+                                 Nbin = 20, Mevent = 500)
+dim(result$flow)  # 500 x 20
 }
 \seealso{
-\code{\link[=stratified_sampler]{stratified_sampler()}}, \code{\link[=qp3]{qp3()}}
+\code{\link[=stratified_sampler]{stratified_sampler()}}, \code{\link[=qp3]{qp3()}}, \code{\link[=rfa_simulate]{rfa_simulate()}}
 }
