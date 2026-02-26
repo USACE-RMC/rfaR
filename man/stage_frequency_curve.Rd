@@ -4,15 +4,13 @@
 \alias{stage_frequency_curve}
 \title{Compute Stage-Frequency Curve}
 \usage{
-stage_frequency_curve(peakStage, weights, Sbins = 500)
+stage_frequency_curve(peakStage, weights)
 }
 \arguments{
 \item{peakStage}{Matrix of peak stages \verb{[Mevents x Nbins]} from routing.}
 
 \item{weights}{Numeric vector of bin weights from \code{\link[=stratified_sampler]{stratified_sampler()}}.
 Must have length equal to \code{ncol(peakStage)}.}
-
-\item{Sbins}{Integer. Number of stage evaluation points. Default is \code{500}.}
 }
 \value{
 A data frame with columns:

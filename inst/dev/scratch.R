@@ -76,18 +76,8 @@ results_full <- rfa_simulate(sim_type = "full",
                              resmodel = jmd_resmodel,
                              Nbins = 50, events_per_bin = 200,
                              Ncores = 26,
-                             results_dir = "D:/0.RMC/Reefer/rfaR/full_uncert_testing")
+                             results_dir = "D:/0.RMC/Reefer/rfaR/full_uncert_testing/")
 
-# FULL
-# full_test <- rfaR(jmd_bf_parameter_sets,
-#                       dist = "LP3",
-#                       jmd_por_stage,
-#                       jmd_seasonality$relative_frequency,
-#                       hydrographs,
-#                       jmd_resmodel,
-#                       critical_dur = 2,
-#                       routing_dur = 10,
-#                       expected_only = FALSE)
 
 # COMPARE WITH RFA RESULTS =====================================================
 library(tidyverse)
@@ -462,14 +452,41 @@ test_result <- tibble(
   Stage = stage_vect
 )
 
+curve1 <- curve1|> mutate(Gumb = -log(-log(1 - AEP)),
+                         Z_var = qnorm(1-AEP),
+                         Stage = stage)
+
+curve_2 <- readRDS("D:/0.RMC/Reefer/full_uncert_testing/curve_2.rds")|> mutate(Gumb = -log(-log(1 - AEP)),
+                                                                               Z_var = qnorm(1-AEP),
+                                                                               Stage = stage)
+
+curve_3 <- readRDS("D:/0.RMC/Reefer/full_uncert_testing/curve_3.rds")|> mutate(Gumb = -log(-log(1 - AEP)),
+                                                                               Z_var = qnorm(1-AEP),
+                                                                               Stage = stage)
+
+
 # Plot
 jmd_rfa_median <- jmd_rfa_median |> mutate(Gumb = -log(-log(1 - AEP)),
           Z_var = qnorm(1-AEP))
+
 jmd_rfa_expected <- jmd_rfa_expected |> mutate(Gumb = -log(-log(1 - AEP)),
                                                Z_var = qnorm(1-AEP))
 ggplot() +
   geom_line(
-    data = test_result,
+    #data = test_result,
+    data = curve1,
+    aes(x = Gumb, y = Stage, color = "rfaR"),
+    linewidth = 0.85) +
+
+  geom_line(
+    #data = test_result,
+    data = curve_2,
+    aes(x = Gumb, y = Stage, color = "rfaR"),
+    linewidth = 0.85) +
+
+  geom_line(
+    #data = test_result,
+    data = curve_3,
     aes(x = Gumb, y = Stage, color = "rfaR"),
     linewidth = 0.85) +
 

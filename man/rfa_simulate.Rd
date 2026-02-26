@@ -70,9 +70,9 @@ Supported values are \code{0.25} (15-min), \code{1} (1-hour, default),
 \item{Ncores}{Integer or \code{NULL}. Number of parallel workers for
 \code{"full"} mode. If \code{NULL} (default), automatically selects based
 on available cores (capped at 16). Ignored for \code{"median"} and
-\code{"expected"} modes.
+\code{"expected"} modes.}
 
-@param results_dir Directory to save full uncertainty progress in case of failure.}
+\item{results_dir}{Directory to save full uncertainty progress in case of failure.}
 }
 \value{
 A list whose contents depend on \code{sim_type}:

@@ -1,6 +1,6 @@
 # Reefer Concept
 # This script serves as a conceptual guide to the processes in RFA and rfa_simulate
-library(tidyverse) # We'll use this later
+library(tidyverse) # Used later
 
 # Set up Stratified Bins =======================================================
 # 20 bins with 500 events per bin
@@ -9,8 +9,6 @@ ords <- stratified_sampler(Nbins = 20,
                                Mevents = 500,
                                dist = "ev1")
 # Set seed ====
-# Feel free to change this, 06-21-1954 is my dad's birthday. Shoutout to my dad, he
-# was an IBM-er for 30 years and instilled the company slogan into us...
 cat(think)
 set.seed(062154)
 
@@ -39,12 +37,12 @@ skewlog <- 0.7555138
 Q_matrix <- 10^qp3(pnorm(z_matrix), meanlog, sdlog, skewlog)
 
 # GEV
-xi <- 2369.6709
-alfa <- 1658.1753
-k <- -0.6567
-gev_params <- c(xi,alfa,k)
-
-Q_matrix <- lmom::quagev(pnorm(z_matrix), gev_params)
+# xi <- 2369.6709
+# alfa <- 1658.1753
+# k <- -0.6567
+# gev_params <- c(xi,alfa,k)
+#
+# Q_matrix <- lmom::quagev(pnorm(z_matrix), gev_params)
 
 # Define the number of simulations =============================================
 # Should be the total number of events (20x500)
@@ -134,7 +132,7 @@ for (i in 1:nrow(Q_matrix)) {
 }
 
 cli::cli_progress_done()
-cli::cli_alert_success("Expected Only Simulation Complete")
+cli::cli_alert_success("{Nsims} simulations Complete")
 
 # Post Process =================================================================
 # Min/Max Stages
@@ -149,7 +147,8 @@ max_flow <- max(peakFlow)
 stage_vect <- rep(NA,ords$Mevents-1)
 flow_vect <- rep(NA,ords$Mevents-1)
 
-for (b in 1:(ords$Mevents)){
+# Vector of Stages/flow to use for exceedance calcs
+for (b in 1:(ords$Mevents-1)){
   if(b < 2){
     stage <- min_stage
     flow <- min_flow
@@ -161,6 +160,7 @@ for (b in 1:(ords$Mevents)){
   flow_vect[b] <- flow
 }
 
+# Count number of exceedances in each bin (full of events) ===
 stage_exceedance_matrix <- matrix(nrow = length(stage_vect), ncol = ncol(Q_matrix))
 flow_exceedance_matrix <- matrix(nrow = length(flow_vect), ncol = ncol(Q_matrix))
 
@@ -277,6 +277,7 @@ ggplot() +
 # stage sampling between rfaR and RFA.
 jmd_rfa_median <- jmd_rfa_median |> mutate(Gumb = -log(-log(1 - AEP)),
                                            Z_var = qnorm(1-AEP))
+
 jmd_rfa_expected <- jmd_rfa_expected |> mutate(Gumb = -log(-log(1 - AEP)),
                                                Z_var = qnorm(1-AEP))
 ggplot() +
@@ -324,3 +325,4 @@ ggplot() +
 # Feel free to mess around
 # This is meant to be educational for both RFA and the rfaR computation process
 cat(castle)
+

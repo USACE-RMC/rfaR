@@ -9,7 +9,6 @@
 #' @param peakStage Matrix of peak stages `[Mevents x Nbins]` from routing.
 #' @param weights Numeric vector of bin weights from [stratified_sampler()].
 #'   Must have length equal to `ncol(peakStage)`.
-#' @param Sbins Integer. Number of stage evaluation points. Default is `500`.
 #'
 #' @return A data frame with columns:
 #' \describe{
@@ -20,12 +19,18 @@
 #' @seealso [stratified_sampler()], [flow_frequency_sampler()], [rfa_simulate()]
 #'
 #' @keywords internal
-stage_frequency_curve <- function(peakStage, weights, Sbins = 500) {
+stage_frequency_curve <- function(peakStage, weights) {
+  min_stage <- min(peakStage)
+  max_stage <- max(peakStage)
+  delta <- (max_stage - min_stage) / (nrow(peakStage)-1)
+  # nrow of peak stage represents mevents
+  n <- nrow(peakStage)-1
 
-  stage_vect <- seq(min(peakStage), max(peakStage), length.out = Sbins)
+  # Stage Vect
+  stage_vect <- seq(min_stage, by = delta, length.out = n)
 
-  aep <- numeric(Sbins)
-  for (i in 1:Sbins) {
+  aep <- numeric(n)
+  for (i in 1:n) {
     exceed_prop <- colMeans(peakStage > stage_vect[i])
     aep[i] <- sum(exceed_prop * weights)
   }

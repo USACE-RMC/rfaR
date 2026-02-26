@@ -69,8 +69,7 @@
 #'   \code{"full"} mode. If \code{NULL} (default), automatically selects based
 #'   on available cores (capped at 16). Ignored for \code{"median"} and
 #'   \code{"expected"} modes.
-#'
-#'   @param results_dir Directory to save full uncertainty progress in case of failure.
+#' @param results_dir Directory to save full uncertainty progress in case of failure.
 #'
 #' @return A list whose contents depend on \code{sim_type}:
 #'
@@ -188,18 +187,15 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
                          Ncores = NULL,
                          results_dir = NULL) {
 
-  # IF NO BINS OR EVENTS ARE DEFINED
-  if(is.null(Nbins)){
-    Nbins <- 50
-  }
-  if(is.null(events_per_bin)){
-    events_per_bin <- 200
-  }
-
+  # If results dir isnt defined
   if(is.null(results_dir)){
-    results_dir <- getwd()
+    results_dir <- file.path(getwd(),"rfaR_results")
   }
+  dir.create(results_dir, showWarnings = FALSE)
 
+  # Target AEPs (for Results - Consider hard coding this as built in data)
+  target_aeps <- c(seq(0.99,0.91,by = -0.01),
+                   unlist(lapply(0:-7, function(p) {seq(9 * 10^p, 1 * 10^p, by = -1 * 10^p) / 10})))
 
 # ============================================================================
 # MEDIAN ONLY ====
@@ -299,7 +295,11 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
 
     # REALIZATION STAGE-FREQUENCY CURVE ========================================
     cli::cli_h1("Calculating exceedance probabilities")
-    median_stage_freq <- stage_frequency_curve(peakStage,Q_samp$weights, Sbins = 500)
+    median_stage_aep <- stage_frequency_curve(peakStage,Q_samp$weights)
+    median_stage_freq <-data.frame(AEP = target_aeps,
+                                   Median = aep2stage(median_stage_aep$aep,
+                                                      median_stage_aep$stage,
+                                                      target_aeps))
     cli::cli_alert_success("Calcuated stage-frequency curve")
 
     # Raw Return right now
@@ -399,10 +399,14 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
 
     # REALIZATION STAGE-FREQUENCY CURVE ========================================
     cli::cli_h1("Calculating exceedance probabilities")
-    expected_stage_freq <- stage_frequency_curve(peakStage,Q_samp$weights, Sbins = 500)
+    expected_stage_aep <- stage_frequency_curve(peakStage,Q_samp$weights)
+    expected_stage_freq <- data.frame(AEP = target_aeps,
+                                      Expected = aep2stage(expected_stage_aep$aep,
+                                                         expected_stage_aep$stage,
+                                                         target_aeps))
     cli::cli_alert_success("Calcuated stage-frequency curve")
 
-    # Raw Return right now
+    # Return
     return(list(
       stage_frequency = expected_stage_freq,
       peakStage       = peakStage,
@@ -415,13 +419,6 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
 # ============================================================================
   } else if (sim_type == "full") {
     cli::cli_alert_success("Full Uncertainty")
-
-    # DEPENDENCY CHECK =========================================================
-    if (!requireNamespace("future", quietly = TRUE) ||
-        !requireNamespace("future.apply", quietly = TRUE)) {
-      stop("Packages 'future' and 'future.apply' are required for full uncertainty mode.\n",
-           "Install with: install.packages(c('future', 'future.apply'))")
-    }
 
     # CONFIGURATION ============================================================
     Nrealizations <- nrow(bestfit_params)
@@ -439,16 +436,25 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
       Ncores <- min(use_cores, total_cores)
     }
 
+    # Results directory - add functionality for user to set this
+    realization_dir <- file.path(results_dir,"realizations")
+    dir.create(realization_dir, showWarnings = FALSE)
+
     cli::cli_alert_info("Realizations: {Nrealizations}")
     cli::cli_alert_info("Simulations per realization: {Nsims_per_realiz}")
     cli::cli_alert_info("Total routings: {Nrealizations * Nsims_per_realiz}")
     cli::cli_alert_info("Parallel workers: {Ncores}")
+    cli::cli_alert_info("Saving realization results to: {realization_dir}")
 
     # PARALLEL EXECUTION =======================================================
     cli::cli_h1("Running Full Uncertainty Simulations")
-    cli::cli_alert_info("Distributing {Nrealizations} realizations across {Ncores} workers...")
 
-    future::plan(future::multisession, workers = Ncores)
+    # Avoid memory issue with workers
+    if (is.null(getOption("future.globals.maxSize"))) {
+      options(future.globals.maxSize = 4 * 1024^3)
+    }
+
+    cli::cli_alert_info("Distributing {Nrealizations} realizations across {Ncores} workers")
 
     # Progress bar setup
     has_progressr <- requireNamespace("progressr", quietly = TRUE)
@@ -458,6 +464,9 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
       cli::cli_alert_warning("Install {.pkg progressr} for progress bars in parallel mode")
     }
 
+    future::plan(future::multisession, workers = Ncores)
+    on.exit(future::plan(future::sequential), add = TRUE)
+
     run_parallel <- function() {
       if (has_progressr) {
         p <- progressr::progressor(steps = Nrealizations)
@@ -466,7 +475,7 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
       future.apply::future_lapply(1:Nrealizations, function(k) {
         tryCatch({
 
-          # SEASONALITY/STARTING POOL SAMPLER ==================================
+          # SEASONALITY/STARTING POOL SAMPLER ================================
           InitMonths <- sample(1:12, size = Nsims_per_realiz, replace = TRUE,
                                prob = seasonality)
 
@@ -484,12 +493,12 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
             )
           }
 
-          # HYDROGRAPH SCALER/SAMPLER ==========================================
+          # HYDROGRAPH SCALER/SAMPLER ========================================
           hydroSamps <- sample(1:length(hydrographs), size = Nsims_per_realiz,
                                replace = TRUE,
                                prob = attr(hydrographs, "probs"))
 
-          # FLOW-FREQUENCY SAMPLER =============================================
+          # FLOW-FREQUENCY SAMPLER ===========================================
           bf_params_k <- c(bestfit_params[k, 1],
                            bestfit_params[k, 2],
                            bestfit_params[k, 3])
@@ -499,7 +508,7 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
                                            Nbin = Nbins, Mevent = events_per_bin)
           Q_matrix <- Q_samp$flow
 
-          # ROUTING EVENTS =====================================================
+          # ROUTING EVENTS ===================================================
           peakStage_k <- matrix(NA, nrow = events_per_bin, ncol = Nbins)
 
           realiz <- 0
@@ -525,16 +534,15 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
             }
           }
 
-          # POST-PROCESS =======================================================
-          curve_k <- stage_frequency_curve(peakStage_k, Q_samp$weights, Sbins = 500)
+          # POST-PROCESS =====================================================
+          realization_k <- stage_frequency_curve(peakStage_k, Q_samp$weights)
 
-          # SAVE PROGRESS
-          saveRDS(curve_k, file = file.path(results_dir, paste0("curve_", k, ".rds")))
+          # Save to disk
+          saveRDS(realization_k, file = file.path(realization_dir,paste0("realization_", k, ".rds")))
 
-          # Signal progress
           if (has_progressr) p()
 
-          curve_k
+          realization_k
 
         }, error = function(e) {
           if (has_progressr) p()
@@ -561,63 +569,73 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
       cli::cli_alert_warning("{n_failed} of {Nrealizations} realizations failed")
       failed_msgs <- sapply(results_list[failures], function(x) x$message)
       cli::cli_alert_info("First failure: {failed_msgs[1]}")
-      cli::cli_alert_info("Saving partial results to rfaR_partial_results.RData")
-      save(results_list, failures, file = "rfaR_partial_results.RData")
-      # Keep only successful results
-      results_list <- results_list[!failures]
-      Nrealizations <- length(results_list)
-      cli::cli_alert_success("Continuing with {Nrealizations} successful realizations")
-    } else {
-      cli::cli_alert_success("Full Uncertainty Simulations Complete")
     }
 
-    # COMBINE REALIZATIONS ON A COMMON STAGE GRID ==============================
+    cli::cli_alert_success("Full Uncertainty Simulations Complete")
+
+    # ============================================================================
+    # FULL UNCERT POST PROCESSING
+    # ============================================================================
+    cli::cli_h1("Full Uncertainty Post-Processing")
+
+    # COLLECT ALL RESULTS FROM DISK ============================================
+    cli::cli_h3("Loading realizations from disk")
+
+    all_files <- list.files(realization_dir, pattern = "realization_.*\\.rds", full.names = TRUE)
+    results_list <- lapply(all_files, readRDS)
+
+    cli::cli_alert_info("Loaded {length(results_list)} of {Nrealizations} realizations")
+
+    # CHECK FOR INCOMPLETE RUN =================================================
+    if (length(results_list) < Nrealizations) {
+      cli::cli_alert_warning("Only {length(results_list)} of {Nrealizations} realizations completed")
+      Nrealizations <- length(results_list)
+    }
+
+    # CONFIDENCE INTERVALS =====================================================
+    # Hard coded to 5 and 95 - possible to add optional functionallity later
     cli::cli_h1("Computing confidence bounds across realizations")
 
-    # Build a common stage grid spanning all realizations
+    # Stage matrix
+    stage_matrix <- interpolate_stage_matrix(results_list, target_aeps)
+
+    # 5, 50, and 95th stage quantiles
+    median_50   <- apply(stage_matrix, 1, quantile, probs = 0.50, na.rm = TRUE)
+    lower_05     <- apply(stage_matrix, 1, quantile, probs = 0.05, na.rm = TRUE)
+    upper_95     <- apply(stage_matrix, 1, quantile, probs = 0.95, na.rm = TRUE)
+    cli::cli_alert_success("Upper and Lower CI calculated")
+
+    # EXPECTED =================================================================
+    cli::cli_h1("Computing Expected Curve")
+    # min and max stage
     global_min <- min(sapply(results_list, function(x) min(x$stage)))
     global_max <- max(sapply(results_list, function(x) max(x$stage)))
-    common_stage <- seq(global_min, global_max, length.out = 500)
 
-    # Interpolate each realization's AEP onto the common stage grid
-    # Interpolate in log-AEP space for better behavior in the tails
-    aep_matrix <- matrix(NA, nrow = 500, ncol = Nrealizations)
+    # Stage Vector
+    expect_stage_vect <- seq(global_min, global_max, length.out = events_per_bin)
 
-    for (k in 1:Nrealizations) {
-      curve_k <- results_list[[k]]
-      # Remove any zero AEPs before log transform
-      valid <- curve_k$AEP > 0
-      if (sum(valid) >= 2) {
-        aep_matrix[, k] <- 10^approx(x = curve_k$stage[valid],
-                                     y = log10(curve_k$AEP[valid]),
-                                     xout = common_stage,
-                                     rule = 2)$y
-      }
-    }
+    # AEPs of Stages from Stage Vector
+    aep_interp <- interpolate_aep_matrix(results_list, expect_stage_vect)
 
-    # Summarize across realizations
-    expected_aep <- rowMeans(aep_matrix, na.rm = TRUE)
-    median_aep   <- apply(aep_matrix, 1, quantile, probs = 0.50, na.rm = TRUE)
-    lower_05     <- apply(aep_matrix, 1, quantile, probs = 0.05, na.rm = TRUE)
-    upper_95     <- apply(aep_matrix, 1, quantile, probs = 0.95, na.rm = TRUE)
+    # Take the average of the AEPs (horizontally across stages)
+    expected_aeps <- rowMeans(aep_interp, na.rm = TRUE)
 
-    full_stage_freq <- data.frame(
-      stage      = common_stage,
-      expected   = expected_aep,
-      median     = median_aep,
-      lower_05   = lower_05,
-      upper_95   = upper_95
-    )
+    # Expected curve
+    expected <- aep2stage(expected_aeps, expect_stage_vect, target_aeps)
+    cli::cli_alert_success("Expected curve calculated")
+
+    full_stage_freq <- data.frame(AEP = target_aeps,
+                                  Upper = upper_95,
+                                  Lower = lower_05,
+                                  Expected = expected,
+                                  Median = median_50)
 
     cli::cli_alert_success("Full Uncertainty Analysis Complete")
 
     return(list(
-      stage_frequency    = full_stage_freq,
-      all_curves         = results_list,
-      aep_matrix         = aep_matrix,
-      common_stage       = common_stage,
-      Nrealizations      = Nrealizations,
-      Nsims_per_realiz   = Nsims_per_realiz
-    ))
+      stage_frequency  = full_stage_freq,
+      Nrealizations    = Nrealizations,
+      Nsims_per_realiz = Nsims_per_realiz,
+      realization_directory = realization_dir))
   }
 }
