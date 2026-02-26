@@ -297,7 +297,7 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     cli::cli_h1("Calculating exceedance probabilities")
     median_stage_aep <- stage_frequency_curve(peakStage,Q_samp$weights)
     median_stage_freq <-data.frame(AEP = target_aeps,
-                                   Median = aep2stage(median_stage_aep$aep,
+                                   Median = aep2stage(median_stage_aep$AEP,
                                                       median_stage_aep$stage,
                                                       target_aeps))
     cli::cli_alert_success("Calcuated stage-frequency curve")
@@ -401,7 +401,7 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     cli::cli_h1("Calculating exceedance probabilities")
     expected_stage_aep <- stage_frequency_curve(peakStage,Q_samp$weights)
     expected_stage_freq <- data.frame(AEP = target_aeps,
-                                      Expected = aep2stage(expected_stage_aep$aep,
+                                      Expected = aep2stage(expected_stage_aep$AEP,
                                                          expected_stage_aep$stage,
                                                          target_aeps))
     cli::cli_alert_success("Calcuated stage-frequency curve")
