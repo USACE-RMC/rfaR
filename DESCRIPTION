@@ -1,6 +1,6 @@
 Package: rfaR
 Title: RMC Reservoir Frequency Analysis in R
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
     person("Daniel", "McGraw, P.E.", , "daniel.e.mcgraw@usace.army.mil", 
            role = c("aut", "cre"), comment = "USACE RMC"),
