@@ -2,6 +2,7 @@
 % Please edit documentation in R/rfaR-package.R
 \docType{package}
 \name{rfaR-package}
+\alias{rfaR}
 \alias{rfaR-package}
 \title{rfaR: RMC Reservoir Frequency Analysis in R}
 \description{
