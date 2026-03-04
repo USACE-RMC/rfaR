@@ -29,11 +29,9 @@ jmd_por_inflow <- read.csv("data-raw/JMD/discharge_gage/jmd_por_inflow.csv")
 usethis::use_data(jmd_por_inflow, overwrite = TRUE)
 
 # JOHN MARTIN DAM - EMPIRICAL FREQUENCY ========================================
-jmd_empirical_stage_por <- read.csv("data-raw/JMD/empirical_freq/empirical_stage_por.csv")
 jmd_empirical_stage_wy1980 <- read.csv("data-raw/JMD/empirical_freq/empirical_stage_wy1980-2024.csv")
 jmd_empirical_stage_wy1980_pt <- read.csv("data-raw/JMD/empirical_freq/empirical_stage_wy1980-2024_PT.csv")
 
-usethis::use_data(jmd_empirical_stage_por, overwrite = TRUE)
 usethis::use_data(jmd_empirical_stage_wy1980, overwrite = TRUE)
 usethis::use_data(jmd_empirical_stage_wy1980_pt, overwrite = TRUE)
 
@@ -65,10 +63,8 @@ jmd_stage_duration <- read.csv("data-raw/JMD/stage_duration/stage_duration_month
 usethis::use_data(jmd_stage_duration, overwrite = TRUE)
 
 # JOHN MARTIN DAM - STAGE GAGE =================================================
-jmd_por_stage <- read.csv("data-raw/JMD/stage_gage/jmd_por_stage.csv")
 jmd_wy1980_stage <- read.csv("data-raw/JMD/stage_gage/jmd_wy1980-2024_stage.csv")
 
-usethis::use_data(jmd_por_stage, overwrite = TRUE)
 usethis::use_data(jmd_wy1980_stage, overwrite = TRUE)
 
 # JOHN MARTIN DAM - VOLUME FREQUENCY CURVE =====================================
@@ -95,10 +91,10 @@ jmd_rfa_full <- read.csv("data-raw/JMD/rfa_results/jmd_rfa_full.csv")
 
 usethis::use_data(jmd_rfa_full, overwrite = TRUE)
 
-# JOHN MARTIN DAM - RFA RESULTS MEDIAN ONLY STARTING STAGE =====================
-jmd_rfa_median_starting_stage <- read.csv("data-raw/JMD/rfa_results/jmd_rfa_median_starting_stage.csv")
+# JOHN MARTIN DAM - RFA EXPECTED TABULAR RESULTS ===============================
+jmd_rfa_expected_tabular <- read.csv("data-raw/JMD/rfa_results/jmd_rfa_expected_tabular_result.csv")
 
-usethis::use_data(jmd_rfa_median_starting_stage, overwrite = TRUE)
+usethis::use_data(jmd_rfa_expected_tabular, overwrite = TRUE)
 
 # STRATIFIED SAMPLING EXAMPLE BINS =============================================
 example_stratified <- read.csv("data-raw/stratified_sampling/stratified_bins_example.csv")

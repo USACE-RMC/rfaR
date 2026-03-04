@@ -84,18 +84,6 @@
 # JOHN MARTIN DAM - EMPIRICAL FREQUENCY
 # ==============================================================================
 
-#' John Martin Dam Empirical Stage-Frequency (Full POR)
-#'
-#' Empirical stage-frequency results for John Martin Dam full period of record.
-#'
-#' @format A data frame with 82 rows and 3 columns:
-#' \describe{
-#'   \item{wy}{Water year}
-#'   \item{stage_ft}{Stage (FT-NAVD88)}
-#'   \item{plot_posit}{Plotting position}
-#' }
-"jmd_empirical_stage_por"
-
 #' John Martin Dam Empirical Stage-Frequency (WY 1980-2024)
 #'
 #' Empirical stage-frequency results for John Martin Dam, water years 1980-2024.
@@ -264,19 +252,6 @@
 # ==============================================================================
 # JOHN MARTIN DAM - STAGE GAGE
 # ==============================================================================
-
-#' John Martin Dam Period of Record Stage
-#'
-#' Daily stage data from the full John Martin Dam period of record (1943-2024).
-#'
-#' @format A data frame with 29,858 rows and 4 columns:
-#' \describe{
-#'   \item{timestep}{Timestep index}
-#'   \item{date}{Date}
-#'   \item{time}{Time}
-#'   \item{stage_ft}{Reservoir stage (FT-NAVD88)}
-#' }
-"jmd_por_stage"
 
 #' John Martin Dam Stage (WY 1980-2024)
 #'

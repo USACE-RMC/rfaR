@@ -141,7 +141,7 @@
 #' results_exp <- rfa_simulate(
 #'   sim_type       = "expected",
 #'   bestfit_params = jmd_vfc_parameters,
-#'   stage_ts       = jmd_por_stage,
+#'   stage_ts       = jmd_wy1980_stage,
 #'   seasonality    = jmd_seasonality$relative_frequency,
 #'   hydrographs    = hydros,
 #'   resmodel       = jmd_resmodel
@@ -151,7 +151,7 @@
 #' results_med <- rfa_simulate(
 #'   sim_type       = "median",
 #'   bestfit_params = jmd_vfc_parameters,
-#'   stage_ts       = jmd_por_stage,
+#'   stage_ts       = jmd_wy1980_stage,
 #'   seasonality    = jmd_seasonality$relative_frequency,
 #'   hydrographs    = hydros,
 #'   resmodel       = jmd_resmodel
@@ -161,7 +161,7 @@
 #' results_full <- rfa_simulate(
 #'   sim_type       = "full",
 #'   bestfit_params = jmd_vfc_parameters,
-#'   stage_ts       = jmd_por_stage,
+#'   stage_ts       = jmd_wy1980_stage,
 #'   seasonality    = jmd_seasonality$relative_frequency,
 #'   hydrographs    = hydros,
 #'   resmodel       = jmd_resmodel,
@@ -263,7 +263,13 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     # Peak Stage (or Flow) Results matrix
     peakStage <- peakFlow <- matrix(NA, nrow = events_per_bin, ncol = Nbins)
 
+    # Tabular Results of Realization
+    # Cant put numeric and character in the same matrix
+    realiz_numeric <- matrix(NA_real_, nrow = Nsims, ncol = 5)
+    realiz_hydro   <- character(Nsims)
+
     realiz <- 0
+
     cli::cli_progress_bar("Median Only Simulations", total = Nsims)
 
     for (i in 1:nrow(Q_matrix)) {
@@ -287,11 +293,23 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
         peakStage[i, j] <- tmpResults[1]
         peakFlow[i, j] <- tmpResults[2]
 
+        # Realiz table
+        realiz_numeric[realiz, ] <- c(InitMonths[realiz], InitStages[realiz], Q_matrix[i,j], tmpResults[1], tmpResults[2])
+        realiz_hydro[realiz] <- attr(hydrographs[[hydroSamps[realiz]]], "name")
+
         cli::cli_progress_update()
       }
     }
     cli::cli_progress_done()
     cli::cli_alert_success("Median Only Simulations Complete")
+
+    # Combine realiz tabluar data
+    realiz_results <- data.frame(month      = realiz_numeric[, 1],
+                                 init_stage = realiz_numeric[, 2],
+                                 volume     = realiz_numeric[, 3],
+                                 peak_stage = realiz_numeric[, 4],
+                                 peak_flow  = realiz_numeric[, 5],
+                                 hydrograph = realiz_hydro)
 
     # REALIZATION STAGE-FREQUENCY CURVE ========================================
     cli::cli_h1("Calculating exceedance probabilities")
@@ -302,12 +320,13 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
                                                       target_aeps))
     cli::cli_alert_success("Calcuated stage-frequency curve")
 
-    # Raw Return right now
+    # Return
     return(list(
       stage_frequency = median_stage_freq,
       peakStage       = peakStage,
       peakFlow        = peakFlow,
-      weights         = Q_samp$weights
+      weights         = Q_samp$weights,
+      realization_results = realiz_results
     ))
 
 # ============================================================================
@@ -367,6 +386,11 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     # Peak Stage (or Flow) Results matrix
     peakStage <- peakFlow <- matrix(NA, nrow = events_per_bin, ncol = Nbins)
 
+    # Tabular Results of Realization
+    # Cant put numeric and character in the same matrix
+    realiz_numeric <- matrix(NA_real_, nrow = Nsims, ncol = 5)
+    realiz_hydro   <- character(Nsims)
+
     realiz <- 0
     cli::cli_progress_bar("Expected Only Simulations", total = Nsims)
 
@@ -391,11 +415,23 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
         peakStage[i, j] <- tmpResults[1]
         peakFlow[i, j] <- tmpResults[2]
 
+        # Realiz table
+        realiz_numeric[realiz, ] <- c(InitMonths[realiz], InitStages[realiz], Q_matrix[i,j], tmpResults[1], tmpResults[2])
+        realiz_hydro[realiz] <- attr(hydrographs[[hydroSamps[realiz]]], "name")
+
         cli::cli_progress_update()
       }
     }
     cli::cli_progress_done()
     cli::cli_alert_success("Expected Only Simulations Complete")
+
+    # Combine realiz tabular data
+    realiz_results <- data.frame(month      = realiz_numeric[, 1],
+                                 init_stage = realiz_numeric[, 2],
+                                 volume     = realiz_numeric[, 3],
+                                 peak_stage = realiz_numeric[, 4],
+                                 peak_flow  = realiz_numeric[, 5],
+                                 hydrograph = realiz_hydro)
 
     # REALIZATION STAGE-FREQUENCY CURVE ========================================
     cli::cli_h1("Calculating exceedance probabilities")
@@ -411,7 +447,8 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
       stage_frequency = expected_stage_freq,
       peakStage       = peakStage,
       peakFlow        = peakFlow,
-      weights         = Q_samp$weights
+      weights         = Q_samp$weights,
+      realization_results = realiz_results
     ))
 
 # ============================================================================

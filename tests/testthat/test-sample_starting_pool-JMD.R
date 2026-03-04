@@ -1,3 +1,14 @@
+# Gaps in testing that need to be added/changed:
+ # - does rfaR's stage-duration lookup matches RFA
+ # - 5% tolerance is large, consider 0.05-ft
+ # - The test checks quantile distributions but not the joint distribution of (month, stage).
+ #   If there's a bug where stage values are being assigned to the wrong month,
+ #   quantile-marginal checks wouldn't catch it.
+
+# IS RFA using water year for the seasonality? Are month assignments consistent?
+
+
+
 test_that("observed quantiles match jmd_stage_duration dataset (from RFA)", {
   stage_ts <- jmd_wy1980_stage
   stage_ts$months <- lubridate::month(lubridate::mdy(jmd_wy1980_stage$date))
@@ -10,9 +21,9 @@ test_that("observed quantiles match jmd_stage_duration dataset (from RFA)", {
                     probs, na.rm = TRUE))
   })
 
-  sd_matrix <- as.matrix(jmd_stage_duration[, -1])
+  stagedur_matrix <- as.matrix(jmd_stage_duration[, -1])
 
-  max_diff <- max(abs(obs_quantiles - sd_matrix), na.rm = TRUE)
+  max_diff <- max(abs(obs_quantiles - stagedur_matrix), na.rm = TRUE)
 
   # Expect less than 0.01-ft difference
   expect_lt(max_diff, 0.01)

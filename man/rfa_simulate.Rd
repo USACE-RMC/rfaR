@@ -164,7 +164,7 @@ hydros <- hydrograph_setup(jmd_hydro_apr1999, jmd_hydro_jun1965,
 results_exp <- rfa_simulate(
   sim_type       = "expected",
   bestfit_params = jmd_vfc_parameters,
-  stage_ts       = jmd_por_stage,
+  stage_ts       = jmd_wy1980_stage,
   seasonality    = jmd_seasonality$relative_frequency,
   hydrographs    = hydros,
   resmodel       = jmd_resmodel
@@ -174,7 +174,7 @@ results_exp <- rfa_simulate(
 results_med <- rfa_simulate(
   sim_type       = "median",
   bestfit_params = jmd_vfc_parameters,
-  stage_ts       = jmd_por_stage,
+  stage_ts       = jmd_wy1980_stage,
   seasonality    = jmd_seasonality$relative_frequency,
   hydrographs    = hydros,
   resmodel       = jmd_resmodel
@@ -184,7 +184,7 @@ results_med <- rfa_simulate(
 results_full <- rfa_simulate(
   sim_type       = "full",
   bestfit_params = jmd_vfc_parameters,
-  stage_ts       = jmd_por_stage,
+  stage_ts       = jmd_wy1980_stage,
   seasonality    = jmd_seasonality$relative_frequency,
   hydrographs    = hydros,
   resmodel       = jmd_resmodel,

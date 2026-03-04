@@ -19,12 +19,14 @@
 #' @seealso [stratified_sampler()], [flow_frequency_sampler()], [rfa_simulate()]
 #'
 #' @keywords internal
-stage_frequency_curve <- function(peakStage, weights) {
+stage_frequency_curve <- function(peakStage, weights, stage_bins = 1000) {
   min_stage <- min(peakStage)
   max_stage <- max(peakStage)
-  delta <- (max_stage - min_stage) / (nrow(peakStage)-1)
   # nrow of peak stage represents mevents
-  n <- nrow(peakStage)-1
+  #n <- nrow(peakStage)-1
+  #n <- nrow(peakStage)
+  n <-stage_bins
+  delta <- (max_stage - min_stage) / (n)
 
   # Stage Vect
   stage_vect <- seq(min_stage, by = delta, length.out = n)

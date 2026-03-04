@@ -39,6 +39,7 @@ hydrograph_setup <- function(..., critical_duration = NULL, routing_days = NULL,
   # Collect Hydrographs ========================================================
   input_hydrographs <- list(...)
   hydrograph_ID <- seq(1,length(input_hydrographs),1)
+  hydrograph_names <- sapply(substitute(list(...))[-1], deparse)
 
   # Set Sample Weights =========================================================
   if(!is.null(weights) && length(weights) != length(hydrograph_ID)){
@@ -67,9 +68,6 @@ hydrograph_setup <- function(..., critical_duration = NULL, routing_days = NULL,
                      hour = NA,
                      inflow = input_hydrographs[[i]][,4],
                      hydrograph_num = hydrograph_ID[i])
-
-    # Calculate Timestep ++++
-    timestep <- as.numeric(difftime(df[2,1],df[1,1], units = "hours"))
 
     # Add to df as hour ++++
     df$hour <- seq(0, (nrow(df)-1) * timesteps[i], by = timesteps[i])
@@ -113,6 +111,9 @@ hydrograph_setup <- function(..., critical_duration = NULL, routing_days = NULL,
 
     # Set an attribute of delta time (dt) ======================================
     attr(full_hydrograph, "dt") <- timesteps[i]
+
+    # Save name of the input hydrograph ========================================
+    attr(full_hydrograph, "name") <- hydrograph_names[i]
 
     # Add to list
     export_list[[i]] <- full_hydrograph

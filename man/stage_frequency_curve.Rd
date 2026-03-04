@@ -4,7 +4,7 @@
 \alias{stage_frequency_curve}
 \title{Compute Stage-Frequency Curve}
 \usage{
-stage_frequency_curve(peakStage, weights)
+stage_frequency_curve(peakStage, weights, stage_bins = 1000)
 }
 \arguments{
 \item{peakStage}{Matrix of peak stages \verb{[Mevents x Nbins]} from routing.}

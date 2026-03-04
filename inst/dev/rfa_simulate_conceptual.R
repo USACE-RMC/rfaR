@@ -56,7 +56,7 @@ InitMonths <- sample(1:12, size = Nsims, replace = TRUE, prob = jmd_seasonality$
 InitStages <- numeric(Nsims)
 
 # JMD stage for this example
-stage_ts <- jmd_por_stage
+stage_ts <- jmd_wy1980_stage
 stage_ts$months <- lubridate::month(lubridate::mdy(stage_ts$date))
 
 # Extract unique months
@@ -101,7 +101,6 @@ realiz <- 0
 cli::cli_progress_bar("Expected Only Simulation", total = Nsims)
 
 for (i in 1:nrow(Q_matrix)) {
-
   for (j in 1:ncol(Q_matrix)) {
     # Keeps the indices lined up - necessary for the weights later
     realiz <- (i - 1) * ncol(Q_matrix) + j
@@ -144,17 +143,17 @@ min_flow <- min(peakFlow)
 max_flow <- max(peakFlow)
 
 # Set up exceedance values ====
-stage_vect <- rep(NA,ords$Mevents-1)
-flow_vect <- rep(NA,ords$Mevents-1)
+stage_vect <- rep(NA,ords$Mevents)
+flow_vect <- rep(NA,ords$Mevents)
 
 # Vector of Stages/flow to use for exceedance calcs
-for (b in 1:(ords$Mevents-1)){
+for (b in 1:(ords$Mevents)){
   if(b < 2){
     stage <- min_stage
     flow <- min_flow
   }else{
-    stage <- stage_vect[b-1] + (max_stage - min_stage)/(ords$Mevents-1)
-    flow <- flow_vect[b-1] + (max_flow - min_flow)/(ords$Mevents-1)
+    stage <- stage_vect[b-1] + (max_stage - min_stage)/(ords$Mevents)
+    flow <- flow_vect[b-1] + (max_flow - min_flow)/(ords$Mevents)
   }
   stage_vect[b] <- stage
   flow_vect[b] <- flow
@@ -211,14 +210,14 @@ for(m in 1:nrow(stage_exceedance_matrix)){
 # Tibbles for nice plotting and organization ===================================
 stage_result <- tibble(
   AEP = stage_aep_vect,
-  Z_AEP = qnorm(1-stage_aep_vect),
+  Z_var = qnorm(1-stage_aep_vect),
   Gumb = -log(-log(1 - AEP)),
   Stage = stage_vect
 )
 
 flow_result <- tibble(
   AEP = flow_aep_vect,
-  Z_AEP = qnorm(1-flow_aep_vect),
+  Z_var = qnorm(1-flow_aep_vect),
   Gumb = -log(-log(1 - AEP)),
   Discharge = flow_vect
 )
@@ -239,6 +238,9 @@ z_breaks_minor <- qnorm(1-minor_aep_breaks)
 gumb_limit1 <- -log(-log(1-(9.9e-1)))
 gumb_limit2 <- -log(-log(1-(1e-7)))
 
+z_limit1 <- qnorm(1 - 9.9e-1)
+z_limit2 <- qnorm(1 - 1e-7)
+
 # Stage Info
 crit_elevs <- tibble(
   Name = c("Upper PMF", "Recommended PMF", "Top of Dam", "Record Pool", "Flood Control Pool", "Spillway Crest"),
@@ -248,28 +250,26 @@ crit_elevs <- crit_elevs %>%
   mutate(label_text = paste(Name,"=",Elev))
 
 jmd_empirical_stage_wy1980_pt$Gumb <- -log(-log(1 - jmd_empirical_stage_wy1980_pt$plot_posit))
+jmd_empirical_stage_wy1980_pt$Z_var <- qnorm(1 - jmd_empirical_stage_wy1980_pt$plot_posit)
 
 # Plot Discharge (standalone) ==================================================
-ggplot() +
-  geom_line(data = flow_result,
-            aes(x = Z_AEP, y = Discharge),
-            color = "#008280FF",
-            linewidth = 0.85) +
-  # geom_point(data = flow_result,
-  #            aes(x = Z_AEP, y = Discharge),
-  #            color = "#008280FF") +
-  scale_x_continuous(breaks = z_breaks,
-                     minor_breaks = z_breaks_minor,
-                     labels = aep_breaks) +
-  scale_y_log10(breaks = scales::log_breaks(n = 5, base = 10),
-                minor_breaks = scales::minor_breaks_log(detail = 1)) +
-  coord_cartesian(xlim = c(qnorm(1-0.01),qnorm(1-1e-6))) +
-  labs(x = "AEP",
-       y = "Discharge (cfs)",
-       title = "JMD Discharge Frequency Curve",
-       subtitle = "Point Estimation Only (one parameter set)") +
-  theme(title = element_text(size = 10,face = "bold"),
-        plot.subtitle = element_text(size = 10,face = "italic"))
+# ggplot() +
+#   geom_line(data = flow_result,
+#             aes(x = Z_AEP, y = Discharge),
+#             color = "#008280FF",
+#             linewidth = 0.85) +
+#   scale_x_continuous(breaks = z_breaks,
+#                      minor_breaks = z_breaks_minor,
+#                      labels = aep_breaks) +
+#   scale_y_log10(breaks = scales::log_breaks(n = 5, base = 10),
+#                 minor_breaks = scales::minor_breaks_log(detail = 1)) +
+#   coord_cartesian(xlim = c(qnorm(1-0.01),qnorm(1-1e-6))) +
+#   labs(x = "AEP",
+#        y = "Discharge (cfs)",
+#        title = "JMD Discharge Frequency Curve",
+#        subtitle = "Point Estimation Only (one parameter set)") +
+#   theme(title = element_text(size = 10,face = "bold"),
+#         plot.subtitle = element_text(size = 10,face = "italic"))
 
 # Plot Stage-Frequency =========================================================
 # These won't match up because if you use the random GEV parameters for the Inflow
@@ -282,19 +282,19 @@ jmd_rfa_expected <- jmd_rfa_expected |> mutate(Gumb = -log(-log(1 - AEP)),
                                                Z_var = qnorm(1-AEP))
 ggplot() +
   geom_line(data = stage_result,
-            aes(x = Gumb, y = Stage, color = "rfaR"),
+            aes(x = Z_var, y = Stage, color = "rfaR"),
             linewidth = 0.85) +
   geom_line(data = jmd_rfa_median,
-            aes(x = Gumb, y = Median, color = "RFA"),
+            aes(x = Z_var, y = Median, color = "RFA"),
             linewidth = 0.85) +
   # Add AAAS color scale
   ggsci::scale_color_aaas() +
   # Observed Stage points
-  geom_point(data = jmd_empirical_stage_wy1980_pt, aes(x = Gumb, y = stage_ft, shape = "Obs. Stages (WY 1948-2020)"),size = 1.5,alpha = 0.7) +
+  geom_point(data = jmd_empirical_stage_wy1980_pt, aes(x = Z_var, y = stage_ft, shape = "Obs. Stages (WY 1948-2020)"),size = 1.5,alpha = 0.7) +
   scale_shape_manual(values = c("Obs. Stages (WY 1948-2020)" = 16)) +
   # Scales
-  scale_x_continuous(breaks = Gumbel_AEP_breaks,
-                     minor_breaks = Gumbel_AEP_breaks_minor,
+  scale_x_continuous(breaks = z_breaks,
+                     minor_breaks = z_breaks_minor,
                      labels = aep_breaks) +
   scale_y_continuous(breaks = seq(3700,3910,10),
                      minor_breaks = seq(3700,3910,5),
@@ -320,7 +320,7 @@ ggplot() +
         axis.text = element_text(size = 8),
         axis.title = element_text(size = 9),
         plot.title = element_text(size = 11, face = "bold"))+
-  coord_cartesian(xlim = c(gumb_limit1, gumb_limit2), ylim = c(3800,3900))
+  coord_cartesian(xlim = c(z_limit1, z_limit2), ylim = c(3800,3900))
 
 # Feel free to mess around
 # This is meant to be educational for both RFA and the rfaR computation process
