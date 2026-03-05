@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_wy1980_stage}
 \alias{jmd_wy1980_stage}
-\title{John Martin Dam Stage (WY 1980-2024)}
+\title{Jay McGraw Dam Stage (WY 1980-2024)}
 \format{
 A data frame with 29,858 rows and 4 columns:
 \describe{

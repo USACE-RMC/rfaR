@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_vfc_parameters}
 \alias{jmd_vfc_parameters}
-\title{John Martin Dam VFC Parameters}
+\title{Jay McGraw Dam VFC Parameters}
 \format{
 A data frame with 1 row and 5 columns:
 \describe{

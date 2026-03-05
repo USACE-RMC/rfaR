@@ -30,7 +30,7 @@
 #' # Setup with equal weights (default)
 #' # hydros <- hydrograph_setup(hydro_apr1999, hydro_jun1965, hydro_pmf)
 #'
-#' # Setup with custom weights (PMF weighted higher)
+#' # Setup with custom weights (PMF 3x more likely to be sampled)
 #' # hydros <- hydrograph_setup(hydro_apr1999, hydro_jun1965, hydro_pmf,
 #' #                            weights = c(1, 1, 3))
 #' # attr(hydros, "probs")  # view normalized probabilities

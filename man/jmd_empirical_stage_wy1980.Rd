@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_empirical_stage_wy1980}
 \alias{jmd_empirical_stage_wy1980}
-\title{John Martin Dam Empirical Stage-Frequency (WY 1980-2024)}
+\title{Jay McGraw Dam Empirical Stage-Frequency (WY 1980-2024)}
 \format{
 A data frame with 45 rows and 3 columns:
 \describe{
@@ -16,6 +16,6 @@ A data frame with 45 rows and 3 columns:
 jmd_empirical_stage_wy1980
 }
 \description{
-Empirical stage-frequency results for John Martin Dam, water years 1980-2024.
+Empirical stage-frequency results for Jay McGraw Dam, water years 1980-2024.
 }
 \keyword{datasets}

@@ -1,0 +1,160 @@
+---
+title: "Validation: Modified Puls Reservoir Routing"
+author: "rfaR Package Validation"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(rfaR)
+```
+
+## Purpose
+
+Validate that `mod_puls_routing()` produces results consistent with HEC-HMS Modified Puls routing for two benchmark datasets: John Martin Dam (JMD) and Cherry Creek Dam. Both benchmarks use identical reservoir models, inflow hydrographs, and initial conditions routed independently in HEC-HMS.
+
+---
+
+## Test 1: John Martin Dam
+
+```{r jmd-compute}
+jmd_routing <- mod_puls_routing(resmodel_df = jmd_resmodel,
+                                inflow_df = jmd_inflowhydro,
+                                initial_elev = jmd_init_elev,
+                                full_results = TRUE)
+
+jmd_diff_elev <- jmd_routing$elevation_ft - jmd_hms_results$elevation_ft
+jmd_diff_outflow <- jmd_routing$outflow_cfs - jmd_hms_results$outflow_cfs
+
+jmd_max_diff_elev <- max(abs(jmd_diff_elev))
+jmd_max_diff_outflow <- max(abs(jmd_diff_outflow))
+```
+
+```{r jmd-table}
+jmd_summary <- data.frame(
+  Metric = c("Peak Elevation (ft)", "Peak Outflow (cfs)",
+             "Max Abs Diff Elevation (ft)", "Max Abs Diff Outflow (cfs)"),
+  rfaR = c(max(jmd_routing$elevation_ft), max(jmd_routing$outflow_cfs),
+           jmd_max_diff_elev, jmd_max_diff_outflow),
+  HMS = c(max(jmd_hms_results$elevation_ft), max(jmd_hms_results$outflow_cfs),
+          NA, NA)
+)
+
+knitr::kable(jmd_summary, digits = 4,
+             col.names = c("Metric", "rfaR", "HEC-HMS"),
+             caption = "John Martin Dam Routing Comparison")
+```
+
+```{r jmd-plot, fig.width=10, fig.height=8}
+par(mfrow = c(2, 1), mar = c(4, 4, 3, 1))
+
+# Hydrograph comparison
+plot(jmd_routing$time_hr, jmd_routing$inflow_cfs, type = "l", col = "gray70", lwd = 1,
+     xlab = "Time (hr)", ylab = "Flow (cfs)",
+     main = "John Martin Dam — Inflow and Outflow Comparison")
+lines(jmd_routing$time_hr, jmd_routing$outflow_cfs, col = "steelblue", lwd = 2)
+lines(jmd_hms_results$time_hr, jmd_hms_results$outflow_cfs, col = "coral", lwd = 2, lty = 2)
+legend("topright", legend = c("Inflow", "rfaR Outflow", "HMS Outflow"),
+       col = c("gray70", "steelblue", "coral"), lwd = c(1, 2, 2), lty = c(1, 1, 2))
+
+# Difference time series
+plot(jmd_routing$time_hr, jmd_diff_outflow, type = "l", col = "steelblue", lwd = 1,
+     xlab = "Time (hr)", ylab = "Difference (cfs)",
+     main = "John Martin Dam — Outflow Difference (rfaR - HMS)")
+abline(h = 0, col = "gray50", lty = 2)
+```
+
+### Acceptance Criterion
+
+Maximum absolute difference must be less than 0.1 ft for elevation and 1.0 cfs for outflow.
+
+```{r jmd-result}
+pass_jmd_elev <- jmd_max_diff_elev < 0.1
+pass_jmd_outflow <- jmd_max_diff_outflow < 1.0
+```
+
+| Metric | Value | Tolerance |
+|--------|-------|-----------|
+| Max Abs Diff Elevation | `r round(jmd_max_diff_elev, 4)` ft | 0.1 ft |
+| Max Abs Diff Outflow | `r round(jmd_max_diff_outflow, 4)` cfs | 1.0 cfs |
+| **Result (Elevation)** | **`r ifelse(pass_jmd_elev, "PASS", "FAIL")`** | |
+| **Result (Outflow)** | **`r ifelse(pass_jmd_outflow, "PASS", "FAIL")`** | |
+
+---
+
+## Test 2: Cherry Creek Dam
+
+```{r cc-compute}
+cc_routing <- mod_puls_routing(resmodel_df = cc_resmodel,
+                               inflow_df = cc_inflowhydro,
+                               initial_elev = cc_init_elev,
+                               full_results = TRUE)
+
+cc_diff_elev <- cc_routing$elevation_ft - cc_hms_results$elevation_ft
+cc_diff_outflow <- cc_routing$outflow_cfs - cc_hms_results$outflow_cfs
+
+cc_max_diff_elev <- max(abs(cc_diff_elev))
+cc_max_diff_outflow <- max(abs(cc_diff_outflow))
+```
+
+```{r cc-table}
+cc_summary <- data.frame(
+  Metric = c("Peak Elevation (ft)", "Peak Outflow (cfs)",
+             "Max Abs Diff Elevation (ft)", "Max Abs Diff Outflow (cfs)"),
+  rfaR = c(max(cc_routing$elevation_ft), max(cc_routing$outflow_cfs),
+           cc_max_diff_elev, cc_max_diff_outflow),
+  HMS = c(max(cc_hms_results$elevation_ft), max(cc_hms_results$outflow_cfs),
+          NA, NA)
+)
+
+knitr::kable(cc_summary, digits = 4,
+             col.names = c("Metric", "rfaR", "HEC-HMS"),
+             caption = "Cherry Creek Dam Routing Comparison")
+```
+
+```{r cc-plot, fig.width=10, fig.height=8}
+par(mfrow = c(2, 1), mar = c(4, 4, 3, 1))
+
+# Hydrograph comparison
+plot(cc_routing$time_hr, cc_routing$inflow_cfs, type = "l", col = "gray70", lwd = 1,
+     xlab = "Time (hr)", ylab = "Flow (cfs)",
+     main = "Cherry Creek Dam — Inflow and Outflow Comparison")
+lines(cc_routing$time_hr, cc_routing$outflow_cfs, col = "steelblue", lwd = 2)
+lines(cc_hms_results$time_hr, cc_hms_results$outflow_cfs, col = "coral", lwd = 2, lty = 2)
+legend("topright", legend = c("Inflow", "rfaR Outflow", "HMS Outflow"),
+       col = c("gray70", "steelblue", "coral"), lwd = c(1, 2, 2), lty = c(1, 1, 2))
+
+# Difference time series
+plot(cc_routing$time_hr, cc_diff_outflow, type = "l", col = "steelblue", lwd = 1,
+     xlab = "Time (hr)", ylab = "Difference (cfs)",
+     main = "Cherry Creek Dam — Outflow Difference (rfaR - HMS)")
+abline(h = 0, col = "gray50", lty = 2)
+```
+
+### Acceptance Criterion
+
+Maximum absolute difference must be less than 0.1 ft for elevation and 1.0 cfs for outflow.
+
+```{r cc-result}
+pass_cc_elev <- cc_max_diff_elev < 0.1
+pass_cc_outflow <- cc_max_diff_outflow < 1.0
+```
+
+| Metric | Value | Tolerance |
+|--------|-------|-----------|
+| Max Abs Diff Elevation | `r round(cc_max_diff_elev, 4)` ft | 0.1 ft |
+| Max Abs Diff Outflow | `r round(cc_max_diff_outflow, 4)` cfs | 1.0 cfs |
+| **Result (Elevation)** | **`r ifelse(pass_cc_elev, "PASS", "FAIL")`** | |
+| **Result (Outflow)** | **`r ifelse(pass_cc_outflow, "PASS", "FAIL")`** | |
+
+---
+
+## Summary
+
+| Test | Dam | Variable | Result |
+|------|-----|----------|--------|
+| 1a | John Martin | Elevation | **`r ifelse(pass_jmd_elev, "PASS", "FAIL")`** |
+| 1b | John Martin | Outflow | **`r ifelse(pass_jmd_outflow, "PASS", "FAIL")`** |
+| 2a | Cherry Creek | Elevation | **`r ifelse(pass_cc_elev, "PASS", "FAIL")`** |
+| 2b | Cherry Creek | Outflow | **`r ifelse(pass_cc_outflow, "PASS", "FAIL")`** |

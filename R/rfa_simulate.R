@@ -69,7 +69,12 @@
 #'   \code{"full"} mode. If \code{NULL} (default), automatically selects based
 #'   on available cores (capped at 16). Ignored for \code{"median"} and
 #'   \code{"expected"} modes.
-#' @param results_dir Directory to save full uncertainty progress in case of failure.
+#' @param sim_name Optional character string to label the simulation. Used in
+#'   the output CSV filename. If \code{NULL} (default), defaults to \code{"sim"}.
+#'   Spaces are replaced with underscores in the filename.
+#' @param results_dir Optional path to the directory where results are saved.
+#'   If \code{NULL} (default), creates an \code{rfaR_results} folder in the
+#'   current working directory.
 #'
 #' @return A list whose contents depend on \code{sim_type}:
 #'
@@ -119,6 +124,12 @@
 #' common stage grid (spanning the global min/max across all realizations) in
 #' log10(AEP) space, then computing summary statistics across realizations at
 #' each stage threshold.
+#'
+#' Results are automatically exported as a CSV file named
+#' \code{{sim_name}_{sim_type}_{MM_DD_YY_HHMM}.csv} in the \code{results_dir}
+#' directory. For example, a median simulation named "Jay McGraw Dam" run on
+#' June 4, 2025 at 2:30 PM would produce
+#' \code{Jay_McGraw_Dam_median_06_04_25_1430.csv}.
 #'
 #' @seealso \code{\link{flow_frequency_sampler}},
 #'   \code{\link{flow_frequency_sampler_expected}},
@@ -185,6 +196,7 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
                          Nbins = 50, events_per_bin = 200,
                          routing_dt = 1,
                          Ncores = NULL,
+                         sim_name = NULL,
                          results_dir = NULL) {
 
   # If results dir isnt defined
@@ -192,6 +204,20 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     results_dir <- file.path(getwd(),"rfaR_results")
   }
   dir.create(results_dir, showWarnings = FALSE)
+
+  # Sim Name is for auto export of results
+  # If its not provided, name the sim the sim_type + datetime
+  if(is.null(sim_name)){
+    sim_name <- "sim"
+    sim_dt <- paste0(format(Sys.time(), "%m_%d_%y_%H%M"))
+    result_csv_name <- paste0(sim_name,"_",sim_type,"_",sim_dt,".csv")
+  } else{
+    sim_name_clean <- gsub(" ", "_", sim_name)
+    sim_dt <- paste0(format(Sys.time(), "%m_%d_%y_%H%M"))
+    result_csv_name <- paste0(sim_name_clean,"_",sim_type,"_",sim_dt,".csv")
+  }
+
+  result_csv_file <- file.path(results_dir,result_csv_name)
 
   # Target AEPs (for Results - Consider hard coding this as built in data)
   target_aeps <- c(seq(0.99,0.91,by = -0.01),
@@ -205,12 +231,24 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
 
     # MOST LIKELY PARAMETER SET ================================================
     # Can be switched to mean, confirm log-likelihood column
-    ml_idx <- which.max(bestfit_params[,4])
-    bf_params <- c(bestfit_params[ml_idx,1],
-                   bestfit_params[ml_idx,2],
-                   bestfit_params[ml_idx,3])
+    # Does log-likelihood column exist?
+    LL_exists <- "log_likelihood" %in% names(bestfit_params) | ncol(bestfit_params) > 3
 
-    # add provision that if only one parameter set is supplied, it can be used
+    # if not use only params supplied OR mean of each parameter
+    if (nrow(bestfit_params) == 1) {
+      bf_params <- c(bestfit_params[1, 1],
+                     bestfit_params[1, 2],
+                     bestfit_params[1, 3])
+    } else if (LL_exists == TRUE) {
+      ml_idx <- which.max(bestfit_params[, 4])
+      bf_params <- c(bestfit_params[ml_idx, 1],
+                     bestfit_params[ml_idx, 2],
+                     bestfit_params[ml_idx, 3])
+    } else {
+      bf_params <- c(mean(bestfit_params[, 1]),
+                     mean(bestfit_params[, 2]),
+                     mean(bestfit_params[, 3]))
+    }
 
     # FLOW-FREQUENCY SAMPLER ===================================================
     cli::cli_h1("Generating Volume-Frequency Samples")
@@ -306,19 +344,23 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     # Combine realiz tabluar data
     realiz_results <- data.frame(month      = realiz_numeric[, 1],
                                  init_stage = realiz_numeric[, 2],
-                                 volume     = realiz_numeric[, 3],
+                                 inflow_vol = realiz_numeric[, 3],
                                  peak_stage = realiz_numeric[, 4],
-                                 peak_flow  = realiz_numeric[, 5],
+                                 peak_dis   = realiz_numeric[, 5],
                                  hydrograph = realiz_hydro)
 
     # REALIZATION STAGE-FREQUENCY CURVE ========================================
     cli::cli_h1("Calculating exceedance probabilities")
     median_stage_aep <- stage_frequency_curve(peakStage,Q_samp$weights)
-    median_stage_freq <-data.frame(AEP = target_aeps,
+    median_stage_freq <- data.frame(AEP = target_aeps,
                                    Median = aep2stage(median_stage_aep$AEP,
                                                       median_stage_aep$stage,
                                                       target_aeps))
     cli::cli_alert_success("Calcuated stage-frequency curve")
+
+    # Write to file ============================================================
+    write.csv(median_stage_freq,result_csv_file,row.names = FALSE)
+    cli::cli_alert_success("Stage-Frequency curve successfully exported to {.path {result_csv_file}}.")
 
     # Return
     return(list(
@@ -428,9 +470,9 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     # Combine realiz tabular data
     realiz_results <- data.frame(month      = realiz_numeric[, 1],
                                  init_stage = realiz_numeric[, 2],
-                                 volume     = realiz_numeric[, 3],
+                                 inflow_vol = realiz_numeric[, 3],
                                  peak_stage = realiz_numeric[, 4],
-                                 peak_flow  = realiz_numeric[, 5],
+                                 peak_dis   = realiz_numeric[, 5],
                                  hydrograph = realiz_hydro)
 
     # REALIZATION STAGE-FREQUENCY CURVE ========================================
@@ -441,6 +483,10 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
                                                          expected_stage_aep$stage,
                                                          target_aeps))
     cli::cli_alert_success("Calcuated stage-frequency curve")
+
+    # Write to file ============================================================
+    write.csv(expected_stage_freq,result_csv_file,row.names = FALSE)
+    cli::cli_alert_success("Stage-Frequency curve successfully exported to {.path {result_csv_file}}.")
 
     # Return
     return(list(
@@ -668,6 +714,10 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
                                   Median = median_50)
 
     cli::cli_alert_success("Full Uncertainty Analysis Complete")
+
+    # Write to file ============================================================
+    write.csv(full_stage_freq,result_csv_file,row.names = FALSE)
+    cli::cli_alert_success("Stage-Frequency curve successfully exported to {.path {result_csv_file}}.")
 
     return(list(
       stage_frequency  = full_stage_freq,

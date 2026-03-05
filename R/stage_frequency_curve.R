@@ -22,10 +22,9 @@
 stage_frequency_curve <- function(peakStage, weights, stage_bins = 1000) {
   min_stage <- min(peakStage)
   max_stage <- max(peakStage)
-  # nrow of peak stage represents mevents
-  #n <- nrow(peakStage)-1
-  #n <- nrow(peakStage)
-  n <-stage_bins
+
+  # How often to calculate exceedances, 1000 seems to be good resolution
+  n <- stage_bins
   delta <- (max_stage - min_stage) / (n)
 
   # Stage Vect

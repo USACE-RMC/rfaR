@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_vfc}
 \alias{jmd_vfc}
-\title{John Martin Dam Volume-Frequency Curve}
+\title{Jay McGraw Dam Volume-Frequency Curve}
 \format{
 A data frame with 25 rows and 5 columns:
 \describe{

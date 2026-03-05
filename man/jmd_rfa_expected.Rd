@@ -3,11 +3,11 @@
 \docType{data}
 \name{jmd_rfa_expected}
 \alias{jmd_rfa_expected}
-\title{John Martin Dam RFA Results - Expected Only}
+\title{Jay McGraw Dam RFA Results - Expected Only}
 \format{
 A data frame with 10000 row and 3 columns:
 \describe{
-\item{AEP}{Annual Exceedace Probabilities}
+\item{AEP}{Annual Exceedance Probabilities}
 \item{Expected}{Expected stages corresponding to AEPs}
 }
 }
@@ -15,6 +15,6 @@ A data frame with 10000 row and 3 columns:
 jmd_rfa_expected
 }
 \description{
-John Martin Dam, expected only stage-frequency results from RFA.
+Jay McGraw Dam, expected only stage-frequency results from RFA.
 }
 \keyword{datasets}

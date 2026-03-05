@@ -3,11 +3,11 @@
 \docType{data}
 \name{jmd_rfa_full}
 \alias{jmd_rfa_full}
-\title{John Martin Dam RFA Results - Full Uncertainty}
+\title{Jay McGraw Dam RFA Results - Full Uncertainty}
 \format{
 A data frame with 10000 rows and 3 columns:
 \describe{
-\item{AEP}{Annual Exceedace Probabilities}
+\item{AEP}{Annual Exceedance Probabilities}
 \item{Upper}{Upper 95\% CI of realizations}
 \item{Lower}{Lower 5\% CI of realizations}
 \item{Expected}{Expected stages corresponding to AEPs}
@@ -18,6 +18,6 @@ A data frame with 10000 rows and 3 columns:
 jmd_rfa_full
 }
 \description{
-John Martin Dam, expected only stage-frequency results from RFA.
+Jay McGraw Dam, full uncertainty stage-frequency results from RFA.
 }
 \keyword{datasets}

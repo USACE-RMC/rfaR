@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_empirical_stage_wy1980_pt}
 \alias{jmd_empirical_stage_wy1980_pt}
-\title{John Martin Dam Empirical Stage-Frequency with Perception Threshold}
+\title{Jay McGraw Dam Empirical Stage-Frequency with Perception Threshold}
 \format{
 A data frame with 54 rows and 3 columns:
 \describe{

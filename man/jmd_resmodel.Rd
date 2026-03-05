@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_resmodel}
 \alias{jmd_resmodel}
-\title{John Martin Dam Reservoir Model}
+\title{Jay McGraw Dam Reservoir Model}
 \format{
 A data frame with 3 columns:
 \describe{
@@ -16,6 +16,6 @@ A data frame with 3 columns:
 jmd_resmodel
 }
 \description{
-Elevation-storage-discharge relationship for John Martin Reservoir (Arkansas River). Reservoir models must be monotonic.
+Elevation-storage-discharge relationship for Jay McGraw Reservoir. Reservoir models must be monotonic.
 }
 \keyword{datasets}

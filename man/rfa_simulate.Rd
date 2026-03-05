@@ -16,6 +16,7 @@ rfa_simulate(
   events_per_bin = 200,
   routing_dt = 1,
   Ncores = NULL,
+  sim_name = NULL,
   results_dir = NULL
 )
 }
@@ -72,7 +73,13 @@ Supported values are \code{0.25} (15-min), \code{1} (1-hour, default),
 on available cores (capped at 16). Ignored for \code{"median"} and
 \code{"expected"} modes.}
 
-\item{results_dir}{Directory to save full uncertainty progress in case of failure.}
+\item{sim_name}{Optional character string to label the simulation. Used in
+the output CSV filename. If \code{NULL} (default), defaults to \code{"sim"}.
+Spaces are replaced with underscores in the filename.}
+
+\item{results_dir}{Optional path to the directory where results are saved.
+If \code{NULL} (default), creates an \code{rfaR_results} folder in the
+current working directory.}
 }
 \value{
 A list whose contents depend on \code{sim_type}:
@@ -152,6 +159,12 @@ Curves from individual realizations are combined by interpolating each onto a
 common stage grid (spanning the global min/max across all realizations) in
 log10(AEP) space, then computing summary statistics across realizations at
 each stage threshold.
+
+Results are automatically exported as a CSV file named
+\code{{sim_name}_{sim_type}_{MM_DD_YY_HHMM}.csv} in the \code{results_dir}
+directory. For example, a median simulation named "Jay McGraw Dam" run on
+June 4, 2025 at 2:30 PM would produce
+\code{Jay_McGraw_Dam_median_06_04_25_1430.csv}.
 }
 \examples{
 \dontrun{

@@ -1,0 +1,231 @@
+---
+title: "Validation: Hydrograph Scaling and Timestep Conversion"
+author: "rfaR Package Validation"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(rfaR)
+```
+
+## Purpose
+
+Validate that `scale_hydrograph()` correctly scales inflow hydrographs and converts between timesteps. This covers three areas:
+
+1. **1-hour input, 1-hour routing** — Verify that the scale factor is applied correctly and output dimensions are preserved.
+2. **15-minute input, 1-hour routing** — Verify that block averaging produces the correct timestep, row count, and ordinate values.
+3. **Edge cases** — Verify behavior with a scale factor of 1 and non-negative flow output.
+
+## Setup
+
+```{r input-data}
+hydrographs <- hydrograph_setup(jmd_hydro_apr1999,
+                                jmd_hydro_jun1921,
+                                jmd_hydro_jun1965,
+                                jmd_hydro_jun1965_15min,
+                                jmd_hydro_may1955,
+                                jmd_hydro_pmf,
+                                jmd_hydro_sdf,
+                                critical_duration = 2,
+                                routing_days = 10)
+
+hydro_1hr   <- hydrographs[[1]]
+hydro_15min <- hydrographs[[4]]
+
+obs_vol    <- attr(hydro_1hr, "obs_vol")
+obs_vol_15 <- attr(hydro_15min, "obs_vol")
+
+sampled_vol_2x    <- obs_vol * 2
+sampled_vol_15_2x <- obs_vol_15 * 2
+
+input_summary <- data.frame(
+  Hydrograph = c("April 1999 (1-hr)", "June 1965 (15-min)"),
+  Timestep_hr = c(attr(hydro_1hr, "dt"), attr(hydro_15min, "dt")),
+  Rows = c(nrow(hydro_1hr), nrow(hydro_15min)),
+  Obs_Volume = c(obs_vol, obs_vol_15)
+)
+
+knitr::kable(input_summary, digits = 2,
+             col.names = c("Hydrograph", "Timestep (hr)", "Rows", "Observed Volume"),
+             caption = "Input Hydrograph Summary")
+```
+
+---
+
+## Test 1: 1-Hour Input, 1-Hour Routing
+
+Scale the April 1999 hydrograph by a factor of 2 with matching input and routing timesteps.
+
+```{r test1-compute}
+scaled_1hr <- scale_hydrograph(
+  hydrograph_shape = hydro_1hr[, c("hour", "inflow")],
+  observed_volume  = obs_vol,
+  sampled_volume   = sampled_vol_2x,
+  routing_dt       = 1
+)
+```
+
+```{r test1-table}
+test1_results <- data.frame(
+  Check = c("Output class is data.frame",
+            "Column names correct",
+            "Time starts at 0",
+            "Row count preserved",
+            "Scale factor applied (all ordinates doubled)"),
+  Result = c(
+    is.data.frame(scaled_1hr),
+    identical(names(scaled_1hr), c("time_hrs", "inflow_cfs")),
+    scaled_1hr$time_hrs[1] == 0,
+    nrow(scaled_1hr) == nrow(hydro_1hr),
+    all.equal(scaled_1hr$inflow_cfs, hydro_1hr$inflow * 2, tolerance = 1e-10)
+  )
+)
+
+knitr::kable(test1_results, caption = "1-Hour Input / 1-Hour Routing Checks")
+```
+
+```{r test1-plot, fig.width=8, fig.height=5}
+plot(hydro_1hr$hour, hydro_1hr$inflow, type = "l", col = "steelblue", lwd = 2,
+     xlab = "Time (hr)", ylab = "Inflow (cfs)",
+     main = "1-Hour Hydrograph: Original vs. Scaled (2x)")
+lines(scaled_1hr$time_hrs, scaled_1hr$inflow_cfs, col = "coral", lwd = 2, lty = 2)
+legend("topright", legend = c("Original", "Scaled (2x)"),
+       col = c("steelblue", "coral"), lwd = 2, lty = c(1, 2))
+```
+
+### Acceptance Criterion
+
+```{r test1-result}
+pass_test1 <- all(
+  is.data.frame(scaled_1hr),
+  identical(names(scaled_1hr), c("time_hrs", "inflow_cfs")),
+  scaled_1hr$time_hrs[1] == 0,
+  nrow(scaled_1hr) == nrow(hydro_1hr),
+  isTRUE(all.equal(scaled_1hr$inflow_cfs, hydro_1hr$inflow * 2, tolerance = 1e-10))
+)
+```
+
+| Metric | Value |
+|--------|-------|
+| **Result** | **`r ifelse(pass_test1, "PASS", "FAIL")`** |
+
+---
+
+## Test 2: 15-Minute Input, 1-Hour Routing (Block Average)
+
+Scale the June 1965 (15-min) hydrograph by a factor of 2 with block averaging to 1-hour routing timestep.
+
+```{r test2-compute}
+scaled_15min <- scale_hydrograph(
+  hydrograph_shape = hydro_15min[, c("hour", "inflow")],
+  observed_volume  = obs_vol_15,
+  sampled_volume   = sampled_vol_15_2x,
+  routing_dt       = 1
+)
+
+expected_rows <- floor(nrow(hydro_15min) / 4)
+dt_out <- scaled_15min$time_hrs[2] - scaled_15min$time_hrs[1]
+expected_first <- mean(hydro_15min$inflow[1:4]) * 2
+```
+
+```{r test2-table}
+test2_results <- data.frame(
+  Check = c("Row count (15-min to 1-hr, factor of 4 reduction)",
+            "Output timestep is 1 hour",
+            "Time starts at 0",
+            "First ordinate matches manual block average × scale"),
+  Expected = c(as.character(expected_rows), "1", "0", round(expected_first, 4)),
+  Actual = c(as.character(nrow(scaled_15min)),
+             as.character(dt_out),
+             as.character(scaled_15min$time_hrs[1]),
+             round(scaled_15min$inflow_cfs[1], 4)),
+  Pass = c(nrow(scaled_15min) == expected_rows,
+           dt_out == 1,
+           scaled_15min$time_hrs[1] == 0,
+           isTRUE(all.equal(scaled_15min$inflow_cfs[1], expected_first, tolerance = 1e-10)))
+)
+
+knitr::kable(test2_results, caption = "15-Minute Input / 1-Hour Routing Checks")
+```
+
+```{r test2-plot, fig.width=8, fig.height=5}
+plot(hydro_15min$hour, hydro_15min$inflow, type = "l", col = "gray70", lwd = 1,
+     xlab = "Time (hr)", ylab = "Inflow (cfs)",
+     main = "15-Min Hydrograph: Original vs. Block-Averaged & Scaled (2x)")
+lines(scaled_15min$time_hrs, scaled_15min$inflow_cfs, col = "coral", lwd = 2)
+legend("topright", legend = c("Original (15-min)", "Block-Averaged & Scaled (1-hr)"),
+       col = c("gray70", "coral"), lwd = c(1, 2))
+```
+
+### Acceptance Criterion
+
+```{r test2-result}
+pass_test2 <- all(
+  nrow(scaled_15min) == expected_rows,
+  dt_out == 1,
+  scaled_15min$time_hrs[1] == 0,
+  isTRUE(all.equal(scaled_15min$inflow_cfs[1], expected_first, tolerance = 1e-10))
+)
+```
+
+| Metric | Value |
+|--------|-------|
+| **Result** | **`r ifelse(pass_test2, "PASS", "FAIL")`** |
+
+---
+
+## Test 3: Edge Cases
+
+```{r test3-compute}
+# Scale factor = 1 (same volume)
+scaled_unity <- scale_hydrograph(
+  hydrograph_shape = hydro_1hr[, c("hour", "inflow")],
+  observed_volume  = obs_vol,
+  sampled_volume   = obs_vol,
+  routing_dt       = 1
+)
+
+unity_match <- isTRUE(all.equal(scaled_unity$inflow_cfs, hydro_1hr$inflow, tolerance = 1e-10))
+
+# Non-negative flows
+scaled_2x <- scale_hydrograph(
+  hydrograph_shape = hydro_1hr[, c("hour", "inflow")],
+  observed_volume  = obs_vol,
+  sampled_volume   = sampled_vol_2x,
+  routing_dt       = 1
+)
+
+all_nonneg <- all(scaled_2x$inflow_cfs >= 0)
+```
+
+```{r test3-table}
+test3_results <- data.frame(
+  Check = c("Scale factor = 1 returns unchanged ordinates",
+            "All flows non-negative for positive scale factor"),
+  Result = c(unity_match, all_nonneg)
+)
+
+knitr::kable(test3_results, caption = "Edge Case Checks")
+```
+
+### Acceptance Criterion
+
+```{r test3-result}
+pass_test3 <- all(unity_match, all_nonneg)
+```
+
+| Metric | Value |
+|--------|-------|
+| **Result** | **`r ifelse(pass_test3, "PASS", "FAIL")`** |
+
+---
+
+## Summary
+
+| Test | Description | Result |
+|------|-------------|--------|
+| 1 | 1-hour input, 1-hour routing — scaling | **`r ifelse(pass_test1, "PASS", "FAIL")`** |
+| 2 | 15-min input, 1-hour routing — block average + scaling | **`r ifelse(pass_test2, "PASS", "FAIL")`** |
+| 3 | Edge cases — unity scale, non-negative flows | **`r ifelse(pass_test3, "PASS", "FAIL")`** |

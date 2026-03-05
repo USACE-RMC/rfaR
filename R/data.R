@@ -48,12 +48,12 @@
 "cc_hms_results"
 
 # ==============================================================================
-# JOHN MARTIN DAM (JMD) CORE EXAMPLE DATA
+# JAY MCGRAW DAM (JMD) CORE EXAMPLE DATA
 # ==============================================================================
 
-#' John Martin Dam Reservoir Model
+#' Jay McGraw Dam Reservoir Model
 #'
-#' Elevation-storage-discharge relationship for John Martin Reservoir (Arkansas River). Reservoir models must be monotonic.
+#' Elevation-storage-discharge relationship for Jay McGraw Reservoir. Reservoir models must be monotonic.
 #'
 #' @format A data frame with 3 columns:
 #' \describe{
@@ -64,12 +64,12 @@
 "jmd_resmodel"
 
 # ==============================================================================
-# JOHN MARTIN DAM - DISCHARGE GAGE
+# JAY MCGRAW DAM - DISCHARGE GAGE
 # ==============================================================================
 
-#' John Martin Dam Period of Record Inflow
+#' Jay McGraw Dam Period of Record Inflow
 #'
-#' Daily inflow at John Martin Dam for the available period of record (1943-2024).
+#' Daily inflow at Jay McGraw Dam for the available period of record.
 #'
 #' @format A data frame with 40,908 rows and 4 columns:
 #' \describe{
@@ -81,12 +81,12 @@
 "jmd_por_inflow"
 
 # ==============================================================================
-# JOHN MARTIN DAM - EMPIRICAL FREQUENCY
+# JAY MCGRAW DAM - EMPIRICAL FREQUENCY
 # ==============================================================================
 
-#' John Martin Dam Empirical Stage-Frequency (WY 1980-2024)
+#' Jay McGraw Dam Empirical Stage-Frequency (WY 1980-2024)
 #'
-#' Empirical stage-frequency results for John Martin Dam, water years 1980-2024.
+#' Empirical stage-frequency results for Jay McGraw Dam, water years 1980-2024.
 #'
 #' @format A data frame with 45 rows and 3 columns:
 #' \describe{
@@ -96,7 +96,7 @@
 #' }
 "jmd_empirical_stage_wy1980"
 
-#' John Martin Dam Empirical Stage-Frequency with Perception Threshold
+#' Jay McGraw Dam Empirical Stage-Frequency with Perception Threshold
 #'
 #' Empirical stage-frequency results for John Martin Dam (WY 1980-2024) with
 #' perception threshold applied.
@@ -110,10 +110,10 @@
 "jmd_empirical_stage_wy1980_pt"
 
 # ==============================================================================
-# JOHN MARTIN DAM - HYDROGRAPHS
+# JAY MCGRAW DAM - HYDROGRAPHS
 # ==============================================================================
 
-#' John Martin Dam April 1999 Hydrograph
+#' Jay McGraw Dam April 1999 Hydrograph
 #'
 #' Inflow hydrograph shape from April 1999 flood event.
 #'
@@ -126,7 +126,7 @@
 #' }
 "jmd_hydro_apr1999"
 
-#' John Martin Dam June 1921 Hydrograph
+#' Jay McGraw Dam June 1921 Hydrograph
 #'
 #' Inflow hydrograph shape from June 1921 flood event.
 #'
@@ -139,7 +139,7 @@
 #' }
 "jmd_hydro_jun1921"
 
-#' John Martin Dam June 1965 Hydrograph
+#' Jay McGraw Dam June 1965 Hydrograph
 #'
 #' Inflow hydrograph shape from June 1965 flood event (from HEC-HMS).
 #'
@@ -152,7 +152,7 @@
 #' }
 "jmd_hydro_jun1965"
 
-#' John Martin Dam June 1965 Hydrograph (15 minute intervals)
+#' Jay McGraw Dam June 1965 Hydrograph (15 minute intervals)
 #'
 #' Inflow hydrograph shape from June 1965 flood event (from HEC-HMS).
 #'
@@ -165,7 +165,7 @@
 #' }
 "jmd_hydro_jun1965_15min"
 
-#' John Martin Dam May 1955 Hydrograph
+#' Jay McGraw Dam May 1955 Hydrograph
 #'
 #' Inflow hydrograph shape from May 1955 flood event.
 #'
@@ -178,7 +178,7 @@
 #' }
 "jmd_hydro_may1955"
 
-#' John Martin Dam PMF Hydrograph
+#' Jay McGraw Dam PMF Hydrograph
 #'
 #' Inflow hydrograph shape for Probable Maximum Flood (PMF).
 #'
@@ -191,7 +191,7 @@
 #' }
 "jmd_hydro_pmf"
 
-#' John Martin Dam SDF Hydrograph
+#' Jay McGraw Dam SDF Hydrograph
 #'
 #' Inflow hydrograph shape for Spillway Design Flood (SDF).
 #'
@@ -205,12 +205,12 @@
 "jmd_hydro_sdf"
 
 # ==============================================================================
-# JOHN MARTIN DAM - SEASONALITY
+# JAY MCGRAW DAM - SEASONALITY
 # ==============================================================================
 
-#' John Martin Dam Flood Seasonality
+#' Jay McGraw Dam Flood Seasonality
 #'
-#' Results of flood seasonality analysis from the full John Martin Dam period
+#' Results of flood seasonality analysis from the full Jay McGraw Dam period
 #' of record. Determined using: threshold flow of 5,000 cfs, critical duration
 #' of 2 days, max events per year of 5, minimum days between events of 7.
 #'
@@ -224,10 +224,10 @@
 "jmd_seasonality"
 
 # ==============================================================================
-# JOHN MARTIN DAM - STAGE DURATION
+# JAY MCGRAW DAM - STAGE DURATION
 # ==============================================================================
 
-#' John Martin Dam Monthly Stage Duration Curves
+#' Jay McGraw Dam Monthly Stage Duration Curves
 #'
 #' Monthly stage duration curves from Water Year 1980-2024.
 #'
@@ -250,10 +250,10 @@
 "jmd_stage_duration"
 
 # ==============================================================================
-# JOHN MARTIN DAM - STAGE GAGE
+# JAY MCGRAW DAM - STAGE GAGE
 # ==============================================================================
 
-#' John Martin Dam Stage (WY 1980-2024)
+#' Jay McGraw Dam Stage (WY 1980-2024)
 #'
 #' Daily stage data from Water Year 1980-2024.
 #'
@@ -267,10 +267,10 @@
 "jmd_wy1980_stage"
 
 # ==============================================================================
-# JOHN MARTIN DAM - VOLUME FREQUENCY CURVE
+# JAY MCGRAW DAM - VOLUME FREQUENCY CURVE
 # ==============================================================================
 
-#' John Martin Dam VFC Parameters
+#' Jay McGraw Dam VFC Parameters
 #'
 #' LP3 distribution parameters of volume-frequency curve results from
 #' RMC-BestFit 2.0.
@@ -285,7 +285,7 @@
 #' }
 "jmd_vfc_parameters"
 
-#' John Martin Dam Volume-Frequency Curve
+#' Jay McGraw Dam Volume-Frequency Curve
 #'
 #' Tabular volume-frequency curve results from RMC-BestFit 2.0.
 #'
@@ -299,7 +299,7 @@
 #' }
 "jmd_vfc"
 
-#' John Martin Dam BestFit Parameter Sets
+#' Jay McGraw Dam BestFit Parameter Sets
 #'
 #' LP3 distribution parameters sets of volume-frequency curve results from
 #' RMC-BestFit 2.0.
@@ -313,24 +313,24 @@
 #' }
 "jmd_bf_parameter_sets"
 
-#' John Martin Dam RFA Results - Expected Only
+#' Jay McGraw Dam RFA Results - Expected Only
 #'
-#' John Martin Dam, expected only stage-frequency results from RFA.
+#' Jay McGraw Dam, expected only stage-frequency results from RFA.
 #'
 #' @format A data frame with 10000 row and 3 columns:
 #' \describe{
-#'   \item{AEP}{Annual Exceedace Probabilities}
+#'   \item{AEP}{Annual Exceedance Probabilities}
 #'   \item{Expected}{Expected stages corresponding to AEPs}
 #' }
 "jmd_rfa_expected"
 
-#' John Martin Dam RFA Results - Full Uncertainty
+#' Jay McGraw Dam RFA Results - Full Uncertainty
 #'
-#' John Martin Dam, expected only stage-frequency results from RFA.
+#' Jay McGraw Dam, full uncertainty stage-frequency results from RFA.
 #'
 #' @format A data frame with 10000 rows and 3 columns:
 #' \describe{
-#'   \item{AEP}{Annual Exceedace Probabilities}
+#'   \item{AEP}{Annual Exceedance Probabilities}
 #'   \item{Upper}{Upper 95% CI of realizations}
 #'   \item{Lower}{Lower 5% CI of realizations}
 #'   \item{Expected}{Expected stages corresponding to AEPs}

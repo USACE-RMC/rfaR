@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_hydro_jun1965_15min}
 \alias{jmd_hydro_jun1965_15min}
-\title{John Martin Dam June 1965 Hydrograph (15 minute intervals)}
+\title{Jay McGraw Dam June 1965 Hydrograph (15 minute intervals)}
 \format{
 A data frame with 481 rows and 4 columns:
 \describe{

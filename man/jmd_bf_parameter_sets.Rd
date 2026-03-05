@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_bf_parameter_sets}
 \alias{jmd_bf_parameter_sets}
-\title{John Martin Dam BestFit Parameter Sets}
+\title{Jay McGraw Dam BestFit Parameter Sets}
 \format{
 A data frame with 10000 rows and 3 columns:
 \describe{

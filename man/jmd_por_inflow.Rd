@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_por_inflow}
 \alias{jmd_por_inflow}
-\title{John Martin Dam Period of Record Inflow}
+\title{Jay McGraw Dam Period of Record Inflow}
 \format{
 A data frame with 40,908 rows and 4 columns:
 \describe{
@@ -17,6 +17,6 @@ A data frame with 40,908 rows and 4 columns:
 jmd_por_inflow
 }
 \description{
-Daily inflow at John Martin Dam for the available period of record (1943-2024).
+Daily inflow at Jay McGraw Dam for the available period of record.
 }
 \keyword{datasets}
