@@ -26,6 +26,6 @@ castle <- r"{
   }
   packageStartupMessage("rfaR: RMC-Reservoir Frequency Analysis in R")
   packageStartupMessage("Version: ", utils::packageVersion("rfaR"), ' - "Half Baked"')
-  # packageStartupMessage("Version: ", utils::packageVersion("rfaR"), ' - "Dazed & Confused')
+  #packageStartupMessage("Version: ", utils::packageVersion("rfaR"), ' - "Dazed & Confused')
   packageStartupMessage("US Army Corps of Engineers - Risk Management Center (USACE-RMC)")
 }

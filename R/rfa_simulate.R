@@ -223,6 +223,9 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
   target_aeps <- c(seq(0.99,0.91,by = -0.01),
                    unlist(lapply(0:-7, function(p) {seq(9 * 10^p, 1 * 10^p, by = -1 * 10^p) / 10})))
 
+  # Remove rows with missing stages in stage timeseries
+  stage_ts <- stage_ts[!is.na(stage_ts$stage),]
+
 # ============================================================================
 # MEDIAN ONLY ====
 # ============================================================================
