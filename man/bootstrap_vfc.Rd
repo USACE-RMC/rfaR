@@ -31,7 +31,16 @@ Generates matrix of parameters using posterior mode/mean and ERL
 }
 \examples{
 # Sample using JMD VFC parameters
-# samples <- flow_frequency_sampler(jmd_vfc_parameters)
+jmd_samples <- bootstrap_vfc(c(jmd_vfc_parameters$mean_log,jmd_vfc_parameters$sd_log,jmd_vfc_parameters$skew_log),
+                               dist = "LP3", ERL = jmd_vfc_parameters$erl)
+
+gev_example <- c(3.0, 1.0, -0.1)
+gev_samples <- bootstrap_vfc(gev_example, dist = "GEV", ERL = 200, Nboots = 5000)
+hist(lp3_samples$params[,1])
+
+lp3_example <- c(3.5, 0.22, 0.1)
+lp3_samples <- bootstrap_vfc(lp3_example, dist = "LP3", ERL = 300, Nboots = 1000)
+hist(gev_samples$params[,3])
 }
 \seealso{
 \code{\link[=flow_frequency_sampler]{flow_frequency_sampler()}}

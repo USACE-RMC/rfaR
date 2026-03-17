@@ -23,33 +23,46 @@
 #'
 #' @examples
 #' # Sample using JMD VFC parameters
-#' # samples <- flow_frequency_sampler(jmd_vfc_parameters)
-bootstrap_vfc <- function(bestfit_postmode, dist = "LP3", ERL=150, Nboots=10000) {
+#' jmd_samples <- bootstrap_vfc(c(jmd_vfc_parameters$mean_log,jmd_vfc_parameters$sd_log,jmd_vfc_parameters$skew_log),
+#'                                dist = "LP3", ERL = jmd_vfc_parameters$erl)
+#'
+#' gev_example <- c(3.0, 1.0, -0.1)
+#' gev_samples <- bootstrap_vfc(gev_example, dist = "GEV", ERL = 200, Nboots = 5000)
+#' hist(lp3_samples$params[,1])
+#'
+#' lp3_example <- c(3.5, 0.22, 0.1)
+#' lp3_samples <- bootstrap_vfc(lp3_example, dist = "LP3", ERL = 300, Nboots = 1000)
+#' hist(gev_samples$params[,3])
+bootstrap_vfc <- function(bestfit_postmode, dist = "LP3", ERL = 150, Nboots = 10000) {
 
   if(!(dist %in% c("LP3","GEV"))){
     errorCondition("Specify either LP3 or GEV as distribution. ")
   }
 
   # do the damn thing
-  params.out = matrix(NA,nrow=Nboots,ncol=3)
+  params.out = matrix(NA, nrow = Nboots, ncol = 3)
 
   # random quantiles for bootstrap
-  quants = matrix(runif(n=Nboots*ERL, min=0, max=1), nrow=Nboots, ncol=ERL)
+  quants = matrix(runif(n = Nboots*ERL, min = 0, max = 1), nrow = Nboots, ncol = ERL)
 
   if(dist == "LP3"){
     # nested functions: qp3 transforms quantiles to LP3 space; samlmu computes sample L-moments of LP3 sample; pelpe3 converts L-moments to LP3 parameters
-    params.out = t(apply(quants, 1, function(x) lmom::pelpe3(lmom::samlmu(qp3(p=x, mu=as.numeric(bestfit_postmode[1]), sigma=as.numeric(bestfit_postmode[2]), gamma=as.numeric(bestfit_postmode[3]))))))
+    params.out = t(apply(quants, 1, function(x) lmom::pelpe3(lmom::samlmu(qp3(p = x,
+                                                                              mu = as.numeric(bestfit_postmode[1]),
+                                                                              sigma = as.numeric(bestfit_postmode[2]),
+                                                                              gamma = as.numeric(bestfit_postmode[3]))))))
+    colnames(params.out) = c("mean_log","sd_log","skew_log")
   }
   if(dist == "GEV"){
     # nested functions: quagev transforms quantiles to GEV space; samlmu computes sample L-moments of GEV sample; pelgev converts L-moments to GEV parameters
-    params.out = t(apply(quants, 1, function(x) lmom::pelgev(lmom::samlmu(lmom::quagev(f=x, para=bestfit_postmode)))))
+    params.out = t(apply(quants, 1, function(x) lmom::pelgev(lmom::samlmu(lmom::quagev(f = x, para = bestfit_postmode)))))
+    colnames(params.out) = c("location","scale","shape")
   }
 
-  # append posterior mode to top of matrix
-  colnames(params.out) = colnames(bestfit_postmode)
-  params.out = rbind(bestfit_postmode, params.out)
+  # Removing this for now - can call the postmode from the list if it's desired
+  # params.out = rbind(bestfit_postmode, params.out)
 
-  # send the damn samples
+  # return samples and parent distros
   return(list(params = params.out,
               dist = dist,
               postmode = bestfit_postmode,
