@@ -63,7 +63,7 @@ bootstrap_vfc <- function(bestfit_postmode, dist = "LP3", ERL = 150, Nboots = 10
   # params.out = rbind(bestfit_postmode, params.out)
 
   # return samples and parent distros
-  return(list(params = params.out,
+  return(list(params = data.frame(params.out),
               dist = dist,
               postmode = bestfit_postmode,
               ERL = ERL))
