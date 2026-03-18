@@ -3,7 +3,7 @@
 \docType{data}
 \name{cc_resmodel}
 \alias{cc_resmodel}
-\title{Cherry Creek Dam Reservoir Model}
+\title{Cherry Cricket Dam Reservoir Model}
 \format{
 A data frame with 3 columns:
 \describe{
@@ -16,6 +16,6 @@ A data frame with 3 columns:
 cc_resmodel
 }
 \description{
-Elevation-storage-discharge relationship for Cherry Creek Reservoir. Reservoir models must be monotonic.
+Elevation-storage-discharge relationship for Cherry Cricket Reservoir. Reservoir models must be monotonic.
 }
 \keyword{datasets}

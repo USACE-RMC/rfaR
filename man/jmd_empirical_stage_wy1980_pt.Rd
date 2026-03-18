@@ -16,7 +16,7 @@ A data frame with 54 rows and 3 columns:
 jmd_empirical_stage_wy1980_pt
 }
 \description{
-Empirical stage-frequency results for John Martin Dam (WY 1980-2024) with
+Empirical stage-frequency results for Jay McGraw Dam (WY 1980-2024) with
 perception threshold applied.
 }
 \keyword{datasets}

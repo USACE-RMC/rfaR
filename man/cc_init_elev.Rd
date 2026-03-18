@@ -3,7 +3,7 @@
 \docType{data}
 \name{cc_init_elev}
 \alias{cc_init_elev}
-\title{Cherry Creek Dam Initial Elevation}
+\title{Cherry Cricket Dam Initial Elevation}
 \format{
 A single numeric value representing the initial reservoir elevation (FT-NAVD88).
 }
@@ -11,7 +11,7 @@ A single numeric value representing the initial reservoir elevation (FT-NAVD88).
 cc_init_elev
 }
 \description{
-Initial/starting elevation (FT-NAVD88) for Cherry Creek Dam reservoir routing.
+Initial/starting elevation (FT-NAVD88) for Cherry Cricket Dam reservoir routing.
 This elevation was used in HEC-HMS.
 }
 \keyword{datasets}

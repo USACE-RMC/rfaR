@@ -10,7 +10,7 @@ jmd_wy1980_stage
 jmd_seasonality
 
 # hydrographs
-hydrographs <- hydrograph_setup(jmd_hydro_pmf,
+jmd_hydrographs <- hydrograph_setup(jmd_hydro_pmf,
                                 jmd_hydro_jun1965_15min,
                                 jmd_hydro_may1955,
                                 jmd_hydro_jun1965,
@@ -40,13 +40,15 @@ dt <- attr(hydrographs[[5]],"dt")
 #                                initial_elev = 3830.0, full_results = T)
 # route_15min$Timestep <- "0.25"
 
-results_expected <- rfa_simulate(sim_type = "expected",
-                                 bestfit_params = jmd_bf_parameter_sets,
-                                 stage_ts = jmd_wy1980_stage,
-                                 seasonality = jmd_seasonality$relative_frequency,
-                                 hydrographs = hydrographs,
-                                 resmodel = jmd_resmodel,
-                                 Nbins = 50, events_per_bin = 200)
+jmd_expected <- rfa_simulate(sim_type        = "expected",
+                             bestfit_params = jmd_bf_parameter_sets,
+                             stage_ts       = jmd_wy1980_stage,
+                             seasonality    = jmd_seasonality$relative_frequency,
+                             hydrographs    = jmd_hydrographs,
+                             resmodel       = jmd_resmodel,
+                             Nbins          = 50,
+                             events_per_bin = 200,
+                             sim_name       = "jmd")
 
 results_median <- rfa_simulate(sim_type = "median",
                                bestfit_params = jmd_bf_parameter_sets,
@@ -65,7 +67,39 @@ results_full <- rfa_simulate(sim_type = "full",
                              Nbins = 50, events_per_bin = 200,
                              Ncores = 26,
                              results_dir = "D:/0.RMC/Reefer/rfaR/full_uncert_testing/")
+# Median =======================================================================
+# harlan_median <- rfa_simulate(sim_type = "median",
+#                               bestfit_params = harlan_bestfit_params,
+#                               stage_ts = harlan_stage_ts,
+#                               seasonality = harlan_seasonality$relative_frequency,
+#                               hydrographs = harlan_hydrographs,
+#                               resmodel = harlan_resmodel,
+#                               Nbins = 50, events_per_bin = 200,
+#                               sim_name = "harlan")
+#
+# # Expected Only ================================================================
+# harlan_expected <- rfa_simulate(sim_type = "expected",
+#                                 bestfit_params = harlan_bestfit_params,
+#                                 stage_ts = harlan_stage_ts,
+#                                 seasonality = harlan_seasonality$relative_frequency,
+#                                 hydrographs = harlan_hydrographs,
+#                                 resmodel = harlan_resmodel,
+#                                 Nbins = 50, events_per_bin = 200,
+#                                 sim_name = "harlan")
+#
+# # Full Uncertainty =============================================================
+# harlan_full <- rfa_simulate(sim_type = "full",
+#                             bestfit_params = harlan_bestfit_params,
+#                             stage_ts = harlan_stage_ts,
+#                             seasonality = harlan_seasonality$relative_frequency,
+#                             hydrographs = harlan_hydrographs,
+#                             resmodel = harlan_resmodel,
+#                             Nbins = 50, events_per_bin = 200,
+#                             Ncores = 26)
 
+jmd_expected$realization_results
+ggplot(jmd_expected$realization_results)+
+  geom_point(aes(x = init_stage, y = peak_stage, color = hydrograph))
 
 # COMPARE WITH RFA RESULTS =====================================================
 library(tidyverse)

@@ -3,7 +3,7 @@
 \docType{data}
 \name{cc_inflowhydro}
 \alias{cc_inflowhydro}
-\title{Cherry Creek Dam Inflow Hydrograph}
+\title{Cherry Cricket Dam Inflow Hydrograph}
 \format{
 A data frame with 2 columns:
 \describe{
@@ -15,6 +15,6 @@ A data frame with 2 columns:
 cc_inflowhydro
 }
 \description{
-Inflow hydrograph for an example flood event at Cherry Creek Dam.
+Inflow hydrograph for an example flood event at Cherry Cricket Dam.
 }
 \keyword{datasets}

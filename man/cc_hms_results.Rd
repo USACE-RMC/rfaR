@@ -3,7 +3,7 @@
 \docType{data}
 \name{cc_hms_results}
 \alias{cc_hms_results}
-\title{Cherry Creek Dam HEC-HMS Routing Results}
+\title{Cherry Cricket Dam HEC-HMS Routing Results}
 \format{
 A data frame with 5 columns:
 \describe{
@@ -18,6 +18,6 @@ A data frame with 5 columns:
 cc_hms_results
 }
 \description{
-Routing results from HEC-HMS using the Cherry Creek reservoir model/geometry, inflow hydrograph, and initial reservoir elevation.
+Routing results from HEC-HMS using the Cherry Cricket reservoir model/geometry, inflow hydrograph, and initial reservoir elevation.
 }
 \keyword{datasets}

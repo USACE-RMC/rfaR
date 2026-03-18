@@ -180,7 +180,8 @@ results_exp <- rfa_simulate(
   stage_ts       = jmd_wy1980_stage,
   seasonality    = jmd_seasonality$relative_frequency,
   hydrographs    = hydros,
-  resmodel       = jmd_resmodel
+  resmodel       = jmd_resmodel,
+  sim_name       = "jmd"
 )
 
 # --- Median only ---
@@ -190,7 +191,8 @@ results_med <- rfa_simulate(
   stage_ts       = jmd_wy1980_stage,
   seasonality    = jmd_seasonality$relative_frequency,
   hydrographs    = hydros,
-  resmodel       = jmd_resmodel
+  resmodel       = jmd_resmodel,
+  sim_name       = "jmd"
 )
 
 # --- Full uncertainty (parallelized) ---
@@ -201,7 +203,8 @@ results_full <- rfa_simulate(
   seasonality    = jmd_seasonality$relative_frequency,
   hydrographs    = hydros,
   resmodel       = jmd_resmodel,
-  Ncores         = 4
+  Ncores         = 4,
+  sim_name       = "jmd"
 )
 
 # Plot full uncertainty results

@@ -1,10 +1,9 @@
 # ==============================================================================
-# CHERRY CREEK DAM
+# CHERRY CRICKET DAM
 # ==============================================================================
-
-#' Cherry Creek Dam Reservoir Model
+#' Cherry Cricket Dam Reservoir Model
 #'
-#' Elevation-storage-discharge relationship for Cherry Creek Reservoir. Reservoir models must be monotonic.
+#' Elevation-storage-discharge relationship for Cherry Cricket Reservoir. Reservoir models must be monotonic.
 #'
 #' @format A data frame with 3 columns:
 #' \describe{
@@ -14,9 +13,9 @@
 #' }
 "cc_resmodel"
 
-#' Cherry Creek Dam Inflow Hydrograph
+#' Cherry Cricket Dam Inflow Hydrograph
 #'
-#' Inflow hydrograph for an example flood event at Cherry Creek Dam.
+#' Inflow hydrograph for an example flood event at Cherry Cricket Dam.
 #'
 #' @format A data frame with 2 columns:
 #' \describe{
@@ -25,17 +24,17 @@
 #' }
 "cc_inflowhydro"
 
-#' Cherry Creek Dam Initial Elevation
+#' Cherry Cricket Dam Initial Elevation
 #'
-#' Initial/starting elevation (FT-NAVD88) for Cherry Creek Dam reservoir routing.
+#' Initial/starting elevation (FT-NAVD88) for Cherry Cricket Dam reservoir routing.
 #' This elevation was used in HEC-HMS.
 #'
 #' @format A single numeric value representing the initial reservoir elevation (FT-NAVD88).
 "cc_init_elev"
 
-#' Cherry Creek Dam HEC-HMS Routing Results
+#' Cherry Cricket Dam HEC-HMS Routing Results
 #'
-#' Routing results from HEC-HMS using the Cherry Creek reservoir model/geometry, inflow hydrograph, and initial reservoir elevation.
+#' Routing results from HEC-HMS using the Cherry Cricket reservoir model/geometry, inflow hydrograph, and initial reservoir elevation.
 #'
 #' @format A data frame with 5 columns:
 #' \describe{
@@ -84,21 +83,9 @@
 # JAY MCGRAW DAM - EMPIRICAL FREQUENCY
 # ==============================================================================
 
-#' Jay McGraw Dam Empirical Stage-Frequency (WY 1980-2024)
-#'
-#' Empirical stage-frequency results for Jay McGraw Dam, water years 1980-2024.
-#'
-#' @format A data frame with 45 rows and 3 columns:
-#' \describe{
-#'   \item{wy}{Water year}
-#'   \item{stage_ft}{Stage (FT-NAVD88)}
-#'   \item{plot_posit}{Plotting position}
-#' }
-"jmd_empirical_stage_wy1980"
-
 #' Jay McGraw Dam Empirical Stage-Frequency with Perception Threshold
 #'
-#' Empirical stage-frequency results for John Martin Dam (WY 1980-2024) with
+#' Empirical stage-frequency results for Jay McGraw Dam (WY 1980-2024) with
 #' perception threshold applied.
 #'
 #' @format A data frame with 54 rows and 3 columns:

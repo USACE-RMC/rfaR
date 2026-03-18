@@ -155,7 +155,8 @@
 #'   stage_ts       = jmd_wy1980_stage,
 #'   seasonality    = jmd_seasonality$relative_frequency,
 #'   hydrographs    = hydros,
-#'   resmodel       = jmd_resmodel
+#'   resmodel       = jmd_resmodel,
+#'   sim_name       = "jmd"
 #' )
 #'
 #' # --- Median only ---
@@ -165,7 +166,8 @@
 #'   stage_ts       = jmd_wy1980_stage,
 #'   seasonality    = jmd_seasonality$relative_frequency,
 #'   hydrographs    = hydros,
-#'   resmodel       = jmd_resmodel
+#'   resmodel       = jmd_resmodel,
+#'   sim_name       = "jmd"
 #' )
 #'
 #' # --- Full uncertainty (parallelized) ---
@@ -176,7 +178,8 @@
 #'   seasonality    = jmd_seasonality$relative_frequency,
 #'   hydrographs    = hydros,
 #'   resmodel       = jmd_resmodel,
-#'   Ncores         = 4
+#'   Ncores         = 4,
+#'   sim_name       = "jmd"
 #' )
 #'
 #' # Plot full uncertainty results
