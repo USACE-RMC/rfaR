@@ -41,7 +41,7 @@
 #'   \item{time_hr}{Time in hours (integer)}
 #'   \item{inflow_cfs}{Inflow in cubic-feet per second (CFS)}
 #'   \item{elevation_ft}{Routed reservoir stage/elevation data in FT-NAVD88}
-#'   \item{stor_acft}{Routed reservoir storage (ACRE-FT) corresponding to reservoir elevation (elev_ft).}
+#'   \item{storage_acft}{Routed reservoir storage (ACRE-FT) corresponding to reservoir elevation (elev_ft).}
 #'   \item{outflow_cfs}{Routed discharge/outflow (CFS) corresponding to reservoir elevation (elev_ft).}
 #' }
 "cc_hms_results"
@@ -56,9 +56,9 @@
 #'
 #' @format A data frame with 3 columns:
 #' \describe{
-#'   \item{elev_ft}{Reservoir stage/elevation data (FT-NAVD88)}
+#'   \item{stage_ft}{Reservoir stage/elevation data (FT-NAVD88)}
 #'   \item{stor_acft}{Cumulative reservoir storage (ACRE-FT) corresponding to reservoir elevation (elev_ft).}
-#'   \item{outflow_cfs}{Cumulative discharge/outflow (CFS) corresponding to reservoir elevation (elev_ft).}
+#'   \item{discharge_cfs}{Cumulative discharge/outflow (CFS) corresponding to reservoir elevation (elev_ft).}
 #' }
 "jmd_resmodel"
 
@@ -296,7 +296,7 @@
 #'   \item{mean_log}{Mean of log-transformed values}
 #'   \item{sd_log}{Standard deviation of log-transformed values}
 #'   \item{skew_log}{Skewness of log-transformed values}
-#'   \item{log-likelihood}{Log-likelihood of parameter set}
+#'   \item{log_likelihood}{Log-likelihood of parameter set}
 #' }
 "jmd_bf_parameter_sets"
 
@@ -348,3 +348,8 @@
 #' @seealso [stratified_sampler()]
 "example_stratified"
 
+#' @keywords internal
+"castle"
+
+#' @keywords internal
+"think"

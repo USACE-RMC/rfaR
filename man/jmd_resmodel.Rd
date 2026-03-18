@@ -7,9 +7,9 @@
 \format{
 A data frame with 3 columns:
 \describe{
-\item{elev_ft}{Reservoir stage/elevation data (FT-NAVD88)}
+\item{stage_ft}{Reservoir stage/elevation data (FT-NAVD88)}
 \item{stor_acft}{Cumulative reservoir storage (ACRE-FT) corresponding to reservoir elevation (elev_ft).}
-\item{outflow_cfs}{Cumulative discharge/outflow (CFS) corresponding to reservoir elevation (elev_ft).}
+\item{discharge_cfs}{Cumulative discharge/outflow (CFS) corresponding to reservoir elevation (elev_ft).}
 }
 }
 \usage{

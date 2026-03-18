@@ -10,7 +10,7 @@ A data frame with 5 columns:
 \item{time_hr}{Time in hours (integer)}
 \item{inflow_cfs}{Inflow in cubic-feet per second (CFS)}
 \item{elevation_ft}{Routed reservoir stage/elevation data in FT-NAVD88}
-\item{stor_acft}{Routed reservoir storage (ACRE-FT) corresponding to reservoir elevation (elev_ft).}
+\item{storage_acft}{Routed reservoir storage (ACRE-FT) corresponding to reservoir elevation (elev_ft).}
 \item{outflow_cfs}{Routed discharge/outflow (CFS) corresponding to reservoir elevation (elev_ft).}
 }
 }

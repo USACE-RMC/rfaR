@@ -10,7 +10,7 @@ A data frame with 10000 rows and 3 columns:
 \item{mean_log}{Mean of log-transformed values}
 \item{sd_log}{Standard deviation of log-transformed values}
 \item{skew_log}{Skewness of log-transformed values}
-\item{log-likelihood}{Log-likelihood of parameter set}
+\item{log_likelihood}{Log-likelihood of parameter set}
 }
 }
 \usage{

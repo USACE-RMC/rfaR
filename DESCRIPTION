@@ -2,16 +2,16 @@ Package: rfaR
 Title: RMC Reservoir Frequency Analysis in R
 Version: 0.1.3
 Authors@R: c(
-    person("Daniel", "McGraw, P.E.", , "daniel.e.mcgraw@usace.army.mil", 
-           role = c("aut", "cre"), comment = "USACE RMC"),
-    person("Andrew", "Verdin, PhD, P.H.", , "andrew.p.verdin@usace.army.mil", 
-           role = "aut", comment = "USACE RMC"),
-    person("C. Haden", "Smith, P.E.", , "cole.h.smith@usace.army.mil", 
-           role = c("aut"), comment = "USACE RMC"),
-    person("Allen", "Avance, P.E.", , "allen.avance@usace.army.mil",
-           role = "ctb", comment = "USACE RMC"),
-    person("Samantha", "Hartke, PhD", , "samantha.h.hartke@usace.army.mil",
-           role = "ctb", comment = "USACE RMC"),
+    person("Daniel", "McGraw", , "daniel.e.mcgraw@usace.army.mil", 
+           role = c("aut", "cre"), comment = "P.E., USACE RMC"),
+    person("Andrew", "Verdin", , "andrew.p.verdin@usace.army.mil", 
+           role = "aut", comment = "PhD, P.H., USACE RMC"),
+    person("C. Haden", "Smith", , "cole.h.smith@usace.army.mil", 
+           role = "aut", comment = "P.E., USACE RMC"),
+    person("Allen", "Avance", , "allen.avance@usace.army.mil",
+           role = "ctb", comment = "P.E., USACE RMC"),
+    person("Samantha", "Hartke", , "samantha.h.hartke@usace.army.mil",
+           role = "ctb", comment = "PhD, USACE RMC"),
     person("Julian", "Gonzalez", , "julian.t.gonzalez@usace.army.mil",
            role = "ctb", comment = "USACE RMC"))
 Description: An R implementation of the U.S. Army Corps of Engineers (USACE) 
@@ -27,14 +27,17 @@ Description: An R implementation of the U.S. Army Corps of Engineers (USACE)
     parameters (stage, discharge, duration) and their associated annual exceedance 
     probabilities.
 License: BSD_3_clause + file LICENSE
+URL: https://github.com/USACE-RMC/rfaR
+BugReports: https://github.com/USACE-RMC/rfaR/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Depends: 
-    R (>= 3.5)
+    R (>= 4.1)
 LazyData: true
 Suggests: 
     gt,
+    ggplot2,
     knitr,
     rmarkdown,
     scales,
@@ -43,7 +46,6 @@ Suggests:
 VignetteBuilder: knitr
 Imports: 
     cli,
-    evd,
     future,
     future.apply,
     lmom,

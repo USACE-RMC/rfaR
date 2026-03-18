@@ -3,7 +3,7 @@
 > [!WARNING]
 > This package is currently under active development. The API may change without notice.
 
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html) [![R](https://img.shields.io/badge/R-%3E%3D4.1-blue)](https://cran.r-project.org/)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html) [![R](https://img.shields.io/badge/R-%3E%3D4.1-blue)](https://cran.r-project.org/) [![License](https://img.shields.io/badge/License-BSD--3--Clause-blue.svg)](LICENSE)
 
 An R implementation of the U.S. Army Corps of Engineers (USACE) Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software. This package produces reservoir stage-frequency curves with uncertainty bounds by combining deterministic flood routing (Modified Puls method) with a nested Monte Carlo framework — providing H&H engineers the tools needed for dam safety risk assessments in accordance with USACE/RMC guidance. \## Example Data
 
@@ -113,6 +113,15 @@ jmd_fulluncert <- rfa_simulate(sim_type      = "full",
 
 ## Quick Start Results
 
+```r
+print(jmd_expected$stage_frequency)
+
+```
+
+<details>
+
+<summary>Plotting Results</summary>
+
 ``` r
 # ggplot is contained in tidyverse
 library(tidyverse)
@@ -192,6 +201,7 @@ ggplot() +
         plot.title = element_text(size = 11, face = "bold"))+
   coord_cartesian(xlim = c(z_limit1, z_limit2), ylim = c(3800,3900))
 ```
+</details>
 
 ## References
 

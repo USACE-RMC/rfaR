@@ -8,19 +8,27 @@
 \description{
 An R implementation of the U.S. Army Corps of Engineers (USACE) Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software. This package produces reservoir stage-frequency curves with uncertainty bounds by combining deterministic flood routing (Modified Puls method) with a nested Monte Carlo framework. The outer loop quantifies knowledge uncertainty in inflow volume frequency distributions, while the inner loop simulates natural variability across thousands of flood events. Uncertain variables include inflow volume, flood hydrograph shape, seasonal occurrence, and antecedent reservoir stage. The resulting stage-frequency curves provide critical hydrologic hazard assessment data for dam safety risk analyses, enabling evaluation of loading parameters (stage, discharge, duration) and their associated annual exceedance probabilities.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/USACE-RMC/rfaR}
+  \item Report bugs at \url{https://github.com/USACE-RMC/rfaR/issues}
+}
+
+}
 \author{
-\strong{Maintainer}: Daniel McGraw, P.E. \email{daniel.e.mcgraw@usace.army.mil} (USACE RMC)
+\strong{Maintainer}: Daniel McGraw \email{daniel.e.mcgraw@usace.army.mil} (P.E., USACE RMC)
 
 Authors:
 \itemize{
-  \item Andrew Verdin, PhD, P.H. \email{andrew.p.verdin@usace.army.mil} (USACE RMC)
-  \item C. Haden Smith, P.E. \email{cole.h.smith@usace.army.mil} (USACE RMC)
+  \item Andrew Verdin \email{andrew.p.verdin@usace.army.mil} (PhD, P.H., USACE RMC)
+  \item C. Haden Smith \email{cole.h.smith@usace.army.mil} (P.E., USACE RMC)
 }
 
 Other contributors:
 \itemize{
-  \item Allen Avance, P.E. \email{allen.avance@usace.army.mil} (USACE RMC) [contributor]
-  \item Samantha Hartke, PhD \email{samantha.h.hartke@usace.army.mil} (USACE RMC) [contributor]
+  \item Allen Avance \email{allen.avance@usace.army.mil} (P.E., USACE RMC) [contributor]
+  \item Samantha Hartke \email{samantha.h.hartke@usace.army.mil} (PhD, USACE RMC) [contributor]
   \item Julian Gonzalez \email{julian.t.gonzalez@usace.army.mil} (USACE RMC) [contributor]
 }
 

@@ -152,10 +152,8 @@ metrics_table
 
 
 ## Cherry Creek Dam Routing Validation
-
-```{r setup, warning = F}
-#library(rfaR)
-devtools::load_all()
+```{r setup, warning = FALSE, message = FALSE}
+library(rfaR)
 ```
 
 ```{r cherry creek routing}
