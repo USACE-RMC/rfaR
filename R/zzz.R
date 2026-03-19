@@ -1,4 +1,5 @@
-castle <- r"{
+.onAttach <- function(libname, pkgname) {
+  castle <- r"{
   _______________________________________
  /                                       \
 /   _   _   _                 _   _   _   \
@@ -15,17 +16,8 @@ castle <- r"{
 \       USACE RISK MANAGEMENT CENTER      /
  \_______________________________________/
 }"
-
-.onAttach <- function(libname, pkgname) {
-  if (runif(1) < 0.05) {
-    utils::data(think, package = "rfaR", envir = environment())
-    packageStartupMessage(castle)
-    packageStartupMessage(think)
-  } else {
-    packageStartupMessage(castle)
-  }
+  packageStartupMessage(castle)
   packageStartupMessage("rfaR: RMC-Reservoir Frequency Analysis in R")
   packageStartupMessage("Version: ", utils::packageVersion("rfaR"), ' - "Half Baked"')
-  #packageStartupMessage("Version: ", utils::packageVersion("rfaR"), ' - "Dazed & Confused')
   packageStartupMessage("US Army Corps of Engineers - Risk Management Center (USACE-RMC)")
 }

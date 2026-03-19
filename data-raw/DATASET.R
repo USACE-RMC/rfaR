@@ -91,35 +91,3 @@ usethis::use_data(example_stratified, overwrite = TRUE)
 # MOD-PULS VALIDATION - JMD MAY 1955 ===========================================
 hms_scaled_may1955 <- read.csv("data-raw/JMD/hms_routing/ModPuls_Validation_May1955.csv")
 usethis::use_data(hms_scaled_may1955, overwrite = TRUE)
-
-# THINK!!!! ====================================================================
-think <- r"{
-  _____   _   _   ___   _   _   _  __
- |_   _| | | | | |_ _| | \ | | | |/ /
-   | |   | |_| |  | |  |  \| | | ' /
-   | |   |  _  |  | |  | |\  | | . \
-   |_|   |_| |_| |___| |_| \_| |_|\_\
-
-}"
-
-usethis::use_data(think, overwrite = TRUE)
-
-# USACE - RMC CASTLE ===========================================================
-castle <- r"{
-  _______________________________________
- /                                       \
-/   _   _   _                 _   _   _   \
-|  | |_| |_| |   _   _   _   | |_| |_| |  |
-|   \   _   /   | |_| |_| |   \   _   /   |
-|    | | | |     \       /     | | | |    |
-|    | |_| |______|     |______| |_| |    |
-|    |              ___              |    |
-|    |  _    _    (     )    _    _  |    |
-|    | | |  |_|  (       )  |_|  | | |    |
-|    | |_|       |       |       |_| |    |
-|   /            |_______|            \   |
-|  |___________________________________|  |
-\       USACE RISK MANAGEMENT CENTER      /
- \_______________________________________/
-}"
-usethis::use_data(castle, overwrite = TRUE)

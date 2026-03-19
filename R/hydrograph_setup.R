@@ -28,12 +28,22 @@
 #'
 #' @examples
 #' # Setup with equal weights (default)
-#' hydros <- hydrograph_setup(hydro_apr1999, hydro_jun1965, hydro_pmf)
+#' hydros <- hydrograph_setup(jmd_hydro_apr1999,
+#'                            jmd_hydro_jun1965,
+#'                            jmd_hydro_pmf,
+#'                            critical_duration = 2,
+#'                            routing_days = 10)
 #'
 #' # Setup with custom weights (PMF 3x more likely to be sampled)
-#' hydros <- hydrograph_setup(hydro_apr1999, hydro_jun1965, hydro_pmf,
-#'                             weights = c(1, 1, 3))
-#' attr(hydros, "probs")  # view normalized probabilities
+#' hydros <- hydrograph_setup(jmd_hydro_apr1999,
+#'                            jmd_hydro_jun1965,
+#'                            jmd_hydro_pmf,
+#'                            critical_duration = 2,
+#'                            routing_days = 10,
+#'                            weights = c(1, 1, 3))
+#'
+#' # view normalized probabilities
+#' attr(hydros, "probs")
 hydrograph_setup <- function(..., critical_duration = NULL, routing_days = NULL, weights = NULL){
 
   # Collect Hydrographs ========================================================

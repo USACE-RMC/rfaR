@@ -33,6 +33,14 @@ the inflow hydrograph — use \code{routable_hydrograph()} to resample to the
 desired computation interval before routing.
 }
 \examples{
+
+# Example hydrograph. Requires pre-processing
+hydro_example <- hydrograph_setup(jmd_hydro_jun1965_15min, critical_duration = 2, routing_days = 10)
+hydrograph_shape <- hydro_example[[1]][, 2:3]
+scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
+                                      observed_volume = 50000,
+                                      sampled_volume = 55000)
+
 # Peak values only
 mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830)
 

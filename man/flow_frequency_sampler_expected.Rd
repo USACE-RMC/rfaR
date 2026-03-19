@@ -47,9 +47,23 @@ mode.
 }
 \examples{
 # Expected only using all 10,000 parameter sets
-# result <- flow_frequency_sampler_expected(jmd_bf_parameter_sets,
-#                                          Nbin = 20, Mevent = 500)
-# dim(result$flow)  # 500 x 20
+result <- flow_frequency_sampler_expected(jmd_bf_parameter_sets,
+                                          Nbin = 20, Mevent = 500)
+dim(result$flow)  # 500 x 20
+
+#' # Using bootstrapped parameter samples
+jmd_samples <- bootstrap_vfc(
+  c(jmd_vfc_parameters$mean_log,
+    jmd_vfc_parameters$sd_log,
+    jmd_vfc_parameters$skew_log),
+  dist = "LP3",
+  ERL  = jmd_vfc_parameters$erl)
+
+jmd_result <- flow_frequency_sampler_expected(
+  jmd_samples$params,
+  freq_dist = "LP3",
+  Nbin      = 20,
+  Mevent    = 500)
 }
 \seealso{
 \code{\link[=stratified_sampler]{stratified_sampler()}}, \code{\link[=qp3]{qp3()}}, \code{\link[=flow_frequency_sampler]{flow_frequency_sampler()}}, \code{\link[=rfa_simulate]{rfa_simulate()}}

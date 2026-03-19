@@ -348,8 +348,3 @@
 #' @seealso [stratified_sampler()]
 "example_stratified"
 
-#' @keywords internal
-"castle"
-
-#' @keywords internal
-"think"

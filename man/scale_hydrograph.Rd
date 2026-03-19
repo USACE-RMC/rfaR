@@ -35,14 +35,18 @@ from the target routing timestep, resampling is applied prior to scaling:
 finer-to-coarser uses block averaging; coarser-to-finer uses linear interpolation.
 }
 \examples{
+# Example hydrograph. Requires pre-processing
+hydro_example <- hydrograph_setup(jmd_hydro_jun1965_15min, critical_duration = 2, routing_days = 10)
+hydrograph_shape <- hydro_example[[1]][, 2:3]
+
 # Default 1-hour routing timestep
-scaled <- scale_hydrograph(cc_inflowhydro, observed_volume = 2500, sampled_volume = 5000)
+scaled <- scale_hydrograph(hydrograph_shape,
+                           observed_volume = 50000,
+                           sampled_volume = 55000)
 
 # 15-min input hydrograph, 1-hour routing timestep
-scaled <- scale_hydrograph(cc_inflowhydro_15min, observed_volume = 2500,
-                           sampled_volume = 5000, routing_dt = 1)
-
-# 6-hour input hydrograph, 1-hour routing timestep
-scaled <- scale_hydrograph(cc_inflowhydro_6hr, observed_volume = 2500,
-                           sampled_volume = 5000, routing_dt = 1)
+scaled <- scale_hydrograph(hydrograph_shape,
+                           observed_volume = 50000,
+                           sampled_volume = 55000,
+                           routing_dt = 1)
 }

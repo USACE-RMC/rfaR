@@ -20,16 +20,20 @@
 #' @export
 #'
 #' @examples
+#' # Example hydrograph. Requires pre-processing
+#' hydro_example <- hydrograph_setup(jmd_hydro_jun1965_15min, critical_duration = 2, routing_days = 10)
+#' hydrograph_shape <- hydro_example[[1]][, 2:3]
+#'
 #' # Default 1-hour routing timestep
-#' scaled <- scale_hydrograph(cc_inflowhydro, observed_volume = 2500, sampled_volume = 5000)
+#' scaled <- scale_hydrograph(hydrograph_shape,
+#'                            observed_volume = 50000,
+#'                            sampled_volume = 55000)
 #'
 #' # 15-min input hydrograph, 1-hour routing timestep
-#' scaled <- scale_hydrograph(cc_inflowhydro_15min, observed_volume = 2500,
-#'                            sampled_volume = 5000, routing_dt = 1)
-#'
-#' # 6-hour input hydrograph, 1-hour routing timestep
-#' scaled <- scale_hydrograph(cc_inflowhydro_6hr, observed_volume = 2500,
-#'                            sampled_volume = 5000, routing_dt = 1)
+#' scaled <- scale_hydrograph(hydrograph_shape,
+#'                            observed_volume = 50000,
+#'                            sampled_volume = 55000,
+#'                            routing_dt = 1)
 scale_hydrograph <- function(hydrograph_shape, observed_volume, sampled_volume, routing_dt = 1) {
 
   # CONVERT TO DF (TIBBLE HANDLING) ============================================
@@ -51,7 +55,7 @@ scale_hydrograph <- function(hydrograph_shape, observed_volume, sampled_volume, 
     n_out <- length(resampled_inflow)
 
   } else if (dt_native < routing_dt) {
-    # BLOCK AVERAGE: native is finer than routing (e.g., 15-min -> 1-hr)
+    # BLOCK AVERAGE: native is finer than routing (e.g., 15-min to 1-hr)
     block_size <- round(routing_dt / dt_native)
 
     # Trim to a complete number of blocks
@@ -64,7 +68,7 @@ scale_hydrograph <- function(hydrograph_shape, observed_volume, sampled_volume, 
     n_out            <- length(resampled_inflow)
 
   } else {
-    # LINEAR INTERPOLATION: native is coarser than routing (e.g., 6-hr -> 1-hr)
+    # LINEAR INTERPOLATION: native is coarser than routing (e.g., 6-hr to 1-hr)
     n_coarse    <- length(inflow)
     time_coarse <- seq(0, by = dt_native, length.out = n_coarse)
     time_fine   <- seq(0, max(time_coarse), by = routing_dt)
