@@ -219,12 +219,12 @@ ggplot() +
 
 #### Statistical Foundations
 
--   Vose, D. (2008). *Risk Analysis: A Quantitative Guide*. John Wiley & Sons, West Sussex, England.
--   Nathan, R., & Weinmann, E. (2013). *Monte Carlo Simulation Techniques*. Australian Rainfall and Runoff Discussion Paper. Engineers Australia.
--   Nathan, R., et al. (2016). Estimating the exceedance probability of extreme rainfalls up to the probable maximum precipitation. *Journal of Hydrology*.
+-   Chow, V. T. (1954). The log-probability law and its engineering applications. *Proceedings of the ASCE*, 80, 1–25.
 -   Efron, B. (1979). Bootstrap methods: another look at the jackknife. *The Annals of Statistics*, 7, 1–26.
 -   Efron, B., & Tibshirani, R. J. (1998). *An Introduction to the Bootstrap*. CRC Press.
--   Chow, V. T. (1954). The log-probability law and its engineering applications. *Proceedings of the ASCE*, 80, 1–25.
+-   Nathan, R., et al. (2016). Estimating the exceedance probability of extreme rainfalls up to the probable maximum precipitation. *Journal of Hydrology*.
+-   Nathan, R., & Weinmann, E. (2013). *Monte Carlo Simulation Techniques*. Australian Rainfall and Runoff Discussion Paper. Engineers Australia.
+-   Vose, D. (2008). *Risk Analysis: A Quantitative Guide*. John Wiley & Sons, West Sussex, England.
 
 <details>
 
