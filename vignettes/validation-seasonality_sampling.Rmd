@@ -1,0 +1,101 @@
+---
+title: "Seasonality Sampling Validation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Seasonality Sampling Validation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(rfaR)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+## Purpose
+
+Verify that sampling from the Jay McGraw Dam (JMD) seasonality distribution reproduces the input relative frequencies within expected Monte Carlo variability.
+
+The seasonality module assigns each simulation realization to a calendar month based on the historical relative frequency of flood events. This test validates that `sample()` with the JMD seasonality probabilities produces a sampled distribution consistent with the input.
+
+## Input Data
+
+The input seasonality distribution is stored in `jmd_seasonality$relative_frequency`, a vector of 12 monthly probabilities that sum to 1.
+
+```{r input-data}
+seasonality_prob <- jmd_seasonality$relative_frequency
+
+input_df <- data.frame(Month = month.abb,
+                       Relative_Frequency = seasonality_prob)
+
+knitr::kable(input_df, digits = 4, col.names = c("Month", "Relative Frequency"),
+             caption = "JMD Seasonality Input Distribution")
+```
+
+## Test
+
+Sample 100,000 months using the input probabilities, then compare the sampled relative frequencies to the input.
+
+```{r sampling}
+set.seed(42)
+Nsims <- 100000
+
+InitMonths <- sample(1:12, size = Nsims, replace = TRUE, prob = seasonality_prob)
+sample_freq <- tabulate(InitMonths, nbins = 12) / Nsims
+```
+
+```{r results-table}
+results_df <- data.frame(Month = month.abb,
+                         Input = seasonality_prob,
+                         Sampled = sample_freq,
+                         Difference = sample_freq - seasonality_prob)
+
+knitr::kable(results_df, digits = 4,
+             col.names = c("Month", "Input Frequency", "Sampled Frequency", "Difference"),
+             caption = "Input vs. Sampled Seasonality Frequencies (N = 100,000)")
+```
+
+```{r results-plot, fig.width=8, fig.height=5}
+results_long <- results_df |>
+  pivot_longer(cols = c(Input, Sampled),
+               names_to  = "Type",
+               values_to = "Frequency") |>
+  mutate(Month = factor(Month, levels = month.abb),
+         Type  = factor(Type, levels = c("Input", "Sampled")))
+
+ggplot(results_long, aes(x = Month, y = Frequency, fill = Type)) +
+  geom_col(position = "dodge", alpha = 0.8, color = "grey80") +
+  scale_fill_manual(values = c("Input"   = "#3B4992FF",
+                               "Sampled" = "#EE0000FF")) +
+  labs(x = NULL,
+       y = "Relative Frequency",
+       fill = NULL) +
+  scale_y_continuous(breaks = seq(0,0.5,0.1), minor_breaks = seq(0,0.5,0.01)) +
+  theme_bw() +
+  theme(legend.position  = "top",
+        panel.grid.major.x = element_blank())
+```
+
+## Acceptance Criterion
+
+Sampled relative frequencies must be within 1% relative tolerance of the input probabilities, consistent with `expect_equal(sample_freq, seasonality_prob, tolerance = 0.01)`.
+
+```{r acceptance}
+max_rel_diff <- max(abs((sample_freq - seasonality_prob) / seasonality_prob), na.rm = TRUE)
+pass <- max_rel_diff < 0.01
+```
+
+| Metric | Value |
+|--------|-------|
+| Maximum Relative Difference | `r round(max_rel_diff, 6)` |
+| Tolerance | 0.01 (1% relative) |
+| **Result** | **`r ifelse(pass, "PASS", "FAIL")`** |

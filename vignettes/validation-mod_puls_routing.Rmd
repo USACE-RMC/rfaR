@@ -1,0 +1,180 @@
+---
+title: "Validation of the Modified-Puls Routing Function"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Validation of the Modified-Puls Routing Function}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(rfaR)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(patchwork)
+library(scales)
+```
+
+## Purpose
+
+Validate that `mod_puls_routing()` produces results consistent with HEC-HMS Modified Puls routing for a benchmark dataset at Cherry Cricket Dam. The comparison benchmark uses an identical reservoir model, inflow hydrograph, and initial condition routed independently in HEC-HMS.
+
+---
+
+## Modified Puls Routing
+
+The Modified Puls routing method, also known as storage routing or level-pool routing, is based upon a finite difference approximation of the continuity equation, coupled with an empirical representation of the momentum equation (Chow, 1964; Henderson, 1966; HEC, 2025).
+
+The continuity equation for a control volume is:
+
+$$\frac{\partial Q}{\partial x} + \frac{\partial A}{\partial t} = 0$$
+
+where *Q* is discharge, *A* is cross-sectional area, *x* is distance, and *t* is time. For reservoir routing, this is expressed using average inflow and outflow over a time step:
+
+$$\bar{I_t} - \bar{O_t} = \frac{\Delta S_t}{\Delta t}$$
+
+where $\bar{I_t}$ is the average inflow, $\bar{O_t}$ is the average outflow, and $\Delta S_t$ is the change in storage over the time interval $\Delta t$.
+
+Rearranging and expressing in finite difference form yields the Modified Puls routing equation:
+
+$$\left(\frac{S_t}{\Delta t} + \frac{O_t}{2}\right) = \frac{I_{t-1} + I_t}{2} + \left(\frac{S_{t-1}}{\Delta t} - \frac{O_{t-1}}{2}\right)$$
+
+The method introduces a "storage indication" term:
+
+$$SI_t = \frac{S_t}{\Delta t} + \frac{O_t}{2}$$
+
+Substituting this into the routing equation:
+
+$$SI_t = \frac{I_{t-1} + I_t}{2} + \left(\frac{S_{t-1}}{\Delta t} - \frac{O_{t-1}}{2}\right)$$
+
+The left side represents the storage indication at time *t*, which can be computed from known values on the right side. This value is then used with the storage-outflow relationship to determine the outflow at time *t*.
+
+---
+
+## Test
+
+```{r cc-compute}
+cc_routing <- mod_puls_routing(resmodel_df = cc_resmodel,
+                               inflow_df = cc_inflowhydro,
+                               initial_elev = cc_init_elev,
+                               full_results = TRUE)
+
+cc_diff_elev <- cc_routing$elevation_ft - cc_hms_results$elevation_ft
+cc_diff_outflow <- cc_routing$outflow_cfs - cc_hms_results$outflow_cfs
+
+cc_max_diff_elev <- max(abs(cc_diff_elev))
+cc_max_diff_outflow <- max(abs(cc_diff_outflow))
+```
+
+```{r cc-table}
+cc_summary <- data.frame(
+  Metric = c("Peak Elevation (ft)", "Peak Outflow (cfs)",
+             "Max Abs Diff Elevation (ft)", "Max Abs Diff Outflow (cfs)"),
+  rfaR = c(max(cc_routing$elevation_ft), max(cc_routing$outflow_cfs),
+           cc_max_diff_elev, cc_max_diff_outflow),
+  HMS = c(max(cc_hms_results$elevation_ft), max(cc_hms_results$outflow_cfs),
+          NA, NA)
+)
+
+knitr::kable(cc_summary, digits = 4,
+             col.names = c("Metric", "rfaR", "HEC-HMS"),
+             caption = "Cherry Creek Dam Routing Comparison")
+```
+
+```{r cc-plot, fig.width=10, fig.height=8}
+hydro_compare_long <- bind_rows(
+  data.frame(time   = cc_routing$time_hr,
+             flow   = cc_routing$inflow_cfs,
+             Series = "Inflow"),
+  data.frame(time   = cc_hms_results$time_hr,
+             flow   = cc_hms_results$outflow_cfs,
+             Series = "HMS Outflow"),
+  data.frame(time   = cc_routing$time_hr,
+             flow   = cc_routing$outflow_cfs,
+             Series = "rfaR Outflow")) |>
+  mutate(Series = factor(Series, levels = c("Inflow", "HMS Outflow", "rfaR Outflow")))
+
+# Difference data
+diff_df <- data.frame(time = cc_routing$time_hr,
+                      diff = cc_diff_outflow)
+
+# Top panel
+p1 <- ggplot(hydro_compare_long, aes(x = time, y = flow,
+                                     color = Series, linetype = Series,
+                                     linewidth = Series)) +
+  geom_line() +
+  scale_color_manual(values = c("Inflow" = "gray70",
+                                "rfaR Outflow" = "#EE0000FF",
+                                "HMS Outflow" = "#3B4992FF")) +
+  scale_linetype_manual(values = c("Inflow"  = "solid",
+                                   "rfaR Outflow" = "dashed",
+                                   "HMS Outflow" = "solid")) +
+  scale_linewidth_manual(values = c("Inflow" = 0.6,
+                                    "rfaR Outflow" = 1.0,
+                                    "HMS Outflow" = 1.0)) +
+  scale_x_continuous(breaks = seq(0,960,24)) +
+  scale_y_continuous(labels = scales::comma_format()) +
+  labs(x = "Time (hr)",
+       y = "Flow (cfs)",
+       title = "Cherry Cricket Dam \u2014 Inflow and Outflow Comparison",
+       color = NULL,
+       linetype = NULL,
+       linewidth = NULL) +
+  theme_bw() +
+  theme(legend.position  = "top") + 
+  coord_cartesian(ylim = c(0,2500))
+
+# Bottom panel
+p2 <- ggplot(diff_df, aes(x = time, y = diff)) +
+  geom_line(color = "#3B4992FF", linewidth = 0.6) +
+  geom_hline(yintercept = 0, color = "gray50", linetype = "dashed") +
+  labs(x     = "Time (hr)",
+       y     = "Difference (cfs)",
+       title = "Cherry Cricket Dam \u2014 Outflow Difference (rfaR \u2212 HMS)") +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank())
+
+p1 / p2
+```
+
+### Acceptance Criterion
+
+Maximum absolute difference must be less than 0.1 ft for elevation and 1.0 cfs for outflow.
+
+```{r cc-result}
+pass_cc_elev <- cc_max_diff_elev < 0.1
+pass_cc_outflow <- cc_max_diff_outflow < 1.0
+```
+
+| Metric | Value | Tolerance |
+|--------|-------|-----------|
+| Max Abs Diff Elevation | `r round(cc_max_diff_elev, 4)` ft | 0.1 ft |
+| Max Abs Diff Outflow | `r round(cc_max_diff_outflow, 4)` cfs | 1.0 cfs |
+| **Result (Elevation)** | **`r ifelse(pass_cc_elev, "PASS", "FAIL")`** | |
+| **Result (Outflow)** | **`r ifelse(pass_cc_outflow, "PASS", "FAIL")`** | |
+
+---
+
+## Summary
+
+| Test | Dam | Variable | Result |
+|------|-----|----------|--------|
+| 1a | Cherry Cricket | Elevation | **`r ifelse(pass_cc_elev, "PASS", "FAIL")`** |
+| 1b | Cherry Cricket | Outflow | **`r ifelse(pass_cc_outflow, "PASS", "FAIL")`** |
+
+## References
+Chow, V. T. (1964). Handbook of Applied Hydrology. McGraw-Hill Book Company, New York.
+
+Henderson, F. M. (1966). Open Channel Flow. Macmillan Publishing Co., Inc., New York.
+
+Nash, J. E., & Sutcliffe, J. V. (1970). River flow forecasting through conceptual models part I — A discussion of principles. Journal of Hydrology, 10(3), 282-290. https://doi.org/10.1016/0022-1694(70)90255-6
+
+U.S. Army Corps of Engineers, Hydrologic Engineering Center. (n.d.). Modified Puls Model. HEC-HMS Technical Reference Manual. Retrieved December 18, 2025, from https://www.hec.usace.army.mil/confluence/hmsdocs/hmstrm/channel-flow/modified-puls-model

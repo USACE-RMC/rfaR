@@ -42,7 +42,11 @@ Suggests:
     rmarkdown,
     scales,
     testthat (>= 3.0.0),
-    tidyverse
+    tidyverse,
+    dplyr,
+    tidyr,
+    kableExtra,
+    patchwork
 VignetteBuilder: knitr
 Imports: 
     cli,

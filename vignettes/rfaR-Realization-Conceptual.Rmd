@@ -1,0 +1,257 @@
+---
+title: "Conceptual Computation of an rfaR Realization"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Conceptual Computation of an rfaR Realization}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+RMC-RFA produces a reservoir stage-frequency curve with uncertainty bounds by utilizing a deterministic flood routing model while treating the inflow volume, flood hydrograph shape, seasonal occurrence, and antecedent reservoir stage as uncertain variables rather than fixed values. To quantify both the natural variability and epistemic uncertainty in reservoir stage-frequency estimates, RMC-RFA employs a two-looped, nested Monte Carlo methodology.
+
+The inner loop — defined here as a realization — simulates natural variability by routing many thousands of individual flood events through the reservoir, each with randomly sampled starting stage, hydrograph shape, and stratified-sampled inflow volume drawn from the volume-frequency distribution. Together these routed events produce a single stage-frequency curve estimate. The outer loop propagates epistemic uncertainty by repeating this process across many realizations, each conditioned on a different set of volume-frequency distribution parameters drawn from the posterior.
+
+This document walks through a single realization in detail. Understanding one realization is the key to understanding the full simulation: the outer loop simply repeats this process with a different parameter set each time. The walkthrough covers the stratified sampling procedure, random sampling of starting stage and hydrograph shape, and calculation of stage exceedance probabilities — steps that are common to all simulation types. The full uncertainty simulation conducts 10,000 realizations, each comprising 10,000 flood events (100 million routing operations total), while the expected value simulation conducts 10,000 realizations using a single representative parameter set.
+
+```{r setup}
+library(rfaR)
+library(dplyr)
+```
+
+## One Simulation 
+10,000 realizations
+
+### Set up Stratified Bins
+
+Stratified sampling is used instead of simple random sampling because reliable estimates of exceedance probabilities far into the tail of the distribution — events with AEPs of 1/10,000 or rarer — are required. Simple random sampling would require an impractically large number of events to adequately populate the tail. Instead, the frequency axis is divided into `Nbins` equal-probability bins, and `Mevents` are sampled uniformly within each bin. This ensures the tail is well-represented without artificially inflating the total number of routing operations.
+
+The bin weights (`ords$Weights`) reflect the true probability mass each bin represents. These weights are applied later to reconstruct the true exceedance probability from the stratified sample, correcting for the fact that rare-event bins were intentionally oversampled relative to their actual frequency of occurrence.
+
+```{r}
+ords <- stratified_sampler(Nbins = 20,
+                               Mevents = 500,
+                               dist = "ev1")
+```
+
+### Construct a Probability Matrix from the Stratified Bins
+
+The Z-variate matrix translates each stratified sample into a standard normal deviate. Each column corresponds to one bin; each row is one of the `Mevents` random draws within that bin. Because EV1 (Gumbel) space is used for stratification, the bin boundaries (`Zlower`, `Zupper`) are in Gumbel reduced variates, and events are drawn uniformly within each bin. The resulting `z_matrix` is an `Mevents` × `Nbins` matrix of Gumbel variates, with each column densely and uniformly populated across its corresponding frequency range.
+
+```{r}
+z_matrix <- matrix(ncol = ords$Nbins, nrow = ords$Mevents)
+
+for (i in 1:ords$Nbins){
+  # ev1
+  # lower
+  bin_lower <- ords$Zlower[i]
+  
+  # upper
+  bin_upper <- ords$Zupper[i]
+
+    # Vector of random values
+  z_matrix[,i] <- (bin_lower + (runif(500, min = 0, max = 1))*(bin_upper - bin_lower))
+}
+```
+
+### Construct a matrix with corresponding flow quantiles from a bestfit parameter set
+
+The Z-variates are converted to flood volumes using the LP3 (Log-Pearson Type III) quantile function. The conversion routes through normal probability space: Gumbel variates → normal CDF (`pnorm`) → LP3 quantile (`qp3`). The result is `Q_matrix`, which has the same dimensions as `z_matrix` — each cell holds the flood volume corresponding to a stratified sample from the inflow frequency distribution.
+
+The parameter set used here (`meanlog`, `sdlog`, `skewlog`) represents a single draw from the posterior distribution of LP3 parameters — one parameter set for this realization. Across the outer loop, a new parameter set is drawn for each realization, which is the mechanism by which epistemic uncertainty is propagated through the simulation.
+
+```{r}
+meanlog <- 3.550399
+sdlog <- 0.3717982
+skewlog <- 0.7555138
+
+Q_matrix <- 10^qp3(pnorm(z_matrix), meanlog, sdlog, skewlog)
+```
+
+### Define the number of simulations
+
+The total number of flood events in this realization is the product of the number of bins and the number of events per bin — in this case, 20 × 500 = 10,000. This is the number of reservoir routings that will be executed in the realization.
+
+```{r}
+Nsims <- nrow(Q_matrix) * ncol(Q_matrix)
+```
+
+### Sample Seasonality
+
+The month of flood occurrence is sampled randomly using historical relative frequencies from the site's seasonal record. This captures the seasonal pattern of flooding — for example, a dam in a snowmelt-dominated basin will have most events concentrated in spring months. The sampled month is used in the next step to select a starting reservoir stage that is climatologically consistent with the flood timing, preserving the seasonal correlation between pool elevation and flood occurrence. 
+
+The sample is a pre-allocated vector/sequence of months that is `Nsims` long.
+
+```{r}
+InitMonths <- sample(1:12, size = Nsims, replace = TRUE, prob = jmd_seasonality$relative_frequency)
+
+UniqMonths <- sort(unique(InitMonths))
+
+```
+
+### Sample Starting Stage
+
+The antecedent reservoir stage at the time of the flood is sampled conditional on the sampled month of occurrence. Stages are drawn only from months matching the sampled flood month, ensuring that starting conditions are seasonally realistic — a flood sampled in April will begin from a pool elevation drawn from the historical April stage record rather than from an arbitrary time of year.
+
+The sample is a pre-allocated vector/sequence of starting stages that is `Nsims` long.
+
+```{r}
+InitStages <- numeric(Nsims)
+
+stage_ts <- jmd_wy1980_stage
+stage_ts$months <- lubridate::month(lubridate::mdy(stage_ts$date))
+
+for (i in 1:length(UniqMonths)) {
+  sampleID <- which(InitMonths == UniqMonths[i])
+  InitStages[sampleID] <- sample(stage_ts$stage[stage_ts$months %in% UniqMonths[i]],
+                                 size = sum(InitMonths == UniqMonths[i]), replace = TRUE)
+}
+
+```
+
+### Sample the Hydrograph Shape
+
+The shape of the flood hydrograph is sampled randomly from a selection of historical and synthetic hydrographs. Each hydrograph in the library is assigned a weight (defaulting to uniform); the sampled shape is then scaled to match the flood volume drawn from the LP3 distribution.
+
+```{r}
+hydrographs <- hydrograph_setup(jmd_hydro_apr1999,
+                                jmd_hydro_jun1921,
+                                jmd_hydro_jun1965,
+                                jmd_hydro_jun1965_15min,
+                                jmd_hydro_may1955,
+                                jmd_hydro_pmf,
+                                jmd_hydro_sdf,
+                                critical_duration = 2,
+                                routing_days = 10)
+
+hydroSamps <- sample(1:length(hydrographs), size = Nsims, replace = TRUE,
+                     prob = attr(hydrographs, "probs"))
+```
+
+### Conduct Realizations
+
+With all random variables sampled, the routing loop executes the Modified Puls method for each of the `Nsims` flood events. For each event, three inputs are combined: (1) the inflow hydrograph, scaled from the sampled shape to match the LP3-derived flood volume; (2) the initial reservoir elevation drawn for that event; and (3) the reservoir's storage-outflow relationship. The Modified Puls method numerically solves the storage equation at each timestep, tracking the reservoir elevation through the duration of the flood. Only the peak stage reached during the event is retained — this is the quantity of interest for the stage-frequency curve.
+
+The loop is structured to preserve the bin-column alignment of `Q_matrix`: event `(i, j)` in `peakStage` corresponds to bin `j` and draw `i`. Maintaining this alignment is essential for correctly applying the stratified bin weights during post-processing.
+
+```{r}
+peakStage <- matrix(NA, nrow = nrow(Q_matrix), ncol = ncol(Q_matrix))
+
+realiz <- 0
+
+for (i in 1:nrow(Q_matrix)) {
+  for (j in 1:ncol(Q_matrix)) {
+    # Keeps the indices lined up - necessary for the weights later
+    realiz <- (i - 1) * ncol(Q_matrix) + j
+
+    # Hydrograph shape
+    hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][,2:3]
+
+    # Hydrograph observed volume
+    obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]],"obs_vol")
+
+    # Scale hydrograph to sample volume
+    scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
+                                          obs_hydrograph_vol,
+                                          Q_matrix[i,j])
+
+    # Route scaled hydrograph
+    tmpResults <- mod_puls_routing(resmodel_df = jmd_resmodel,
+                                   inflow_df = scaled_hydrograph,
+                                   initial_elev = InitStages[realiz],
+                                   full_results = FALSE)
+
+    # Record results
+    peakStage[i, j] <- tmpResults[1]
+  }
+}
+```
+
+
+### Realizaton Results
+
+### Determine Min and Max peak stage realizations
+
+The range of routed peak stages defines the domain over which the stage-frequency curve will be estimated. All subsequent exceedance probability calculations are bounded by these values.
+
+```{r}
+min_stage <- min(peakStage)
+max_stage <- max(peakStage)
+```
+
+### Define Exceedance Values based on Stratified Bins
+
+A vector of stage thresholds is constructed by stepping evenly from the minimum to the maximum peak stage across `Mevents` increments. Each threshold in `stage_vect` represents a candidate stage level at which exceedance probability will be estimated, forming the vertical axis of the stage-frequency curve.
+
+```{r}
+stage_vect <- rep(NA,ords$Mevents)
+
+for (b in 1:(ords$Mevents)){
+  if(b < 2){
+    stage <- min_stage
+  }else{
+    stage <- stage_vect[b-1] + (max_stage - min_stage)/(ords$Mevents)
+  }
+  stage_vect[b] <- stage
+}
+```
+
+### Count Exceedances & Relative Frequencies
+
+For each bin column of `peakStage` and each stage threshold, the fraction of routed events exceeding that threshold is calculated. This gives the conditional exceedance probability within each stratified bin — that is, the probability of exceeding a given stage level given that the flood volume was drawn from that bin's frequency range. The result is stored in `stage_exceedance_matrix`, with rows corresponding to stage thresholds and columns corresponding to bins.
+
+```{r}
+stage_exceedance_matrix <- matrix(nrow = length(stage_vect), ncol = ncol(Q_matrix))
+
+for(m in 1:ncol(peakStage)){
+  # Get Bin of routed stages & flows
+  mstages <- peakStage[,m]
+
+  for(n in 1:length(stage_vect)){
+    # Get Stage & Flow
+    exceedance_stage <- stage_vect[n]
+
+    # How many exceedances in Bin
+    stage_exceed_count <- sum(mstages > exceedance_stage)
+
+    # Exceedance Prob in Bin
+    stage_exceed_prob <- stage_exceed_count/length(mstages)
+
+    # Save to exceedance matrix 
+    stage_exceedance_matrix[n,m] <- stage_exceed_prob
+  }
+}
+```
+
+### Estimate Exceedance Probabilities using Stratified Bin Weights
+
+The conditional exceedance probabilities across bins are combined using the stratified bin weights via the law of total probability. For each stage threshold, the weighted sum of bin-level exceedance probabilities recovers the true (unstratified) annual exceedance probability at that stage level, correcting for the intentional oversampling of rare-event bins. The result is `stage_result` — a table of stage levels paired with their estimated AEPs, which together define the stage-frequency curve for this realization. This can be used to interpolate stages give AEPs or AEPs given stages.
+
+```{r}
+stage_aep_vect <- rep(NA,length(stage_vect))
+
+for(m in 1:nrow(stage_exceedance_matrix)){
+  # Grab row of exceedances
+  stage_exceedance_probs <- stage_exceedance_matrix[m,]
+
+  # Sum the dot product of exceedances and weights
+  stage_aep <- sum(stage_exceedance_probs*ords$Weights)
+
+  #save to vector
+  stage_aep_vect[m] <- stage_aep
+}
+
+stage_result <- tibble(
+  AEP = stage_aep_vect,
+  Z_var = qnorm(1-stage_aep_vect),
+  Gumb = -log(-log(1 - AEP)),
+  Stage = stage_vect)
+
+```
+

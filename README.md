@@ -5,7 +5,7 @@
 
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html) [![R](https://img.shields.io/badge/R-%3E%3D4.1-blue)](https://cran.r-project.org/) [![License](https://img.shields.io/badge/License-BSD--3--Clause-blue.svg)](LICENSE)
 
-An R implementation of the U.S. Army Corps of Engineers (USACE) Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software. This package produces reservoir stage-frequency curves with uncertainty bounds by combining deterministic flood routing (Modified Puls method) with a nested Monte Carlo framework — providing H&H engineers the tools needed for dam safety risk assessments in accordance with USACE/RMC guidance. \## Example Data
+An R implementation of the U.S. Army Corps of Engineers (USACE) Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software. This package produces reservoir stage-frequency curves with uncertainty bounds by combining deterministic flood routing (Modified Puls method) with a nested Monte Carlo framework — providing H&H engineers the tools needed for dam safety risk assessments in accordance with USACE/RMC guidance.
 
 ## Example Data
 
@@ -98,16 +98,16 @@ jmd_expected <- rfa_simulate(sim_type        = "expected",
                               sim_name       = "jmd")
 
 # Full Uncert
-jmd_fulluncert <- rfa_simulate(sim_type      = "full",
-                              bestfit_params = jmd_bf_parameter_sets,
-                              stage_ts       = jmd_wy1980_stage,
-                              seasonality    = jmd_seasonality$relative_frequency,
-                              hydrographs    = jmd_hydrographs,
-                              resmodel       = jmd_resmodel,
-                              Nbins          = 50, 
-                              events_per_bin = 200,
-                              sim_name       = "jmd",
-                              Ncores         = 26)
+jmd_fulluncert <- rfa_simulate(sim_type       = "full",
+                               bestfit_params = jmd_bf_parameter_sets,
+                               stage_ts       = jmd_wy1980_stage,
+                               seasonality    = jmd_seasonality$relative_frequency,
+                               hydrographs    = jmd_hydrographs,
+                               resmodel       = jmd_resmodel,
+                               Nbins          = 50, 
+                               events_per_bin = 200,
+                               sim_name       = "jmd",
+                               Ncores         = 26)
                               
 ```
 
