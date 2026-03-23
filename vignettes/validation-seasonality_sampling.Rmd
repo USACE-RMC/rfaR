@@ -1,8 +1,8 @@
 ---
-title: "Seasonality Sampling Validation"
+title: "V3 - Seasonality Sampling Validation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Seasonality Sampling Validation}
+  %\VignetteIndexEntry{V2 - Seasonality Sampling Validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,18 +14,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, include = FALSE, warning=FALSE}
 library(rfaR)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(scales)
 ```
 
 ## Purpose
 
-Verify that sampling from the Jay McGraw Dam (JMD) seasonality distribution reproduces the input relative frequencies within expected Monte Carlo variability.
+Verify that the seasonality sampling processes/module reproduces the input relative frequencies (within Monte Carlo variability).
 
-The seasonality module assigns each simulation realization to a calendar month based on the historical relative frequency of flood events. This test validates that `sample()` with the JMD seasonality probabilities produces a sampled distribution consistent with the input.
+The seasonality module creates a sequence of calendar months that is `Nsims` in length. The sampling probability is based on the historical relative frequency of flood events. This test validates the application of `sample()` within `rfa_similate()` produces a sampled distribution consistent with the input.
 
 ## Input Data
 
@@ -36,35 +37,42 @@ seasonality_prob <- jmd_seasonality$relative_frequency
 
 input_df <- data.frame(Month = month.abb,
                        Relative_Frequency = seasonality_prob)
-
-knitr::kable(input_df, digits = 4, col.names = c("Month", "Relative Frequency"),
-             caption = "JMD Seasonality Input Distribution")
 ```
 
+```{r input-data-table, echo = FALSE}
+seasonality_prob <- jmd_seasonality$relative_frequency
+
+input_df <- data.frame(Month = month.abb,
+                       Relative_Frequency = seasonality_prob)
+
+knitr::kable(jmd_seasonality, col.names = c("Month", "Frequency", "Relative Frequency", "Cumulative Rel. Frequency"),
+             caption = "JMD Seasonality Input Distribution")
+```
 ## Test
 
-Sample 100,000 months using the input probabilities, then compare the sampled relative frequencies to the input.
+Sample 1,000,000 months using the input probabilities, then compare the sampled relative frequencies to the input.
 
 ```{r sampling}
 set.seed(42)
-Nsims <- 100000
+Nsims <- 1000000
 
 InitMonths <- sample(1:12, size = Nsims, replace = TRUE, prob = seasonality_prob)
 sample_freq <- tabulate(InitMonths, nbins = 12) / Nsims
 ```
 
-```{r results-table}
+```{r results-table, echo = FALSE}
 results_df <- data.frame(Month = month.abb,
                          Input = seasonality_prob,
                          Sampled = sample_freq,
-                         Difference = sample_freq - seasonality_prob)
+                         Difference = sample_freq - seasonality_prob,
+                         pdiff = ((sample_freq - seasonality_prob)/seasonality_prob)*100)
 
 knitr::kable(results_df, digits = 4,
-             col.names = c("Month", "Input Frequency", "Sampled Frequency", "Difference"),
-             caption = "Input vs. Sampled Seasonality Frequencies (N = 100,000)")
+             col.names = c("Month", "Input Frequency", "Sampled Frequency", "Difference","Percent Difference"),
+             caption = "Input vs. Sampled Seasonality Frequencies (N = 1,000,000)")
 ```
 
-```{r results-plot, fig.width=8, fig.height=5}
+```{r results-plot, fig.width=8, fig.height=5, echo = FALSE}
 results_long <- results_df |>
   pivot_longer(cols = c(Input, Sampled),
                names_to  = "Type",
@@ -84,12 +92,52 @@ ggplot(results_long, aes(x = Month, y = Frequency, fill = Type)) +
   theme(legend.position  = "top",
         panel.grid.major.x = element_blank())
 ```
+```{r nsim decay, echo = FALSE, warning = FALSE}
+set.seed(42)
+
+power_funct <- function(x) {
+  as.integer(outer(c(1,2.5,5,7.5), 10^(1:x)))
+}
+
+nsim_vect <- power_funct(8)
+
+nsim_df <- do.call(rbind, lapply(nsim_vect, \(NSims) {
+  sample_freq <- tabulate(
+    sample(1:12, size = NSims, replace = TRUE, prob = seasonality_prob),
+    nbins = 12
+  ) / NSims
+  
+  data.frame(
+    Nsims   = NSims,
+    Month   = month.abb,
+    Input   = seasonality_prob,
+    Sampled = sample_freq,
+    Diff    = sample_freq - seasonality_prob,
+    PctDiff = (sample_freq - seasonality_prob) / seasonality_prob * 100
+  )
+}))
+
+decay_curve <- nsim_df |> 
+  group_by(Nsims) |> 
+  slice_max(abs(Diff),n = 1)
+
+ggplot(decay_curve) + 
+  geom_line(aes(x = Nsims, y = abs(Diff)), color =  "#008280FF", linewidth = 0.8) + 
+  scale_x_log10(breaks = scales::breaks_log(n = 10,base = 10),
+                minor_breaks = minor_breaks_log(detail = 1),
+                labels = scales::label_scientific(digits = 1)) + 
+  theme_bw() + 
+  labs(y = "Abs. Difference (sample - input)",
+       x = "Number of Simulations (Nsims)",
+       title = "Absolute Difference of Sampled and Input Relative Frequency",
+       subtitle = "Convergence to input frequencies occurs with increasing number of simulations")
+```
 
 ## Acceptance Criterion
 
 Sampled relative frequencies must be within 1% relative tolerance of the input probabilities, consistent with `expect_equal(sample_freq, seasonality_prob, tolerance = 0.01)`.
 
-```{r acceptance}
+```{r acceptance, echo = FALSE}
 max_rel_diff <- max(abs((sample_freq - seasonality_prob) / seasonality_prob), na.rm = TRUE)
 pass <- max_rel_diff < 0.01
 ```

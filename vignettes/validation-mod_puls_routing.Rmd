@@ -1,8 +1,8 @@
 ---
-title: "Validation of the Modified-Puls Routing Function"
+title: "V7 - Modified-Puls Routing Validation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Validation of the Modified-Puls Routing Function}
+  %\VignetteIndexEntry{V6 - Modified-Puls Routing Validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, include = FALSE, warning=FALSE}
 library(rfaR)
 library(ggplot2)
 library(dplyr)
@@ -31,31 +31,11 @@ Validate that `mod_puls_routing()` produces results consistent with HEC-HMS Modi
 
 ## Modified Puls Routing
 
-The Modified Puls routing method, also known as storage routing or level-pool routing, is based upon a finite difference approximation of the continuity equation, coupled with an empirical representation of the momentum equation (Chow, 1964; Henderson, 1966; HEC, 2025).
+The Modified Puls routing method, also known as storage routing or level-pool routing, is based upon a finite difference approximation of the continuity equation, coupled with an empirical representation of the momentum equation (Chow, 1964; Henderson, 1966; HEC, 2025). The full derivation of the Mod-Puls routing equation from the continuity equation can be found in the rfaR Reference Manual.
 
-The continuity equation for a control volume is:
-
-$$\frac{\partial Q}{\partial x} + \frac{\partial A}{\partial t} = 0$$
-
-where *Q* is discharge, *A* is cross-sectional area, *x* is distance, and *t* is time. For reservoir routing, this is expressed using average inflow and outflow over a time step:
-
-$$\bar{I_t} - \bar{O_t} = \frac{\Delta S_t}{\Delta t}$$
-
-where $\bar{I_t}$ is the average inflow, $\bar{O_t}$ is the average outflow, and $\Delta S_t$ is the change in storage over the time interval $\Delta t$.
-
-Rearranging and expressing in finite difference form yields the Modified Puls routing equation:
-
-$$\left(\frac{S_t}{\Delta t} + \frac{O_t}{2}\right) = \frac{I_{t-1} + I_t}{2} + \left(\frac{S_{t-1}}{\Delta t} - \frac{O_{t-1}}{2}\right)$$
-
-The method introduces a "storage indication" term:
-
-$$SI_t = \frac{S_t}{\Delta t} + \frac{O_t}{2}$$
-
-Substituting this into the routing equation:
+Mod-Puls routing uses the known inflow, outflow, and storage at time *t-1* and the known inflow at time *t* to estimate the the storage indicator at time *t*. The storage indicator uses the stage-storage-discharge relationship (`your_res_model`) to determine the outflow at time *t*.
 
 $$SI_t = \frac{I_{t-1} + I_t}{2} + \left(\frac{S_{t-1}}{\Delta t} - \frac{O_{t-1}}{2}\right)$$
-
-The left side represents the storage indication at time *t*, which can be computed from known values on the right side. This value is then used with the storage-outflow relationship to determine the outflow at time *t*.
 
 ---
 
@@ -74,7 +54,7 @@ cc_max_diff_elev <- max(abs(cc_diff_elev))
 cc_max_diff_outflow <- max(abs(cc_diff_outflow))
 ```
 
-```{r cc-table}
+```{r cc-table, echo = FALSE}
 cc_summary <- data.frame(
   Metric = c("Peak Elevation (ft)", "Peak Outflow (cfs)",
              "Max Abs Diff Elevation (ft)", "Max Abs Diff Outflow (cfs)"),
@@ -89,7 +69,7 @@ knitr::kable(cc_summary, digits = 4,
              caption = "Cherry Creek Dam Routing Comparison")
 ```
 
-```{r cc-plot, fig.width=10, fig.height=8}
+```{r cc-plot, fig.width=10, fig.height=8, echo = FALSE}
 hydro_compare_long <- bind_rows(
   data.frame(time   = cc_routing$time_hr,
              flow   = cc_routing$inflow_cfs,
@@ -129,16 +109,22 @@ p1 <- ggplot(hydro_compare_long, aes(x = time, y = flow,
        linetype = NULL,
        linewidth = NULL) +
   theme_bw() +
-  theme(legend.position  = "top") + 
+  theme(legend.position  = "inside",
+        legend.position.inside = c(0.8,0.8)) + 
   coord_cartesian(ylim = c(0,2500))
 
 # Bottom panel
-p2 <- ggplot(diff_df, aes(x = time, y = diff)) +
-  geom_line(color = "#3B4992FF", linewidth = 0.6) +
-  geom_hline(yintercept = 0, color = "gray50", linetype = "dashed") +
-  labs(x     = "Time (hr)",
-       y     = "Difference (cfs)",
-       title = "Cherry Cricket Dam \u2014 Outflow Difference (rfaR \u2212 HMS)") +
+p2 <- ggplot(diff_df) +
+  geom_histogram(aes(x = diff),
+                 binwidth = 5e-6,
+                 color = "grey70",
+                 fill = "#008280FF",
+                 alpha = 0.75) + 
+  scale_x_continuous(breaks = scales::breaks_pretty(n = 10))+
+  geom_vline(xintercept = 0, color = "gray50", linetype = "dashed") +
+  labs(x = "Cherry Cricket Dam — Outflow Difference (rfaR − HMS)",
+       y = "Frequency",
+       title = "Distribution of Calculation Differences") +
   theme_bw() +
   theme(panel.grid.minor = element_blank())
 
@@ -149,7 +135,7 @@ p1 / p2
 
 Maximum absolute difference must be less than 0.1 ft for elevation and 1.0 cfs for outflow.
 
-```{r cc-result}
+```{r cc-result, echo = FALSE}
 pass_cc_elev <- cc_max_diff_elev < 0.1
 pass_cc_outflow <- cc_max_diff_outflow < 1.0
 ```
@@ -171,10 +157,5 @@ pass_cc_outflow <- cc_max_diff_outflow < 1.0
 | 1b | Cherry Cricket | Outflow | **`r ifelse(pass_cc_outflow, "PASS", "FAIL")`** |
 
 ## References
-Chow, V. T. (1964). Handbook of Applied Hydrology. McGraw-Hill Book Company, New York.
-
-Henderson, F. M. (1966). Open Channel Flow. Macmillan Publishing Co., Inc., New York.
-
-Nash, J. E., & Sutcliffe, J. V. (1970). River flow forecasting through conceptual models part I — A discussion of principles. Journal of Hydrology, 10(3), 282-290. https://doi.org/10.1016/0022-1694(70)90255-6
 
 U.S. Army Corps of Engineers, Hydrologic Engineering Center. (n.d.). Modified Puls Model. HEC-HMS Technical Reference Manual. Retrieved December 18, 2025, from https://www.hec.usace.army.mil/confluence/hmsdocs/hmstrm/channel-flow/modified-puls-model

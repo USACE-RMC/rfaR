@@ -1,8 +1,8 @@
 ---
-title: "Stratified Sampling Validation"
+title: "V1 - Stratified Sampling Validation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Stratified Sampling Validation}
+  %\VignetteIndexEntry{V1 - Stratified Sampling Validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -274,8 +274,7 @@ order_results <- data.frame(
   Distribution = c("EV1", "Normal", "Uniform"),
   All_Ordered = c(all(ev1$Zlower < ev1$Zupper),
                    all(normal$Zlower < normal$Zupper),
-                   all(uniform$Zlower < uniform$Zupper))
-)
+                   all(uniform$Zlower < uniform$Zupper)))
 
 knitr::kable(order_results,
              col.names = c("Distribution", "All Zlower < Zupper"),

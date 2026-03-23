@@ -1,8 +1,8 @@
 ---
-title: "Starting Stage Sampling Validation"
+title: "V4 - Starting Stage Sampling Validation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Starting Stage Sampling Validation}
+  %\VignetteIndexEntry{V3 - Starting Stage Sampling Validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, include = FALSE, warning=FALSE}
 library(rfaR)
 library(dplyr)
 library(tidyr)
@@ -23,11 +23,15 @@ library(ggplot2)
 
 ## Purpose
 
-Validate the starting pool elevation sampling module for Jay McGraw Dam (JMD). This involves two tests:
+Verify that the starting stage sampling processes/module produces a reliable sequence of starting stages that represents the observed stage-duration (quantiles) of the input stage timeseries data.
 
-1. **Stage Duration Curve Verification** — Confirm that quantiles computed directly from the observed stage time series match the `jmd_stage_duration` dataset included in the package.
+The starting stage sampling processes produces creates a sequence of reservoir stages which is `Nsims` in length. Starting stages are sampled randomly from the observed record based on randomly sampled months (`InitMonths`). Similar to the seasonality sampling process, this test validates the application of `sample()` within `rfa_similate()` produces a sample of stages consistent with the input.
 
-2. **Sampled Stage Validation** — Confirm that stages sampled via the seasonality-weighted sampling process reproduce the observed stage duration curves within acceptable tolerance.
+This involves two tests:
+
+1.  **Stage Duration Curve Verification** — Confirm that quantiles computed directly from the observed stage time series match the `jmd_stage_duration` dataset included in the package.
+
+2.  **Sampled Stage Validation** — Confirm that stages sampled via the seasonality-weighted sampling process reproduce the observed stage quantiles within acceptable tolerance.
 
 ## Input Data
 
@@ -41,11 +45,11 @@ stage_ts <- stage_ts[!is.na(stage_ts$months), ]
 probs <- 1 - jmd_stage_duration$Probability
 ```
 
----
+------------------------------------------------------------------------
 
 ## Test 1: Observed Quantiles vs. Package Dataset
 
-Compute stage quantiles directly from the observed time series for each month and compare against `jmd_stage_duration`.
+Compute stage quantiles directly from the observed time series for each month and compare against `jmd_stage_duration` ("Observed Stage Duration").
 
 ```{r test1-compute}
 obs_quantiles <- sapply(1:12, function(m) {
@@ -58,35 +62,41 @@ diff_matrix <- obs_quantiles - sd_matrix
 max_diff_obs <- max(abs(diff_matrix), na.rm = TRUE)
 ```
 
-```{r test1-table}
+```{r test1-table, echo=FALSE}
 test1_summary <- data.frame(
   Month = month.abb,
   Max_Abs_Difference = apply(abs(diff_matrix), 2, max, na.rm = TRUE))
 
 knitr::kable(test1_summary, digits = 4,
              col.names = c("Month", "Max Absolute Difference (ft)"),
-             caption = "Maximum Difference Between Computed and Package Stage Duration Curves")
+             caption = "Maximum Difference Between Computed and Observed Stage Duration Curves")
 ```
 
 ### Acceptance Criterion
 
 Maximum absolute difference must be less than 0.01 ft, consistent with `expect_lt(max_diff, 0.01)`.
 
-```{r test1-result}
+```{r test1-result, echo = FALSE}
 pass_test1 <- max_diff_obs < 0.01
 ```
 
-| Metric | Value |
-|--------|-------|
-| Maximum Absolute Difference | `r round(max_diff_obs, 6)` ft |
-| Tolerance | 0.01 ft |
-| **Result** | **`r ifelse(pass_test1, "PASS", "FAIL")`** |
+| Metric                      | Value                                      |
+|-----------------------------|--------------------------------------------|
+| Maximum Absolute Difference | `r round(max_diff_obs, 6)` ft              |
+| Tolerance                   | 0.01 ft                                    |
+| **Result**                  | **`r ifelse(pass_test1, "PASS", "FAIL")`** |
 
----
+------------------------------------------------------------------------
 
-## Test 2: Sampled Stage Quantiles vs. Observed Quantiles
+## Test 2: Sampled Stage Quantiles vs. Observed Stage Quantiles
 
-Sample 10,000 months using the JMD seasonality distribution, then for each sampled month, sample a starting stage from the observed record for that month. Compare the resulting stage duration curves against the observed curves.
+Sample 10,000 stages using the seasonality and starting stage sampling process in `rfa_simulate()`:
+
+1.  Sample 10,000 months using the JMD seasonality distribution (`jmd_seasonality$relative_frequency`)
+
+2.  Sample a starting stage from the observed record for that month.
+
+Compare the resulting stage duration curves against the observed curves.
 
 ```{r test2-sampling}
 set.seed(42)
@@ -107,7 +117,7 @@ for (i in 1:length(UniqMonths)) {
 sample_stages <- data.frame(months = InitMonths, stage_ft = InitStages)
 ```
 
-```{r test2-compute}
+```{r test2-compute, echo = FALSE}
 sample_quantiles <- sapply(1:12, function(m) {
   unname(quantile(sample_stages$stage_ft[sample_stages$months == m],
                   probs, na.rm = TRUE))
@@ -123,7 +133,7 @@ pct_diff_matrix <- abs((sample_quantiles[, sampled_months] -
 max_pct_diff <- max(pct_diff_matrix, na.rm = TRUE)
 ```
 
-```{r test2-table}
+```{r test2-table, echo = FALSE}
 test2_summary <- data.frame(
   Month = month.abb[sampled_months],
   Max_Pct_Difference = apply(pct_diff_matrix, 2, max, na.rm = TRUE)
@@ -136,7 +146,7 @@ knitr::kable(test2_summary, digits = 4,
 
 **Months not sampled** (zero seasonality probability): `r paste(month.abb[unsampled_months], collapse = ", ")`. These months correctly produce no samples.
 
-```{r test2-plot, fig.width=10, fig.height=6}
+```{r test2-plot, fig.width=10, fig.height=6, echo = FALSE}
 # Build observed quantiles long
 obs_long <- as.data.frame(obs_quantiles) |>
   setNames(month.abb) |>
@@ -157,10 +167,10 @@ samp_long <- as.data.frame(sample_quantiles) |>
 
 # Combine and factor
 sampled_months <- (unique(samp_long$Month[!is.na(samp_long$Stage)]))
-months_i_want <- rep(NA,length.out = length(sampled_months))
+months_w_samples <- rep(NA,length.out = length(sampled_months))
 
 for (i in 1:length(sampled_months)){
-  months_i_want[i] <- month.abb[sampled_months[i]]
+  months_w_samples[i] <- month.abb[sampled_months[i]]
 }
 
 quantile_long <- bind_rows(obs_long, samp_long) |>
@@ -193,21 +203,21 @@ ggplot(quantile_long, aes(x = prob, y = Stage,
 
 Maximum percent difference between sampled and observed stage quantiles must be less than 5%, consistent with `expect_lt(pct_diff, 5)`.
 
-```{r test2-result}
+```{r test2-result, echo = FALSE}
 pass_test2 <- max_pct_diff < 5
 ```
 
-| Metric | Value |
-|--------|-------|
-| Maximum Percent Difference | `r round(max_pct_diff, 4)`% |
-| Tolerance | 5% |
-| **Result** | **`r ifelse(pass_test2, "PASS", "FAIL")`** |
+| Metric                     | Value                                      |
+|----------------------------|--------------------------------------------|
+| Maximum Percent Difference | `r round(max_pct_diff, 4)`%                |
+| Tolerance                  | 5%                                         |
+| **Result**                 | **`r ifelse(pass_test2, "PASS", "FAIL")`** |
 
----
+------------------------------------------------------------------------
 
 ## Summary
 
 | Test | Description | Result |
-|------|-------------|--------|
-| 1 | Observed quantiles match `jmd_stage_duration` | **`r ifelse(pass_test1, "PASS", "FAIL")`** |
-| 2 | Sampled stage quantiles within 5% of observed | **`r ifelse(pass_test2, "PASS", "FAIL")`** |
+|------------------|----------------------------------|---------------------|
+| 1 | Observed quantiles match `jmd_stage_duration` quantiles | **`r ifelse(pass_test1, "PASS", "FAIL")`** |
+| 2 | Sampled stage quantiles within 5% of observed quantiles | **`r ifelse(pass_test2, "PASS", "FAIL")`** |

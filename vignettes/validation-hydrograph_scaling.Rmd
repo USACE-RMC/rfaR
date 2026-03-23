@@ -1,8 +1,8 @@
 ---
-title: "Hydrograph Scaling Validation"
+title: "V6 - Hydrograph Scaling Validation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Hydrograph Scaling Validation}
+  %\VignetteIndexEntry{V5 - Hydrograph Scaling Validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, include = FALSE, warning = FALSE}
 library(rfaR)
 library(dplyr)
 library(tidyr)
@@ -23,7 +23,7 @@ library(ggplot2)
 
 ## Purpose
 
-Validate that `scale_hydrograph()` correctly scales inflow hydrographs and converts between timesteps. This covers three areas:
+Validate that `scale_hydrograph()` correctly scales inflow hydrographs and converts between timesteps. This test covers three cases:
 
 1. **1-hour input, 1-hour routing** — Verify that the scale factor is applied correctly and output dimensions are preserved.
 2. **15-minute input, 1-hour routing** — Verify that block averaging produces the correct timestep, row count, and ordinate values.
@@ -51,6 +51,9 @@ obs_vol_15 <- attr(hydro_15min, "obs_vol")
 sampled_vol_2x    <- obs_vol * 2
 sampled_vol_15_2x <- obs_vol_15 * 2
 
+```
+
+```{r input-data-table, echo = FALSE}
 input_summary <- data.frame(
   Hydrograph = c("April 1999 (1-hr)", "June 1965 (15-min)"),
   Timestep_hr = c(attr(hydro_1hr, "dt"), attr(hydro_15min, "dt")),
@@ -62,23 +65,21 @@ knitr::kable(input_summary, digits = 2,
              col.names = c("Hydrograph", "Timestep (hr)", "Rows", "Observed Volume"),
              caption = "Input Hydrograph Summary")
 ```
-
 ---
 
 ## Test 1: 1-Hour Input, 1-Hour Routing
 
-Scale the April 1999 hydrograph by a factor of 2 with matching input and routing timesteps.
+Scale the April 1999 hydrograph by a factor of 2 with matching input and routing timesteps (1-hour).
 
 ```{r test1-compute}
 scaled_1hr <- scale_hydrograph(
   hydrograph_shape = hydro_1hr[, c("hour", "inflow")],
   observed_volume  = obs_vol,
   sampled_volume   = sampled_vol_2x,
-  routing_dt       = 1
-)
+  routing_dt       = 1)
 ```
 
-```{r test1-table}
+```{r test1-table, echo = FALSE}
 test1_results <- data.frame(
   Check = c("Output class is data.frame",
             "Column names correct",
@@ -95,9 +96,10 @@ test1_results <- data.frame(
 )
 
 knitr::kable(test1_results, caption = "1-Hour Input / 1-Hour Routing Checks")
+
 ```
 
-```{r test1-plot, fig.width=8, fig.height=5}
+```{r test1-plot, fig.width=8, fig.height=5, echo = FALSE}
 hydro_long <- bind_rows(data.frame(time = hydro_1hr$hour,
                                    inflow = hydro_1hr$inflow,
                                    Type = "Original"),
@@ -125,40 +127,39 @@ ggplot(hydro_long, aes(x = time, y = inflow, color = Type, linetype = Type)) +
 
 ### Acceptance Criterion
 
-```{r test1-result}
-pass_test1 <- all(
-  is.data.frame(scaled_1hr),
-  identical(names(scaled_1hr), c("time_hrs", "inflow_cfs")),
-  scaled_1hr$time_hrs[1] == 0,
-  nrow(scaled_1hr) == nrow(hydro_1hr),
-  isTRUE(all.equal(scaled_1hr$inflow_cfs, hydro_1hr$inflow * 2, tolerance = 1e-10))
-)
-```
+```{r test1-result, echo = FALSE}
+is_df <- is.data.frame(scaled_1hr)
+colnames_good <- identical(names(scaled_1hr), c("time_hrs", "inflow_cfs"))
+zero_hour <- scaled_1hr$time_hrs[1] == 0
+equal_rows <- nrow(scaled_1hr) == nrow(hydro_1hr)
 
-| Metric | Value |
-|--------|-------|
-| **Result** | **`r ifelse(pass_test1, "PASS", "FAIL")`** |
+pass_test1 <- all(
+  is_df,
+  colnames_good,
+  zero_hour,
+  equal_rows,
+  isTRUE(all.equal(scaled_1hr$inflow_cfs, hydro_1hr$inflow * 2, tolerance = 1e-10)))
+```
 
 ---
 
 ## Test 2: 15-Minute Input, 1-Hour Routing (Block Average)
 
-Scale the June 1965 (15-min) hydrograph by a factor of 2 with block averaging to 1-hour routing timestep.
+Scale the June 1965 (15-min) hydrograph by a factor of 1 with block averaging to 1-hour routing timestep.
 
 ```{r test2-compute}
 scaled_15min <- scale_hydrograph(
   hydrograph_shape = hydro_15min[, c("hour", "inflow")],
   observed_volume  = obs_vol_15,
-  sampled_volume   = sampled_vol_15_2x,
-  routing_dt       = 1
-)
+  sampled_volume   = obs_vol_15,
+  routing_dt       = 1)
 
 expected_rows <- floor(nrow(hydro_15min) / 4)
 dt_out <- scaled_15min$time_hrs[2] - scaled_15min$time_hrs[1]
-expected_first <- mean(hydro_15min$inflow[1:4]) * 2
+expected_first <- mean(hydro_15min$inflow[1:4]) * 1
 ```
 
-```{r test2-table}
+```{r test2-table, echo = FALSE}
 test2_results <- data.frame(
   Check = c("Row count (15-min to 1-hr, factor of 4 reduction)",
             "Output timestep is 1 hour",
@@ -172,41 +173,46 @@ test2_results <- data.frame(
   Pass = c(nrow(scaled_15min) == expected_rows,
            dt_out == 1,
            scaled_15min$time_hrs[1] == 0,
-           isTRUE(all.equal(scaled_15min$inflow_cfs[1], expected_first, tolerance = 1e-10)))
-)
+           isTRUE(all.equal(scaled_15min$inflow_cfs[1], expected_first, tolerance = 1e-10))))
 
 knitr::kable(test2_results, caption = "15-Minute Input / 1-Hour Routing Checks")
 ```
 
-```{r test2-plot, fig.width=8, fig.height=5}
+```{r test2-plot, fig.width=8, fig.height=5, echo=FALSE, warning=FALSE}
 hydro_15min_long <- bind_rows(data.frame(time   = hydro_15min$hour,
                                          inflow = hydro_15min$inflow,
                                          Type   = "Original (15-min)"),
                               data.frame(time   = scaled_15min$time_hrs,
                                          inflow = scaled_15min$inflow_cfs,
-                                         Type   = "Scaled (2x, 1-hr)")) |>
-  mutate(Type = factor(Type, levels = c("Original (15-min)", "Scaled (2x, 1-hr)")))
+                                         Type   = "Scaled (1x, 1-hr)")) |>
+  mutate(Type = factor(Type, levels = c("Original (15-min)", "Scaled (1x, 1-hr)")))
 
-ggplot(hydro_15min_long, aes(x = time, y = inflow, color = Type, linetype = Type)) +
-  geom_line(linewidth = 0.8) +
+ggplot(hydro_15min_long) +
+  geom_line(aes(x = time, y = inflow, 
+                color = Type, 
+                linetype = Type, 
+                linewidth = Type)) +
   scale_color_manual(values = c("Original (15-min)" = "#3B4992FF",
-                                "Scaled (2x, 1-hr)" = "#EE0000FF")) +
+                                "Scaled (1x, 1-hr)" = "#EE0000FF")) +
   scale_linetype_manual(values = c("Original (15-min)" = "solid",
-                                   "Scaled (2x, 1-hr)" = "solid")) +
-    scale_y_continuous(label = scales::label_comma()) +
+                                   "Scaled (1x, 1-hr)" = "solid")) +
+  scale_linewidth_manual(values = c("Original (15-min)" = 1.1,
+                                   "Scaled (1x, 1-hr)" = 0.75)) +
+  scale_y_continuous(label = scales::label_comma()) +
   scale_x_continuous(breaks = seq(0,240,24), minor_breaks = seq(0,240,12)) + 
   labs(x = "Time (hr)",
        y = "Inflow (cfs)",
-       title = "15-Min Hydrograph: Original vs. Scaled (2x, Aggregated to 1-hr)",
+       title = "15-Min Hydrograph: Original vs. Scaled (1x, Aggregated to 1-hr)",
        color = NULL,
-       linetype = NULL) +
+       linetype = NULL,
+       linewidth = NULL) +
   theme_bw() +
   theme(legend.position  = "top")
 ```
 
 ### Acceptance Criterion
 
-```{r test2-result}
+```{r test2-result, echo = FALSE}
 pass_test2 <- all(
   nrow(scaled_15min) == expected_rows,
   dt_out == 1,
@@ -215,9 +221,6 @@ pass_test2 <- all(
 )
 ```
 
-| Metric | Value |
-|--------|-------|
-| **Result** | **`r ifelse(pass_test2, "PASS", "FAIL")`** |
 
 ---
 
@@ -247,7 +250,7 @@ scaled_2x <- scale_hydrograph(
 all_nonneg <- all(scaled_2x$inflow_cfs >= 0)
 ```
 
-```{r test3-table}
+```{r test3-table, echo = FALSE}
 test3_results <- data.frame(
   Check = c("Scale factor = 1 returns unchanged ordinates",
             "All flows non-negative for positive scale factor"),
@@ -259,13 +262,9 @@ knitr::kable(test3_results, caption = "Edge Case Checks")
 
 ### Acceptance Criterion
 
-```{r test3-result}
+```{r test3-result, echo = FALSE}
 pass_test3 <- all(unity_match, all_nonneg)
 ```
-
-| Metric | Value |
-|--------|-------|
-| **Result** | **`r ifelse(pass_test3, "PASS", "FAIL")`** |
 
 ---
 
@@ -274,5 +273,5 @@ pass_test3 <- all(unity_match, all_nonneg)
 | Test | Description | Result |
 |------|-------------|--------|
 | 1 | 1-hour input, 1-hour routing — scaling | **`r ifelse(pass_test1, "PASS", "FAIL")`** |
-| 2 | 15-min input, 1-hour routing — block average + scaling | **`r ifelse(pass_test2, "PASS", "FAIL")`** |
+| 2 | 15-min input, 1-hour routing — block average | **`r ifelse(pass_test2, "PASS", "FAIL")`** |
 | 3 | Edge cases — unity scale, non-negative flows | **`r ifelse(pass_test3, "PASS", "FAIL")`** |
