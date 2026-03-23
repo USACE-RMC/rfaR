@@ -1,8 +1,8 @@
 ---
-title: "Hydrograph Shape Sampling Validation"
+title: "V5 - Hydrograph Shape Sampling Validation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Hydrograph Shape Sampling Validation}
+  %\VignetteIndexEntry{V4 - Hydrograph Shape Sampling Validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,20 +14,21 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, include = FALSE, warning=FALSE}
 library(rfaR)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(scales)
 ```
 
 ## Purpose
 
-Verify that the hydrograph shape sampling module correctly applies user-specified weights when selecting hydrograph shapes during simulation. This test validates that `hydrograph_setup()` correctly normalizes weights to probabilities and that `sample()` using those probabilities reproduces the expected distribution.
+Validate that the hydrograph shape sampling module correctly applies user-specified weights when selecting hydrograph shapes during simulation. This test validates that `hydrograph_setup()` correctly normalizes weights to probabilities and that `sample()` using those probabilities reproduces the expected distribution.
 
 ## Input Data
 
-Seven JMD hydrographs are loaded via `hydrograph_setup()` with the following user-specified weights:
+Seven example hydrographs are loaded via `hydrograph_setup()` with the following user-specified weights:
 
 ```{r input-data}
 hydrograph_names <- c("April 1999", "June 1921", "June 1965 (1hr)",
@@ -35,20 +36,24 @@ hydrograph_names <- c("April 1999", "June 1921", "June 1965 (1hr)",
 weights <- c(0.5, 1, 1, 2, 2, 2, 4)
 expected_probs <- weights / sum(weights)
 
+```
+
+
+```{r input-data-table, echo = FALSE}
 input_df <- data.frame(
   Hydrograph = hydrograph_names,
   Weight = weights,
-  Expected_Probability = expected_probs
-)
+  Expected_Probability = expected_probs,
+  exp_prob_equation = paste0(weights,"/", sum(weights)))
 
 knitr::kable(input_df, digits = 4,
-             col.names = c("Hydrograph", "Weight", "Expected Probability"),
+             col.names = c("Hydrograph", "Weight", "Expected Prob.", "Expected Prob. Fraction"),
              caption = "Hydrograph Sampling Weights and Normalized Probabilities")
 ```
 
 ## Test
 
-Set up hydrographs with weights, then sample 100,000 times and compare the sampled frequencies to the expected probabilities.
+Set up hydrographs with weights, then sample 1,000,000 times and compare the sampled frequencies to the expected probabilities.
 
 ```{r sampling}
 set.seed(42)
@@ -71,7 +76,7 @@ hydroSamps <- sample(1:length(hydrographs), size = Nsims, replace = TRUE,
 sample_freq <- tabulate(hydroSamps, nbins = length(hydro_probs)) / Nsims
 ```
 
-```{r results-table}
+```{r results-table, echo = FALSE}
 results_df <- data.frame(
   Hydrograph = hydrograph_names,
   Weight = weights,
@@ -82,10 +87,10 @@ results_df <- data.frame(
 
 knitr::kable(results_df, digits = 4,
              col.names = c("Hydrograph", "Weight", "Expected Prob.", "Sampled Freq.", "Difference"),
-             caption = "Expected vs. Sampled Hydrograph Frequencies (N = 100,000)")
+             caption = "Expected vs. Sampled Hydrograph Frequencies (N = 1,000,000)")
 ```
 
-```{r results-plot, fig.width=8, fig.height=5}
+```{r results-plot, fig.width=8, fig.height=5, echo = FALSE}
 results_long <- results_df |>
   pivot_longer(cols = c(Expected, Sampled),
                names_to = "Type",
@@ -108,11 +113,49 @@ ggplot(results_long, aes(x = Hydrograph, y = Probability, fill = Type)) +
         panel.grid.major.x = element_blank())
 ```
 
+```{r nsim decay, echo = FALSE, warning = FALSE}
+set.seed(42)
+power_funct <- function(x) {
+  as.integer(outer(c(1,2.5,5,7.5), 10^(1:x)))
+}
+
+nsim_vect <- power_funct(8)
+
+nsim_df <- do.call(rbind, lapply(nsim_vect, \(NSims) {
+  
+  hydroSamps <- sample(1:length(hydrographs), size = NSims, replace = TRUE,
+                     prob = hydro_probs)
+  sample_freq <- tabulate(hydroSamps, nbins = length(hydro_probs)) / NSims
+  
+  data.frame(
+    Nsims   = NSims,
+    Input   = expected_probs,
+    Sampled = sample_freq,
+    Diff    = sample_freq - expected_probs,
+    PctDiff = (sample_freq - expected_probs) / expected_probs * 100
+  )
+}))
+
+decay_curve <- nsim_df |> 
+  group_by(Nsims) |> 
+  slice_max(abs(Diff),n = 1)
+
+ggplot(decay_curve) + 
+  geom_line(aes(x = Nsims, y = abs(Diff)), color =  "#008280FF", linewidth = 0.8) + 
+  scale_x_log10(breaks = scales::breaks_log(n = 10,base = 10),
+                minor_breaks = minor_breaks_log(detail = 1),
+                labels = scales::label_scientific(digits = 1)) + 
+  theme_bw() + 
+  labs(y = "Abs. Difference (sample - expected)",
+       x = "Number of Simulations (Nsims)",
+       title = "Absolute Difference of Sampled and Expected Relative Frequency",
+       subtitle = "Convergence to input frequencies occurs with increasing number of simulations")
+```
 ## Acceptance Criterion
 
 Sampled frequencies must be within 1% relative tolerance of the expected probabilities, consistent with `expect_equal(sample_freq, hydro_probs, tolerance = 0.01)`.
 
-```{r acceptance}
+```{r acceptance, echo = FALSE}
 max_rel_diff <- max(abs((sample_freq - expected_probs) / expected_probs), na.rm = TRUE)
 pass <- max_rel_diff < 0.01
 ```
