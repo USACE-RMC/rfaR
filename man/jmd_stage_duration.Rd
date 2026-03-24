@@ -28,4 +28,7 @@ jmd_stage_duration
 \description{
 Monthly stage duration curves from Water Year 1980-2024.
 }
+\examples{
+head(jmd_stage_duration)
+}
 \keyword{datasets}

@@ -19,4 +19,7 @@ jmd_por_inflow
 \description{
 Daily inflow at Jay McGraw Dam for the available period of record.
 }
+\examples{
+head(jmd_por_inflow)
+}
 \keyword{datasets}

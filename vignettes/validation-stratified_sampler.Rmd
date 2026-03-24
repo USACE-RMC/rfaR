@@ -10,8 +10,9 @@ vignette: >
 ```{r, include = FALSE, warning=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
-)
+  fig.align = 'center',
+  comment = "#>")
+
 library(rfaR)
 library(dplyr)
 library(tidyr)
@@ -80,7 +81,7 @@ ggplot(bin_spacing) +
 
 ```
 
-```{r weight-distribution-plot, fig.width=10, fig.height=5}
+```{r weight-distribution-plot, fig.width=10, fig.height=5, echo = FALSE}
 bin_weights <- bind_rows(
   data.frame(dist = "EV1",     bin = 1:ev1$Nbins,     weight = ev1$Weights),
   data.frame(dist = "Normal",  bin = 1:normal$Nbins,  weight = normal$Weights),
@@ -127,7 +128,7 @@ diff_normal <- normal$Zlower - z_lower_valid[normal_idx]
 diff_uniform <- uniform$Zlower - z_lower_valid[uniform_idx]
 ```
 
-```{r test2-table}
+```{r test2-table, echo = FALSE}
 zlower_results <- data.frame(
   Distribution = c("EV1", "Normal", "Uniform"),
   Max_Abs_Difference = c(max(abs(diff_ev1)),
@@ -142,7 +143,7 @@ knitr::kable(zlower_results, digits = 10,
 
 ### Acceptance Criterion
 
-```{r test2-result}
+```{r test2-result, echo = FALSE}
 tol_zlower <- 1e-6
 pass_zlower <- all(c(max(abs(diff_ev1)),
                       max(abs(diff_normal)),
@@ -166,7 +167,7 @@ wt_diff_normal <- normal$Weights - example_stratified$weight[normal_idx]
 wt_diff_uniform <- uniform$Weights - example_stratified$weight[uniform_idx]
 ```
 
-```{r test3-table}
+```{r test3-table, echo = FALSE}
 weight_results <- data.frame(
   Distribution = c("EV1", "Normal", "Uniform"),
   Max_Abs_Difference = c(max(abs(wt_diff_ev1)),
@@ -181,7 +182,7 @@ knitr::kable(weight_results, digits = 10,
 
 ### Acceptance Criterion
 
-```{r test3-result}
+```{r test3-result, echo = FALSE}
 tol_wt <- 1e-6
 pass_wt <- all(c(max(abs(wt_diff_ev1)),
                   max(abs(wt_diff_normal)),
@@ -203,7 +204,7 @@ sum_normal <- sum(normal$Weights)
 sum_uniform <- sum(uniform$Weights)
 ```
 
-```{r test4-table}
+```{r test4-table, echo = FALSE}
 sum_results <- data.frame(
   Distribution = c("EV1", "Normal", "Uniform"),
   Weight_Sum = c(sum_ev1, sum_normal, sum_uniform),
@@ -217,7 +218,7 @@ knitr::kable(sum_results, digits = 12,
 
 ### Acceptance Criterion
 
-```{r test4-result}
+```{r test4-result, echo = FALSE}
 tol_sum <- 1e-10
 pass_sum <- all(c(abs(1 - sum_ev1), abs(1 - sum_normal), abs(1 - sum_uniform)) < tol_sum)
 ```
@@ -245,7 +246,7 @@ dim_results <- data.frame(
 )
 ```
 
-```{r test5-table}
+```{r test5-table, echo = FALSE}
 dim_results$Pass <- dim_results$Expected == dim_results$Actual
 
 knitr::kable(dim_results,
@@ -255,7 +256,7 @@ knitr::kable(dim_results,
 
 ### Acceptance Criterion
 
-```{r test5-result}
+```{r test5-result, echo = FALSE}
 pass_dims <- all(dim_results$Pass)
 ```
 
@@ -269,7 +270,7 @@ pass_dims <- all(dim_results$Pass)
 
 Verify that all bin lower bounds are strictly less than upper bounds.
 
-```{r test6-compute}
+```{r test6-compute, echo = FALSE}
 order_results <- data.frame(
   Distribution = c("EV1", "Normal", "Uniform"),
   All_Ordered = c(all(ev1$Zlower < ev1$Zupper),

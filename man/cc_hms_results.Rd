@@ -20,4 +20,7 @@ cc_hms_results
 \description{
 Routing results from HEC-HMS using the Cherry Cricket reservoir model/geometry, inflow hydrograph, and initial reservoir elevation.
 }
+\examples{
+head(cc_hms_results)
+}
 \keyword{datasets}

@@ -21,4 +21,7 @@ jmd_vfc_parameters
 LP3 distribution parameters of volume-frequency curve results from
 RMC-BestFit 2.0.
 }
+\examples{
+head(jmd_vfc_parameters)
+}
 \keyword{datasets}

@@ -27,6 +27,9 @@ Demonstrates how different transformations allocate sampling effort across
 the probability range, with EV1 concentrating more bins in the rare event
 tail critical for dam safety analysis.
 }
+\examples{
+example_stratified[sample(nrow(example_stratified), 5), ]
+}
 \seealso{
 \code{\link[=stratified_sampler]{stratified_sampler()}}
 }

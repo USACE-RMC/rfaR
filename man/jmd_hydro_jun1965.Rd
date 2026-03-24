@@ -19,4 +19,12 @@ jmd_hydro_jun1965
 \description{
 Inflow hydrograph shape from June 1965 flood event (from HEC-HMS).
 }
+\examples{
+head(jmd_hydro_jun1965)
+\donttest{
+plot(jmd_hydro_jun1965$Ordinate, jmd_hydro_jun1965$Flow,
+     xlab = "Ordinate", ylab = "Inflow (cfs)",
+     type = "l")
+}
+}
 \keyword{datasets}

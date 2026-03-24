@@ -18,4 +18,12 @@ jmd_resmodel
 \description{
 Elevation-storage-discharge relationship for Jay McGraw Reservoir. Reservoir models must be monotonic.
 }
+\examples{
+head(jmd_resmodel)
+\donttest{
+plot(jmd_resmodel[[1]], jmd_resmodel[[2]],
+     xlab = "Elevation (ft)", ylab = "Storage (acre-ft)",
+     type = "l")
+}
+}
 \keyword{datasets}

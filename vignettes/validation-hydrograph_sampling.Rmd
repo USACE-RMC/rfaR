@@ -2,19 +2,17 @@
 title: "V5 - Hydrograph Shape Sampling Validation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{V4 - Hydrograph Shape Sampling Validation}
+  %\VignetteIndexEntry{V5 - Hydrograph Shape Sampling Validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r, include = FALSE, warning= FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
-)
-```
+  fig.align = 'center',
+  comment = "#>")
 
-```{r setup, include = FALSE, warning=FALSE}
 library(rfaR)
 library(dplyr)
 library(tidyr)

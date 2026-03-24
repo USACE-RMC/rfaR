@@ -11,6 +11,8 @@
 #'   \item{stor_acft}{Cumulative reservoir storage (ACRE-FT) corresponding to reservoir elevation (elev_ft).}
 #'   \item{outflow_cfs}{Cumulative discharge/outflow (CFS) corresponding to reservoir elevation (elev_ft).}
 #' }
+#' @examples
+#' head(cc_resmodel)
 "cc_resmodel"
 
 #' Cherry Cricket Dam Inflow Hydrograph
@@ -22,6 +24,8 @@
 #'   \item{time_hr}{Time in hours (integer)}
 #'   \item{inflow_cfs}{Inflow in cubic-feet per second (CFS)}
 #' }
+#' @examples
+#' head(cc_inflowhydro)
 "cc_inflowhydro"
 
 #' Cherry Cricket Dam Initial Elevation
@@ -30,6 +34,8 @@
 #' This elevation was used in HEC-HMS.
 #'
 #' @format A single numeric value representing the initial reservoir elevation (FT-NAVD88).
+#' @examples
+#' head(cc_init_elev)
 "cc_init_elev"
 
 #' Cherry Cricket Dam HEC-HMS Routing Results
@@ -44,6 +50,8 @@
 #'   \item{storage_acft}{Routed reservoir storage (ACRE-FT) corresponding to reservoir elevation (elev_ft).}
 #'   \item{outflow_cfs}{Routed discharge/outflow (CFS) corresponding to reservoir elevation (elev_ft).}
 #' }
+#' @examples
+#' head(cc_hms_results)
 "cc_hms_results"
 
 # ==============================================================================
@@ -59,6 +67,13 @@
 #'   \item{stage_ft}{Reservoir stage/elevation data (FT-NAVD88)}
 #'   \item{stor_acft}{Cumulative reservoir storage (ACRE-FT) corresponding to reservoir elevation (elev_ft).}
 #'   \item{discharge_cfs}{Cumulative discharge/outflow (CFS) corresponding to reservoir elevation (elev_ft).}
+#' }
+#' @examples
+#' head(jmd_resmodel)
+#' \donttest{
+#' plot(jmd_resmodel[[1]], jmd_resmodel[[2]],
+#'      xlab = "Elevation (ft)", ylab = "Storage (acre-ft)",
+#'      type = "l")
 #' }
 "jmd_resmodel"
 
@@ -77,6 +92,8 @@
 #'   \item{time}{Time}
 #'   \item{flow_cfs}{Daily average inflow (cfs)}
 #' }
+#' @examples
+#' head(jmd_por_inflow)
 "jmd_por_inflow"
 
 # ==============================================================================
@@ -94,6 +111,8 @@
 #'   \item{stage_ft}{Stage (FT-NAVD88)}
 #'   \item{plot_posit}{Plotting position}
 #' }
+#' @examples
+#' head(jmd_empirical_stage_wy1980_pt)
 "jmd_empirical_stage_wy1980_pt"
 
 # ==============================================================================
@@ -111,6 +130,13 @@
 #'   \item{Time}{Time in 00:00}
 #'   \item{Flow}{Inflow (cfs)}
 #' }
+#' @examples
+#' head(jmd_hydro_apr1999)
+#' \donttest{
+#' plot(jmd_hydro_apr1999$Ordinate, jmd_hydro_apr1999$Flow,
+#'      xlab = "Ordinate", ylab = "Inflow (cfs)",
+#'           type = "l")
+#'}
 "jmd_hydro_apr1999"
 
 #' Jay McGraw Dam June 1921 Hydrograph
@@ -123,6 +149,13 @@
 #'   \item{Date}{Date mm/dd/yyyy}
 #'   \item{Time}{Time in 00:00}
 #'   \item{Flow}{Inflow (cfs)}
+#' }
+#' @examples
+#' head(jmd_hydro_jun1921)
+#' \donttest{
+#' plot(jmd_hydro_jun1921$Ordinate, jmd_hydro_jun1921$Flow,
+#'      xlab = "Ordinate", ylab = "Inflow (cfs)",
+#'      type = "l")
 #' }
 "jmd_hydro_jun1921"
 
@@ -137,6 +170,13 @@
 #'   \item{Time}{Time in 00:00}
 #'   \item{Flow}{Inflow (cfs)}
 #' }
+#' @examples
+#' head(jmd_hydro_jun1965)
+#' \donttest{
+#' plot(jmd_hydro_jun1965$Ordinate, jmd_hydro_jun1965$Flow,
+#'      xlab = "Ordinate", ylab = "Inflow (cfs)",
+#'      type = "l")
+#' }
 "jmd_hydro_jun1965"
 
 #' Jay McGraw Dam June 1965 Hydrograph (15 minute intervals)
@@ -149,6 +189,13 @@
 #'   \item{Date}{Date mm/dd/yyyy}
 #'   \item{Time}{Time in 00:00}
 #'   \item{Flow}{Inflow (cfs)}
+#' }
+#' @examples
+#' head(jmd_hydro_jun1965_15min)
+#' \donttest{
+#' plot(jmd_hydro_jun1965_15min$Ordinate, jmd_hydro_jun1965_15min$Flow,
+#'      xlab = "Ordinate", ylab = "Inflow (cfs)",
+#'      type = "l")
 #' }
 "jmd_hydro_jun1965_15min"
 
@@ -163,6 +210,13 @@
 #'   \item{Time}{Time in 00:00}
 #'   \item{Flow}{Inflow (cfs)}
 #' }
+#' @examples
+#' head(jmd_hydro_may1955)
+#' \donttest{
+#' plot(jmd_hydro_may1955$Ordinate, jmd_hydro_may1955$Flow,
+#'      xlab = "Ordinate", ylab = "Inflow (cfs)",
+#'      type = "l")
+#' }
 "jmd_hydro_may1955"
 
 #' Jay McGraw Dam PMF Hydrograph
@@ -176,6 +230,13 @@
 #'   \item{Time}{Time in 00:00}
 #'   \item{Flow}{Inflow (cfs)}
 #' }
+#' @examples
+#' head(jmd_hydro_pmf)
+#' \donttest{
+#' plot(jmd_hydro_pmf$Ordinate, jmd_hydro_pmf$Flow,
+#'      xlab = "Ordinate", ylab = "Inflow (cfs)",
+#'      type = "l")
+#' }
 "jmd_hydro_pmf"
 
 #' Jay McGraw Dam SDF Hydrograph
@@ -188,6 +249,13 @@
 #'   \item{Date}{Date mm/dd/yyyy}
 #'   \item{Time}{Time in 00:00}
 #'   \item{Flow}{Inflow (cfs)}
+#' }
+#' @examples
+#' head(jmd_hydro_sdf)
+#' \donttest{
+#' plot(jmd_hydro_sdf$Ordinate, jmd_hydro_sdf$Flow,
+#'      xlab = "Ordinate", ylab = "Inflow (cfs)",
+#'      type = "l")
 #' }
 "jmd_hydro_sdf"
 
@@ -208,6 +276,8 @@
 #'   \item{relative_frequency}{Relative frequency}
 #'   \item{cume_rel_frequency}{Cumulative relative frequency}
 #' }
+#' @examples
+#' print(jmd_seasonality)
 "jmd_seasonality"
 
 # ==============================================================================
@@ -234,6 +304,8 @@
 #'   \item{November}{Stage for November (FT-NAVD88)}
 #'   \item{December}{Stage for December (FT-NAVD88)}
 #' }
+#' @examples
+#' head(jmd_stage_duration)
 "jmd_stage_duration"
 
 # ==============================================================================
@@ -251,6 +323,8 @@
 #'   \item{time}{Time}
 #'   \item{stage_ft}{Reservoir stage (FT-NAVD88)}
 #' }
+#' @examples
+#' head(jmd_wy1980_stage)
 "jmd_wy1980_stage"
 
 # ==============================================================================
@@ -270,6 +344,8 @@
 #'   \item{erl}{Estimated effective record length}
 #'   \item{duration}{Inflow-volume duration in days}
 #' }
+#' @examples
+#' head(jmd_vfc_parameters)
 "jmd_vfc_parameters"
 
 #' Jay McGraw Dam Volume-Frequency Curve
@@ -284,6 +360,8 @@
 #'   \item{posterior_predictive}{Posterior predictive value}
 #'   \item{posterior_mode}{Posterior mode value}
 #' }
+#' @examples
+#' head(jmd_vfc)
 "jmd_vfc"
 
 #' Jay McGraw Dam BestFit Parameter Sets
@@ -298,6 +376,8 @@
 #'   \item{skew_log}{Skewness of log-transformed values}
 #'   \item{log_likelihood}{Log-likelihood of parameter set}
 #' }
+#' @examples
+#' jmd_bf_parameter_sets[sample(nrow(jmd_bf_parameter_sets), 5), ]
 "jmd_bf_parameter_sets"
 
 #' Jay McGraw Dam RFA Results - Expected Only
@@ -309,6 +389,8 @@
 #'   \item{AEP}{Annual Exceedance Probabilities}
 #'   \item{Expected}{Expected stages corresponding to AEPs}
 #' }
+#' @examples
+#' head(jmd_rfa_expected)
 "jmd_rfa_expected"
 
 #' Jay McGraw Dam RFA Results - Full Uncertainty
@@ -323,6 +405,8 @@
 #'   \item{Expected}{Expected stages corresponding to AEPs}
 #'   \item{Median}{Median stages corresponding to AEPs}
 #' }
+#' @examples
+#' head(jmd_rfa_full)
 "jmd_rfa_full"
 
 #' Stratified Sampling - Example Data
@@ -346,5 +430,7 @@
 #' }
 #'
 #' @seealso [stratified_sampler()]
+#' @examples
+#' example_stratified[sample(nrow(example_stratified), 5), ]
 "example_stratified"
 

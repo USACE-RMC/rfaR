@@ -20,4 +20,7 @@ jmd_vfc
 \description{
 Tabular volume-frequency curve results from RMC-BestFit 2.0.
 }
+\examples{
+head(jmd_vfc)
+}
 \keyword{datasets}

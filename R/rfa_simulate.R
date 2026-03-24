@@ -202,24 +202,28 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
                          sim_name = NULL,
                          results_dir = NULL) {
 
-  # If results dir isnt defined
-  if(is.null(results_dir)){
-    results_dir <- file.path(getwd(),"rfaR_results")
-  }
-  dir.create(results_dir, showWarnings = FALSE)
-
-  # Sim Name is for auto export of results
-  # If its not provided, name the sim the sim_type + datetime
+  # Sim Name Subfolder
+  # If Sim Name not provided, name the sim the sim_type + datetime
   if(is.null(sim_name)){
     sim_name <- "sim"
     sim_dt <- paste0(format(Sys.time(), "%m_%d_%y_%H%M"))
     result_csv_name <- paste0(sim_name,"_",sim_type,"_",sim_dt,".csv")
+    sim_sub_dir <- paste0(sim_name,"_",sim_type)
   } else{
     sim_name_clean <- gsub(" ", "_", sim_name)
+    sim_name <- sim_name_clean
     sim_dt <- paste0(format(Sys.time(), "%m_%d_%y_%H%M"))
-    result_csv_name <- paste0(sim_name_clean,"_",sim_type,"_",sim_dt,".csv")
+    result_csv_name <- paste0(sim_name,"_",sim_type,"_",sim_dt,".csv")
+    sim_sub_dir <- paste0(sim_name,"_",sim_type)
   }
 
+  # If results dir isnt defined
+  if(is.null(results_dir)){
+    results_dir <- file.path(getwd(),"rfaR_results",sim_sub_dir)
+  }
+  dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
+
+  # Final results CSV file
   result_csv_file <- file.path(results_dir,result_csv_name)
 
   # Target AEPs (for Results - Consider hard coding this as built in data)
@@ -368,6 +372,10 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     write.csv(median_stage_freq,result_csv_file,row.names = FALSE)
     cli::cli_alert_success("Stage-Frequency curve successfully exported to {.path {result_csv_file}}.")
 
+    realiz_tablular_csvfile <- file.path(results_dir,paste0("realizations_tabular_",sim_name,"_",sim_type,".csv"))
+    write.csv(realiz_results,realiz_tablular_csvfile,row.names = FALSE)
+    cli::cli_alert_success("Tabular Realization results successfully exported to {.path {realiz_tablular_csvfile}}.")
+
     # Return
     return(list(
       stage_frequency = median_stage_freq,
@@ -494,6 +502,10 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     write.csv(expected_stage_freq,result_csv_file,row.names = FALSE)
     cli::cli_alert_success("Stage-Frequency curve successfully exported to {.path {result_csv_file}}.")
 
+    realiz_tablular_csvfile <- file.path(results_dir,paste0("realizations_tabular_",sim_name,"_",sim_type,".csv"))
+    write.csv(realiz_results,realiz_tablular_csvfile,row.names = FALSE)
+    cli::cli_alert_success("Tabular Realization results successfully exported to {.path {realiz_tablular_csvfile}}.")
+
     # Return
     return(list(
       stage_frequency = expected_stage_freq,
@@ -525,9 +537,9 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
       Ncores <- min(use_cores, total_cores)
     }
 
-    # Results directory - add functionality for user to set this
+    # Results directory - Set name to simulation name
     realization_dir <- file.path(results_dir,"realizations")
-    dir.create(realization_dir, showWarnings = FALSE)
+    dir.create(realization_dir, showWarnings = FALSE, recursive = TRUE)
 
     cli::cli_alert_info("Realizations: {Nrealizations}")
     cli::cli_alert_info("Simulations per realization: {Nsims_per_realiz}")

@@ -14,4 +14,7 @@ cc_init_elev
 Initial/starting elevation (FT-NAVD88) for Cherry Cricket Dam reservoir routing.
 This elevation was used in HEC-HMS.
 }
+\examples{
+head(cc_init_elev)
+}
 \keyword{datasets}

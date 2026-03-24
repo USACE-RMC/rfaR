@@ -19,4 +19,12 @@ jmd_hydro_may1955
 \description{
 Inflow hydrograph shape from May 1955 flood event.
 }
+\examples{
+head(jmd_hydro_may1955)
+\donttest{
+plot(jmd_hydro_may1955$Ordinate, jmd_hydro_may1955$Flow,
+     xlab = "Ordinate", ylab = "Inflow (cfs)",
+     type = "l")
+}
+}
 \keyword{datasets}

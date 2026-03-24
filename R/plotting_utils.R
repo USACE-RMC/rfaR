@@ -1,8 +1,12 @@
-# COMPARE WITH RFA RESULTS =====================================================
-#library(tidyverse)
-
-# 1. AEP breaks for plotting -----
-aep_breaks <- c(9.9e-1, 9e-1, 5e-1, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10)
-minor_aep_breaks <- unlist(lapply(2:9, function(i) i * 10^-(1:10)))
-
-
+#' rfaR ggplot theme for conceptual example
+#'
+#' custom ggplot2 theme for rfaR-Realization-Conceptual.Rmd
+#' @export
+theme_rfar_conceptual <- function(){
+  ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "none",
+                   plot.title = ggplot2::element_text(size = 11, face = "bold.italic"),
+                   plot.subtitle = ggplot2::element_text(size = 8, face = "italic"),
+                   axis.title = ggplot2::element_text(size = 9, face = "bold"),
+                   axis.text = ggplot2::element_text(size = 8))
+}

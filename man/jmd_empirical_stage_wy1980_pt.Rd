@@ -19,4 +19,7 @@ jmd_empirical_stage_wy1980_pt
 Empirical stage-frequency results for Jay McGraw Dam (WY 1980-2024) with
 perception threshold applied.
 }
+\examples{
+head(jmd_empirical_stage_wy1980_pt)
+}
 \keyword{datasets}

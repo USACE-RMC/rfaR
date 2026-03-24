@@ -2,23 +2,22 @@
 title: "V4 - Starting Stage Sampling Validation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{V3 - Starting Stage Sampling Validation}
+  %\VignetteIndexEntry{V4 - Starting Stage Sampling Validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r, include = FALSE, warning = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
-)
-```
+  fig.align = 'center',
+  comment = "#>")
 
-```{r setup, include = FALSE, warning=FALSE}
 library(rfaR)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(scales)
 ```
 
 ## Purpose
@@ -29,13 +28,13 @@ The starting stage sampling processes produces creates a sequence of reservoir s
 
 This involves two tests:
 
-1.  **Stage Duration Curve Verification** — Confirm that quantiles computed directly from the observed stage time series match the `jmd_stage_duration` dataset included in the package.
+1.  **Stage Duration Curve Verification** — Confirm that quantiles computed directly from the observed stage time series (`stage_ts`) match the `jmd_stage_duration` dataset included in the package.
 
 2.  **Sampled Stage Validation** — Confirm that stages sampled via the seasonality-weighted sampling process reproduce the observed stage quantiles within acceptable tolerance.
 
 ## Input Data
 
-The observed stage record (`jmd_wy1980_stage`) contains daily pool elevation readings. The `jmd_stage_duration` dataset contains pre-computed monthly stage duration curves at specified exceedance probabilities.
+The observed stage record (`stage_ts <- jmd_wy1980_stage`) contains daily pool elevation readings. The `jmd_stage_duration` dataset contains pre-computed monthly stage duration curves at specified exceedance probabilities.
 
 ```{r input-data}
 stage_ts <- jmd_wy1980_stage

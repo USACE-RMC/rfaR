@@ -20,4 +20,7 @@ jmd_rfa_full
 \description{
 Jay McGraw Dam, full uncertainty stage-frequency results from RFA.
 }
+\examples{
+head(jmd_rfa_full)
+}
 \keyword{datasets}

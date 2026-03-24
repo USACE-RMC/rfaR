@@ -19,4 +19,12 @@ jmd_hydro_pmf
 \description{
 Inflow hydrograph shape for Probable Maximum Flood (PMF).
 }
+\examples{
+head(jmd_hydro_pmf)
+\donttest{
+plot(jmd_hydro_pmf$Ordinate, jmd_hydro_pmf$Flow,
+     xlab = "Ordinate", ylab = "Inflow (cfs)",
+     type = "l")
+}
+}
 \keyword{datasets}

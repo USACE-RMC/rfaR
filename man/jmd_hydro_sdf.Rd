@@ -19,4 +19,12 @@ jmd_hydro_sdf
 \description{
 Inflow hydrograph shape for Spillway Design Flood (SDF).
 }
+\examples{
+head(jmd_hydro_sdf)
+\donttest{
+plot(jmd_hydro_sdf$Ordinate, jmd_hydro_sdf$Flow,
+     xlab = "Ordinate", ylab = "Inflow (cfs)",
+     type = "l")
+}
+}
 \keyword{datasets}

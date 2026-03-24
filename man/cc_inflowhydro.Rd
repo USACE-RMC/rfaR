@@ -17,4 +17,7 @@ cc_inflowhydro
 \description{
 Inflow hydrograph for an example flood event at Cherry Cricket Dam.
 }
+\examples{
+head(cc_inflowhydro)
+}
 \keyword{datasets}

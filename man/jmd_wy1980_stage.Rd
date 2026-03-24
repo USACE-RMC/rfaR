@@ -19,4 +19,7 @@ jmd_wy1980_stage
 \description{
 Daily stage data from Water Year 1980-2024.
 }
+\examples{
+head(jmd_wy1980_stage)
+}
 \keyword{datasets}

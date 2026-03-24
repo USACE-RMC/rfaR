@@ -2,19 +2,17 @@
 title: "V3 - Seasonality Sampling Validation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{V2 - Seasonality Sampling Validation}
+  %\VignetteIndexEntry{V3 - Seasonality Sampling Validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r, include = FALSE, warning = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
-)
-```
+  fig.align = 'center',
+  comment = "#>")
 
-```{r setup, include = FALSE, warning=FALSE}
 library(rfaR)
 library(dplyr)
 library(tidyr)
@@ -92,7 +90,7 @@ ggplot(results_long, aes(x = Month, y = Frequency, fill = Type)) +
   theme(legend.position  = "top",
         panel.grid.major.x = element_blank())
 ```
-```{r nsim decay, echo = FALSE, warning = FALSE}
+```{r nsim-decay-plot, fig.width=8, fig.height=5, echo = FALSE, warning = FALSE}
 set.seed(42)
 
 power_funct <- function(x) {

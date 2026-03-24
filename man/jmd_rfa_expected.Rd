@@ -17,4 +17,7 @@ jmd_rfa_expected
 \description{
 Jay McGraw Dam, expected only stage-frequency results from RFA.
 }
+\examples{
+head(jmd_rfa_expected)
+}
 \keyword{datasets}

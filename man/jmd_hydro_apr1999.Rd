@@ -19,4 +19,12 @@ jmd_hydro_apr1999
 \description{
 Inflow hydrograph shape from April 1999 flood event.
 }
+\examples{
+head(jmd_hydro_apr1999)
+\donttest{
+plot(jmd_hydro_apr1999$Ordinate, jmd_hydro_apr1999$Flow,
+     xlab = "Ordinate", ylab = "Inflow (cfs)",
+          type = "l")
+}
+}
 \keyword{datasets}

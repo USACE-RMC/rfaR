@@ -18,4 +18,7 @@ cc_resmodel
 \description{
 Elevation-storage-discharge relationship for Cherry Cricket Reservoir. Reservoir models must be monotonic.
 }
+\examples{
+head(cc_resmodel)
+}
 \keyword{datasets}
