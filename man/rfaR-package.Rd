@@ -12,6 +12,7 @@ An R implementation of the U.S. Army Corps of Engineers (USACE) Risk Management 
 Useful links:
 \itemize{
   \item \url{https://github.com/USACE-RMC/rfaR}
+  \item \url{https://ideal-broccoli-1q9y47z.pages.github.io/}
   \item Report bugs at \url{https://github.com/USACE-RMC/rfaR/issues}
 }
 

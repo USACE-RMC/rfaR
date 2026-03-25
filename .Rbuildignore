@@ -5,3 +5,7 @@
 ^Meta$
 ^rfaR_results$
 ^dev$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
