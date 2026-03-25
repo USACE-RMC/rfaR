@@ -1,0 +1,149 @@
+---
+title: "MCD-Example"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
+library(rfaR)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(fs)
+```
+
+```{r mcd-directory}
+project_dir <- "D:/0.RMC/Reefer/MC_Dam"
+```
+
+```{r load-bestfit-params, echo = FALSE, warning = FALSE}
+bestfit_file <- file.path(project_dir,"bestfit","mcd_bestfit_params.csv")
+mcd_gev_params <- read.csv(bestfit_file)
+head(mcd_gev_params)
+```
+
+```{r load-seasonality, echo = FALSE, warning = FALSE}
+szn_file <- file.path(project_dir,"seasonality","mcd_seasonality.csv")
+mcd_seasonality <- read.csv(szn_file)
+print(mcd_seasonality)
+```
+
+```{r load-stageTS, echo = FALSE, warning = FALSE}
+stage_ts_file <- file.path(project_dir,"stage_data","mcd_stageTS.csv")
+
+mcd_stage_TS <- read.csv(stage_ts_file)
+
+# Empirical Stage Frequency
+mcd_empirical_stage <- read.csv(file.path(project_dir,"stage_data","mcd_empirical_stage.csv"))
+
+head(mcd_stage_TS)
+```
+
+```{r load-resmodel, echo = FALSE, warning = FALSE}
+resmodel_file <- file.path(project_dir,"res_model","mcd_resmodel.csv")
+mcd_resmodel <- read.csv(resmodel_file)
+
+# Selected Rows
+mcd_resmodel[c(1,10,25,50,60),]
+```
+
+```{r load-hydrographs, echo = FALSE, warning = FALSE}
+hydro_1993 <- read.csv(file.path(project_dir,"hydrographs","mcd_1993flood.csv"))
+hydro_1995 <- read.csv(file.path(project_dir,"hydrographs","mcd_1995flood.csv"))
+hydro_2004 <- read.csv(file.path(project_dir,"hydrographs","mcd_2004flood.csv"))
+hydro_2010 <- read.csv(file.path(project_dir,"hydrographs","mcd_2010flood.csv"))
+
+# First two rows of each hydrograph dataframe
+bind_rows(hydro_1993[c(1:2),],
+          hydro_1995[c(1:2),],
+          hydro_2004[c(1:2),],
+          hydro_2004[c(1:2),])
+
+```
+
+```{r setup-hydrographs, echo = FALSE, warning = FALSE}
+# Check crit and routing dir
+mcd_hydrographs <- hydrograph_setup(hydro_1993,
+                                    hydro_1995,
+                                    hydro_2004,
+                                    hydro_2010,
+                                    critical_duration = 1,
+                                    routing_days = 5)
+
+```
+
+```{r mcd-expectd-only, echo = FALSE, warning = FALSE, message = FALSE}
+# Expected Only 
+mcd_expected <- rfa_simulate(sim_type = "expected",
+                             bestfit_params = mcd_gev_params,
+                             dist = "GEV",
+                             stage_ts = mcd_stage_TS,
+                             seasonality = mcd_seasonality$relative_frequency,
+                             hydrographs = mcd_hydrographs,
+                             resmodel = mcd_resmodel,
+                             Nbins = 50, 
+                             events_per_bin = 200,
+                             sim_name = "mcd",
+                             results_dir = project_dir)
+
+```
+
+```{r result-plot-setup, include = FALSE}
+aep_breaks <- c(9.9e-1, 9e-1, 5e-1, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10)
+minor_aep_breaks <- unlist(lapply(2:9, function(i) i * 10^-(1:10)))
+
+z_breaks <- qnorm(1-aep_breaks)
+z_breaks_minor <- qnorm(1-minor_aep_breaks)
+
+z_limit1 <- qnorm(1 - 9.9e-1)
+z_limit2 <- qnorm(1 - 1e-7)
+```
+
+```{r results-expected-plot, echo=FALSE,warning=FALSE}
+mcd_expected_df <- mcd_expected$stage_frequency |> 
+  mutate(z_aep = qnorm(1-AEP))
+
+mcd_empirical_stage <- mcd_empirical_stage |> 
+  mutate(z_aep = qnorm(1-plot_posit))
+
+ggplot() +
+  geom_line(data = mcd_expected_df,
+            aes(x = z_aep, y = Expected),
+            color = "#3B4992FF",
+            linewidth = 0.85) +
+  # Observed Stage points
+  geom_point(data = mcd_empirical_stage, 
+             aes(x = z_aep, y = stage_ft, shape = "Obs. Stages"),
+             size = 1.5, alpha = 0.7) +
+  scale_shape_manual(values = c("Obs. Stages" = 16)) +
+  # Scales
+  scale_x_continuous(breaks = z_breaks,
+                     minor_breaks = z_breaks_minor,
+                     labels = aep_breaks) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10),
+                     labels = scales::label_comma()) +
+  # Labels
+  labs(x = "AEP",
+       y = "Stage (ft-NAVD88)",
+       title = paste("Marcus Camby Dam"),
+       shape = NULL,
+       color = NULL) +
+  # Theme
+  theme_bw() +
+  theme(legend.position = "inside",
+        legend.justification = c(0.95, 0.1),
+        legend.text = element_text(size = 7, face = "italic"),
+        legend.title = element_text(size = 8, face = "bold"),
+        legend.background = element_rect(fill = "white", color = "black"),
+        axis.text = element_text(size = 8),
+        axis.title = element_text(size = 9),
+        plot.subtitle = element_text(size = 9, face = "italic"),
+        plot.title = element_text(size = 11, face = "bold.italic"))
+
+
+```
