@@ -102,6 +102,7 @@ mod_puls_routing <- function(resmodel_df, inflow_df, initial_elev, full_results 
 
   for (t in 2:n) {
     SI_new      <- (S_vec[t - 1] * two_over_dt) - O_vec[t - 1] + I_sum[t]
+
     O_vec[t]    <- interp_SI_to_outflow(SI_new)
     S_vec[t]    <- interp_SI_to_stor(SI_new)
     elev_vec[t] <- interp_stor_to_elev(S_vec[t])

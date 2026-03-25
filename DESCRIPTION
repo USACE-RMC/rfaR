@@ -46,7 +46,8 @@ Suggests:
     dplyr,
     tidyr,
     kableExtra,
-    patchwork
+    patchwork,
+    ggsci
 VignetteBuilder: knitr
 Imports: 
     cli,

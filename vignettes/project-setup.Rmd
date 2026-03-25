@@ -1,6 +1,10 @@
 ---
 title: "Setting Up Your rfaR Project"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
 vignette: >
   %\VignetteIndexEntry{Setting Up Your rfaR Project}
   %\VignetteEngine{knitr::rmarkdown}
@@ -72,6 +76,6 @@ str(jmd_resmodel)
 str(resmodel)  # should match
 ```
 
-```{r setup}
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
 library(rfaR)
 ```
