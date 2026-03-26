@@ -1,7 +1,7 @@
-# Jay McGraw Dam Empirical Stage-Frequency with Perception Threshold
+# JMD Empirical Stage-Frequency with Perception Threshold
 
-Empirical stage-frequency results for Jay McGraw Dam (WY 1980-2024) with
-perception threshold applied.
+Empirical stage-frequency results for JMD (WY 1980-2024) with perception
+threshold applied.
 
 ## Usage
 

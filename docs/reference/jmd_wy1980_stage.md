@@ -1,4 +1,4 @@
-# Jay McGraw Dam Stage (WY 1980-2024)
+# JMD Stage (WY 1980-2024)
 
 Daily stage data from Water Year 1980-2024.
 

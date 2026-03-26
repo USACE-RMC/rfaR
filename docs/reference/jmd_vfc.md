@@ -1,4 +1,4 @@
-# Jay McGraw Dam Volume-Frequency Curve
+# JMD Volume-Frequency Curve
 
 Tabular volume-frequency curve results from RMC-BestFit 2.0.
 

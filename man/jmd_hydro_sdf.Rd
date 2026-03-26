@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_hydro_sdf}
 \alias{jmd_hydro_sdf}
-\title{Jay McGraw Dam SDF Hydrograph}
+\title{JMD SDF Hydrograph}
 \format{
 A data frame with 337 rows and 2 columns:
 \describe{

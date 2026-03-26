@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_stage_duration}
 \alias{jmd_stage_duration}
-\title{Jay McGraw Dam Monthly Stage Duration Curves}
+\title{JMD Monthly Stage Duration Curves}
 \format{
 A data frame with 45 rows and 13 columns:
 \describe{

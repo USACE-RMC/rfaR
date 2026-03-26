@@ -1,4 +1,4 @@
-# Jay McGraw Dam June 1965 Hydrograph
+# JMD June 1965 Hydrograph
 
 Inflow hydrograph shape from June 1965 flood event (from HEC-HMS).
 

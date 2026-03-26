@@ -1,4 +1,4 @@
-# Jay McGraw Dam PMF Hydrograph
+# JMD PMF Hydrograph
 
 Inflow hydrograph shape for Probable Maximum Flood (PMF).
 

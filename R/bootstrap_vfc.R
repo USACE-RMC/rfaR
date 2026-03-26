@@ -19,7 +19,7 @@
 #'
 #' @export
 #'
-#' @seealso [flow_frequency_sampler()]
+#' @seealso [rfaR::flow_frequency_sampler()]
 #'
 #' @examples
 #' # Sample using JMD VFC parameters

@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_rfa_full}
 \alias{jmd_rfa_full}
-\title{Jay McGraw Dam RFA Results - Full Uncertainty}
+\title{JMD RFA Results - Full Uncertainty}
 \format{
 A data frame with 10000 rows and 3 columns:
 \describe{
@@ -18,7 +18,7 @@ A data frame with 10000 rows and 3 columns:
 jmd_rfa_full
 }
 \description{
-Jay McGraw Dam, full uncertainty stage-frequency results from RFA.
+JMD full uncertainty stage-frequency results from RFA.
 }
 \examples{
 head(jmd_rfa_full)

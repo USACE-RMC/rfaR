@@ -1,4 +1,4 @@
-# Jay McGraw Dam BestFit Parameter Sets
+# JMD BestFit Parameter Sets
 
 LP3 distribution parameters sets of volume-frequency curve results from
 RMC-BestFit 2.0.

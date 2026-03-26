@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_por_inflow}
 \alias{jmd_por_inflow}
-\title{Jay McGraw Dam Period of Record Inflow}
+\title{JMD Period of Record Inflow}
 \format{
 A data frame with 40,908 rows and 4 columns:
 \describe{
@@ -17,7 +17,7 @@ A data frame with 40,908 rows and 4 columns:
 jmd_por_inflow
 }
 \description{
-Daily inflow at Jay McGraw Dam for the available period of record.
+Daily inflow at JMD for the available period of record.
 }
 \examples{
 head(jmd_por_inflow)

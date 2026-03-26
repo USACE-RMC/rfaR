@@ -1,6 +1,6 @@
-# Jay McGraw Dam Period of Record Inflow
+# JMD Period of Record Inflow
 
-Daily inflow at Jay McGraw Dam for the available period of record.
+Daily inflow at JMD for the available period of record.
 
 ## Usage
 

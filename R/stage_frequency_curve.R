@@ -7,7 +7,7 @@
 #' probability (AEP).
 #'
 #' @param peakStage Matrix of peak stages `[Mevents x Nbins]` from routing.
-#' @param weights Numeric vector of bin weights from [stratified_sampler()].
+#' @param weights Numeric vector of bin weights from [rfaR::stratified_sampler()].
 #'   Must have length equal to `ncol(peakStage)`.
 #'
 #' @return A data frame with columns:
@@ -16,7 +16,7 @@
 #'   \item{AEP}{Annual exceedance probability at each stage}
 #' }
 #'
-#' @seealso [stratified_sampler()], [flow_frequency_sampler()], [rfa_simulate()]
+#' @seealso [rfaR::stratified_sampler()], [rfaR::flow_frequency_sampler()], [rfaR::rfa_simulate()]
 #'
 #' @keywords internal
 stage_frequency_curve <- function(peakStage, weights, stage_bins = 1000) {

@@ -1,4 +1,4 @@
-# Jay McGraw Dam VFC Parameters
+# JMD VFC Parameters
 
 LP3 distribution parameters of volume-frequency curve results from
 RMC-BestFit 2.0.

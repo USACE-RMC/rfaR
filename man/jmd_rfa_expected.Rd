@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_rfa_expected}
 \alias{jmd_rfa_expected}
-\title{Jay McGraw Dam RFA Results - Expected Only}
+\title{JMD RFA Results - Expected Only}
 \format{
 A data frame with 10000 row and 3 columns:
 \describe{
@@ -15,7 +15,7 @@ A data frame with 10000 row and 3 columns:
 jmd_rfa_expected
 }
 \description{
-Jay McGraw Dam, expected only stage-frequency results from RFA.
+JMD expected only stage-frequency results from RFA.
 }
 \examples{
 head(jmd_rfa_expected)

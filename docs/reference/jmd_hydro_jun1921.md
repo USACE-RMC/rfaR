@@ -1,4 +1,4 @@
-# Jay McGraw Dam June 1921 Hydrograph
+# JMD June 1921 Hydrograph
 
 Inflow hydrograph shape from June 1921 flood event.
 

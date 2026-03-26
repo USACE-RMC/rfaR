@@ -26,6 +26,7 @@ Description: An R implementation of the U.S. Army Corps of Engineers (USACE)
     assessment data for dam safety risk analyses, enabling evaluation of loading 
     parameters (stage, discharge, duration) and their associated annual exceedance 
     probabilities.
+Nickname: Friday
 License: BSD_3_clause + file LICENSE
 URL: https://github.com/USACE-RMC/rfaR, https://ideal-broccoli-1q9y47z.pages.github.io/
 BugReports: https://github.com/USACE-RMC/rfaR/issues

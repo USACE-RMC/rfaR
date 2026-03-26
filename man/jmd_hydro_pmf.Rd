@@ -3,7 +3,7 @@
 \docType{data}
 \name{jmd_hydro_pmf}
 \alias{jmd_hydro_pmf}
-\title{Jay McGraw Dam PMF Hydrograph}
+\title{JMD PMF Hydrograph}
 \format{
 A data frame with 192 rows and 2 columns:
 \describe{

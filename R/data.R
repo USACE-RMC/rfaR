@@ -429,7 +429,7 @@
 #'     within each distribution.}
 #' }
 #'
-#' @seealso [stratified_sampler()]
+#' @seealso [rfaR::stratified_sampler()]
 #' @examples
 #' example_stratified[sample(nrow(example_stratified), 5), ]
 "example_stratified"

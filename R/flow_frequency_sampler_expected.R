@@ -4,7 +4,7 @@
 #' a different parameter set from the posterior distribution. This collapses the
 #' nested Monte Carlo structure into a single pass, simultaneously sampling
 #' natural variability (via stratified z-ordinates) and knowledge uncertainty
-#' (via varying parameters). Used internally by [rfa_simulate()] for expected-only
+#' (via varying parameters). Used internally by [rfaR::rfa_simulate()] for expected-only
 #' mode.
 #'
 #' @param bestfit_params Data frame of distribution parameters from RMC-BestFit.
@@ -13,8 +13,8 @@
 #'   For GEV: columns are location, scale, shape.
 #' @param freq_dist Character. Distribution type. Either `"LP3"` (default) or `"GEV"`.
 #' @param strat_dist Character. Probability space for stratification bins.
-#'   Passed to [stratified_sampler()]. One of `"ev1"` (default), `"normal"`,
-#'   or `"uniform"`. See [stratified_sampler()] for details.
+#'   Passed to [rfaR::stratified_sampler()]. One of `"ev1"` (default), `"normal"`,
+#'   or `"uniform"`. See [rfaR::stratified_sampler()] for details.
 #' @param Nbin Integer. Number of stratified bins. Default is `50`.
 #' @param Mevent Integer. Number of events per bin. Default is `200`.
 #'
@@ -23,12 +23,12 @@
 #'   \item{flow}{Matrix of sampled flow values `[Mevent x Nbin]`}
 #'   \item{nbins}{Number of stratified bins}
 #'   \item{mevents}{Number of events per bin}
-#'   \item{weights}{Probability weights for each bin from [stratified_sampler()]}
+#'   \item{weights}{Probability weights for each bin from [rfaR::stratified_sampler()]}
 #' }
 #'
 #' @export
 #'
-#' @seealso [stratified_sampler()], [qp3()], [flow_frequency_sampler()], [rfa_simulate()]
+#' @seealso [rfaR::stratified_sampler()], [rfaR::qp3()], [rfaR::flow_frequency_sampler()], [rfaR::rfa_simulate()]
 #'
 #' @examples
 #' # Expected only using all 10,000 parameter sets

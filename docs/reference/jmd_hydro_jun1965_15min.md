@@ -1,4 +1,4 @@
-# Jay McGraw Dam June 1965 Hydrograph (15 minute intervals)
+# JMD June 1965 Hydrograph (15 minute intervals)
 
 Inflow hydrograph shape from June 1965 flood event (from HEC-HMS).
 

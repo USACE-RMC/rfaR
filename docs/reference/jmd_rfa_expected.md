@@ -1,6 +1,6 @@
-# Jay McGraw Dam RFA Results - Expected Only
+# JMD RFA Results - Expected Only
 
-Jay McGraw Dam, expected only stage-frequency results from RFA.
+JMD expected only stage-frequency results from RFA.
 
 ## Usage
 
