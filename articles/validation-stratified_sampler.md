@@ -1,4 +1,4 @@
-# V1 - Stratified Sampling Validation
+# Stratified Sampling Validation
 
 ## Purpose
 

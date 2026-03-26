@@ -1,4 +1,4 @@
-# V4 - Starting Stage Sampling Validation
+# Starting Stage Sampling Validation
 
 ## Purpose
 

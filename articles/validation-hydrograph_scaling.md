@@ -1,4 +1,4 @@
-# V6 - Hydrograph Scaling Validation
+# Hydrograph Scaling Validation
 
 ## Purpose
 

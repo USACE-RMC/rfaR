@@ -1,4 +1,4 @@
-# V2 - Validation of BestFit Parameter Sets
+# Validation of BestFit Parameter Sets
 
 ## Purpose
 

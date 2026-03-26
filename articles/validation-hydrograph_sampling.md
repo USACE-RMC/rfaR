@@ -1,4 +1,4 @@
-# V5 - Hydrograph Shape Sampling Validation
+# Hydrograph Shape Sampling Validation
 
 ## Purpose
 

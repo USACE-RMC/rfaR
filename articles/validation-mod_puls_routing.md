@@ -1,4 +1,4 @@
-# V7 - Modified-Puls Routing Validation
+# Modified-Puls Routing Validation
 
 ## Purpose
 

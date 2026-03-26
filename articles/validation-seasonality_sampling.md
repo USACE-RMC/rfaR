@@ -1,4 +1,4 @@
-# V3 - Seasonality Sampling Validation
+# Seasonality Sampling Validation
 
 ## Purpose
 
