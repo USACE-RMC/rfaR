@@ -1,12 +1,12 @@
 ---
-title: "V2 - Validation of BestFit Parameter Sets"
+title: "Validation of BestFit Parameter Sets"
 output:
   rmarkdown::html_document:
     theme: flatly
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{V2 - Validation of BestFit Parameter Sets}
+  %\VignetteIndexEntry{Validation of BestFit Parameter Sets}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

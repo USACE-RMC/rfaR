@@ -1,12 +1,12 @@
 ---
-title: "V1 - Stratified Sampling Validation"
+title: "Stratified Sampling Validation"
 output:
   rmarkdown::html_document:
     theme: flatly
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{V1 - Stratified Sampling Validation}
+  %\VignetteIndexEntry{Stratified Sampling Validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -1,12 +1,12 @@
 ---
-title: "V7 - Modified-Puls Routing Validation"
+title: "Modified-Puls Routing Validation"
 output:
   rmarkdown::html_document:
     theme: flatly
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{V7 - Modified-Puls Routing Validation}
+  %\VignetteIndexEntry{Modified-Puls Routing Validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

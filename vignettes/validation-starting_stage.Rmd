@@ -1,12 +1,12 @@
 ---
-title: "V4 - Starting Stage Sampling Validation"
+title: "Starting Stage Sampling Validation"
 output:
   rmarkdown::html_document:
     theme: flatly
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{V4 - Starting Stage Sampling Validation}
+  %\VignetteIndexEntry{Starting Stage Sampling Validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

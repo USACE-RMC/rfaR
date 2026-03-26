@@ -1,12 +1,12 @@
 ---
-title: "V6 - Hydrograph Scaling Validation"
+title: "Hydrograph Scaling Validation"
 output:
   rmarkdown::html_document:
     theme: flatly
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{V6 - Hydrograph Scaling Validation}
+  %\VignetteIndexEntry{Hydrograph Scaling Validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
