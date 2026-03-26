@@ -8,7 +8,7 @@
   Project](https://ideal-broccoli-1q9y47z.pages.github.io/articles/project-setup.md):
 - [Conceptual Computation of an rfaR
   Realization](https://ideal-broccoli-1q9y47z.pages.github.io/articles/rfaR-Realization-Conceptual.md):
-- [V5 - Hydrograph Shape Sampling
+- [Hydrograph Shape Sampling
   Validation](https://ideal-broccoli-1q9y47z.pages.github.io/articles/validation-hydrograph_sampling.md):
 - [Hydrograph Scaling
   Validation](https://ideal-broccoli-1q9y47z.pages.github.io/articles/validation-hydrograph_scaling.md):

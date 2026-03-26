@@ -1,12 +1,12 @@
 ---
-title: "V5 - Hydrograph Shape Sampling Validation"
+title: "Hydrograph Shape Sampling Validation"
 output:
   rmarkdown::html_document:
     theme: flatly
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{V5 - Hydrograph Shape Sampling Validation}
+  %\VignetteIndexEntry{Hydrograph Shape Sampling Validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

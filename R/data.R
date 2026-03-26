@@ -55,12 +55,12 @@
 "cc_hms_results"
 
 # ==============================================================================
-# JAY MCGRAW DAM (JMD) CORE EXAMPLE DATA
+# John McGraw DAM (JMD) CORE EXAMPLE DATA
 # ==============================================================================
 
-#' Jay McGraw Dam Reservoir Model
+#' JMD Reservoir Model
 #'
-#' Elevation-storage-discharge relationship for Jay McGraw Reservoir. Reservoir models must be monotonic.
+#' Elevation-storage-discharge relationship for John McGraw Reservoir. Reservoir models must be monotonic.
 #'
 #' @format A data frame with 3 columns:
 #' \describe{
@@ -78,12 +78,12 @@
 "jmd_resmodel"
 
 # ==============================================================================
-# JAY MCGRAW DAM - DISCHARGE GAGE
+# John McGraw DAM - DISCHARGE GAGE
 # ==============================================================================
 
-#' Jay McGraw Dam Period of Record Inflow
+#' JMD Period of Record Inflow
 #'
-#' Daily inflow at Jay McGraw Dam for the available period of record.
+#' Daily inflow at JMD for the available period of record.
 #'
 #' @format A data frame with 40,908 rows and 4 columns:
 #' \describe{
@@ -97,12 +97,12 @@
 "jmd_por_inflow"
 
 # ==============================================================================
-# JAY MCGRAW DAM - EMPIRICAL FREQUENCY
+# John McGraw DAM - EMPIRICAL FREQUENCY
 # ==============================================================================
 
-#' Jay McGraw Dam Empirical Stage-Frequency with Perception Threshold
+#' JMD Empirical Stage-Frequency with Perception Threshold
 #'
-#' Empirical stage-frequency results for Jay McGraw Dam (WY 1980-2024) with
+#' Empirical stage-frequency results for JMD (WY 1980-2024) with
 #' perception threshold applied.
 #'
 #' @format A data frame with 54 rows and 3 columns:
@@ -116,10 +116,10 @@
 "jmd_empirical_stage_wy1980_pt"
 
 # ==============================================================================
-# JAY MCGRAW DAM - HYDROGRAPHS
+# John McGraw DAM - HYDROGRAPHS
 # ==============================================================================
 
-#' Jay McGraw Dam April 1999 Hydrograph
+#' JMD April 1999 Hydrograph
 #'
 #' Inflow hydrograph shape from April 1999 flood event.
 #'
@@ -139,7 +139,7 @@
 #'}
 "jmd_hydro_apr1999"
 
-#' Jay McGraw Dam June 1921 Hydrograph
+#' JMD June 1921 Hydrograph
 #'
 #' Inflow hydrograph shape from June 1921 flood event.
 #'
@@ -159,7 +159,7 @@
 #' }
 "jmd_hydro_jun1921"
 
-#' Jay McGraw Dam June 1965 Hydrograph
+#' JMD June 1965 Hydrograph
 #'
 #' Inflow hydrograph shape from June 1965 flood event (from HEC-HMS).
 #'
@@ -179,7 +179,7 @@
 #' }
 "jmd_hydro_jun1965"
 
-#' Jay McGraw Dam June 1965 Hydrograph (15 minute intervals)
+#' JMD June 1965 Hydrograph (15 minute intervals)
 #'
 #' Inflow hydrograph shape from June 1965 flood event (from HEC-HMS).
 #'
@@ -199,7 +199,7 @@
 #' }
 "jmd_hydro_jun1965_15min"
 
-#' Jay McGraw Dam May 1955 Hydrograph
+#' JMD May 1955 Hydrograph
 #'
 #' Inflow hydrograph shape from May 1955 flood event.
 #'
@@ -219,7 +219,7 @@
 #' }
 "jmd_hydro_may1955"
 
-#' Jay McGraw Dam PMF Hydrograph
+#' JMD PMF Hydrograph
 #'
 #' Inflow hydrograph shape for Probable Maximum Flood (PMF).
 #'
@@ -239,7 +239,7 @@
 #' }
 "jmd_hydro_pmf"
 
-#' Jay McGraw Dam SDF Hydrograph
+#' JMD SDF Hydrograph
 #'
 #' Inflow hydrograph shape for Spillway Design Flood (SDF).
 #'
@@ -260,12 +260,12 @@
 "jmd_hydro_sdf"
 
 # ==============================================================================
-# JAY MCGRAW DAM - SEASONALITY
+# John McGraw DAM - SEASONALITY
 # ==============================================================================
 
-#' Jay McGraw Dam Flood Seasonality
+#' JMD Flood Seasonality
 #'
-#' Results of flood seasonality analysis from the full Jay McGraw Dam period
+#' Results of flood seasonality analysis from the full John McGraw Dam period
 #' of record. Determined using: threshold flow of 5,000 cfs, critical duration
 #' of 2 days, max events per year of 5, minimum days between events of 7.
 #'
@@ -281,10 +281,10 @@
 "jmd_seasonality"
 
 # ==============================================================================
-# JAY MCGRAW DAM - STAGE DURATION
+# John McGraw DAM - STAGE DURATION
 # ==============================================================================
 
-#' Jay McGraw Dam Monthly Stage Duration Curves
+#' JMD Monthly Stage Duration Curves
 #'
 #' Monthly stage duration curves from Water Year 1980-2024.
 #'
@@ -309,10 +309,10 @@
 "jmd_stage_duration"
 
 # ==============================================================================
-# JAY MCGRAW DAM - STAGE GAGE
+# John McGraw DAM - STAGE GAGE
 # ==============================================================================
 
-#' Jay McGraw Dam Stage (WY 1980-2024)
+#' JMD Stage (WY 1980-2024)
 #'
 #' Daily stage data from Water Year 1980-2024.
 #'
@@ -328,10 +328,10 @@
 "jmd_wy1980_stage"
 
 # ==============================================================================
-# JAY MCGRAW DAM - VOLUME FREQUENCY CURVE
+# John McGraw DAM - VOLUME FREQUENCY CURVE
 # ==============================================================================
 
-#' Jay McGraw Dam VFC Parameters
+#' JMD VFC Parameters
 #'
 #' LP3 distribution parameters of volume-frequency curve results from
 #' RMC-BestFit 2.0.
@@ -348,7 +348,7 @@
 #' head(jmd_vfc_parameters)
 "jmd_vfc_parameters"
 
-#' Jay McGraw Dam Volume-Frequency Curve
+#' JMD Volume-Frequency Curve
 #'
 #' Tabular volume-frequency curve results from RMC-BestFit 2.0.
 #'
@@ -364,7 +364,7 @@
 #' head(jmd_vfc)
 "jmd_vfc"
 
-#' Jay McGraw Dam BestFit Parameter Sets
+#' JMD BestFit Parameter Sets
 #'
 #' LP3 distribution parameters sets of volume-frequency curve results from
 #' RMC-BestFit 2.0.
@@ -380,9 +380,9 @@
 #' jmd_bf_parameter_sets[sample(nrow(jmd_bf_parameter_sets), 5), ]
 "jmd_bf_parameter_sets"
 
-#' Jay McGraw Dam RFA Results - Expected Only
+#' JMD RFA Results - Expected Only
 #'
-#' Jay McGraw Dam, expected only stage-frequency results from RFA.
+#' JMD expected only stage-frequency results from RFA.
 #'
 #' @format A data frame with 10000 row and 3 columns:
 #' \describe{
@@ -393,9 +393,9 @@
 #' head(jmd_rfa_expected)
 "jmd_rfa_expected"
 
-#' Jay McGraw Dam RFA Results - Full Uncertainty
+#' JMD RFA Results - Full Uncertainty
 #'
-#' Jay McGraw Dam, full uncertainty stage-frequency results from RFA.
+#' JMD full uncertainty stage-frequency results from RFA.
 #'
 #' @format A data frame with 10000 rows and 3 columns:
 #' \describe{

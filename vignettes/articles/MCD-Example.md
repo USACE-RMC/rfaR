@@ -6,6 +6,7 @@ output:
     toc: true
     toc_float: true
     toc_depth: 3
+eval: false
 ---
 
 # Summary 
@@ -32,7 +33,7 @@ library(ggplot2)
 
 All of the MCD data is stored in sub-directories within this parent directory. Setting up the parent directory as an R-project can also make searching for files/directories easier. An R-project will change the working directory to the specified project location. For example, setting `parent_dir` as the R-project directory would set the default working directory (likely on the C: drive) to `parent_dir` (ex. `getwd()` would return `"D:/0.RMC/Reefer/MC_Dam"`).
 
-```{r mcd-directory}
+```{r mcd-directory,include = FALSE, warning = FALSE}
 parent_dir <- "D:/0.RMC/Reefer/MC_Dam"
 ```
 
@@ -44,7 +45,7 @@ Currently, the preferred method of data entry for rfaR is copying data from RMC-
 
 The BestFit parameter sets should be 10,000 rows and 3 columns. Each row is a set of 3 parameters (for both GEV and LP3 parameter sets). Users can include a 4th column, log-likelihood, if desired. All of the data is numeric
 
-```{r load-bestfit-params, echo = FALSE, warning = FALSE}
+```{r load-bestfit-params, warning = FALSE}
 bestfit_file <- file.path(parent_dir,"bestfit","mcd_bestfit_params.csv")
 mcd_gev_params <- read.csv(bestfit_file)
 
@@ -59,7 +60,7 @@ head(mcd_gev_params)
 
 `rfaR` does not have a seasonality analysis module at this time. The seasonality analysis from RMC-RFA should be copied as is from the software. The seasonality data should have 12 rows and 4 columns. The third column, `$relative_frequency` will be used in `rfa_simulate()` to sample the seasonality.
 
-```{r load-seasonality, echo = FALSE, warning = FALSE}
+```{r load-seasonality, warning = FALSE}
 szn_file <- file.path(parent_dir,"seasonality","mcd_seasonality.csv")
 mcd_seasonality <- read.csv(szn_file)
 
@@ -76,7 +77,7 @@ print(mcd_seasonality)
 
 The empirical stage frequency from RMC-RFA has been loaded below. This data contains 2 columns of stage and corresponding plotting-position. 
 
-```{r load-stageTS, echo = FALSE, warning = FALSE}
+```{r load-stageTS, warning = FALSE}
 stage_ts_file <- file.path(parent_dir,"stage_data","mcd_stageTS.csv")
 
 mcd_stage_TS <- read.csv(stage_ts_file)
@@ -95,7 +96,7 @@ head(mcd_stage_TS)
 
 The reservoir model is formatted identically to RMC-RFA. The model should be three columns: stage, storage, and discharge and the stage must be monotonic.
 
-```{r load-resmodel, echo = FALSE, warning = FALSE}
+```{r load-resmodel, warning = FALSE}
 resmodel_file <- file.path(parent_dir,"res_model","mcd_resmodel.csv")
 mcd_resmodel <- read.csv(resmodel_file)
 
@@ -107,7 +108,7 @@ mcd_resmodel[c(1,10,25,50,60),]
 
 The hydrographs have been copied directly from RMC-RFA, including the **Ordinate** column. The 
 
-```{r load-hydrographs, echo = FALSE, warning = FALSE}
+```{r load-hydrographs, warning = FALSE}
 hydro_1993 <- read.csv(file.path(parent_dir,"hydrographs","mcd_1993flood.csv"))
 hydro_1995 <- read.csv(file.path(parent_dir,"hydrographs","mcd_1995flood.csv"))
 hydro_2004 <- read.csv(file.path(parent_dir,"hydrographs","mcd_2004flood.csv"))
@@ -123,7 +124,7 @@ bind_rows(hydro_1993[c(1:2),],
 
 # Set up Hydrograph Shapes
 
-```{r setup-hydrographs, echo = FALSE, warning = FALSE}
+```{r setup-hydrographs, warning = FALSE}
 # Check crit and routing dir
 mcd_hydrographs <- hydrograph_setup(hydro_1993,
                                     hydro_1995,
@@ -134,7 +135,7 @@ mcd_hydrographs <- hydrograph_setup(hydro_1993,
 
 ```
 
-```{r plot-hydrographs, echo = FALSE, waring = FALSE}
+```{r plot-hydrographs, echo = FALSE, warning = FALSE}
 # Add Peak Flow and Time
 for (i in seq_along(mcd_hydrographs)) {
   mcd_hydrographs[[i]] <- mcd_hydrographs[[i]] |> 
@@ -193,7 +194,7 @@ ggplot(hydros) +
 # Expected-Only Stage-Frequency Analysis
 
 
-```{r mcd-expectd-only, echo = FALSE, warning = FALSE, message = FALSE}
+```{r mcd-expectd-only, warning = FALSE, message = FALSE}
 # Expected Only 
 mcd_expected <- rfa_simulate(sim_type = "expected",
                              bestfit_params = mcd_gev_params,
@@ -239,7 +240,7 @@ theme_stage_freq <- function(){
 
 The results have been plotted below on a standard `ggplot2` template. Note that the AEPs of both the results and emprical stage-frequency were converted to z-variates for plotting purposes.
 
-```{r results-expected-plot, echo=FALSE,warning=FALSE,collapse = TRUE}
+```{r results-expected-plot, warning=FALSE, collapse = TRUE}
 mcd_expected_df <- mcd_expected$stage_frequency |> 
   mutate(z_aep = qnorm(1-AEP))
 
