@@ -1,27 +1,46 @@
 # Package index
 
-## All functions
+## Functions
 
-- [`aep2stage()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/aep2stage.md)
-  : Interpolate Stage from AEP
-- [`bootstrap_vfc()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/bootstrap_vfc.md)
-  : Bootstrap option for VFC (RFA-style w/ ERL)
-- [`cc_hms_results`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/cc_hms_results.md)
-  : Cherry Cricket Dam HEC-HMS Routing Results
-- [`cc_inflowhydro`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/cc_inflowhydro.md)
-  : Cherry Cricket Dam Inflow Hydrograph
-- [`cc_init_elev`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/cc_init_elev.md)
-  : Cherry Cricket Dam Initial Elevation
-- [`cc_resmodel`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/cc_resmodel.md)
-  : Cherry Cricket Dam Reservoir Model
-- [`example_stratified`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/example_stratified.md)
-  : Stratified Sampling - Example Data
+Core functions for reservoir frequency analysis
+
+- [`mod_puls_routing()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/mod_puls_routing.md)
+  : Modified Puls Reservoir Routing
+- [`scale_hydrograph()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/scale_hydrograph.md)
+  : Scale Hydrograph
+- [`hydrograph_setup()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/hydrograph_setup.md)
+  : Hydrograph Setup for RFA Simulation
+- [`stratified_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stratified_sampler.md)
+  : Stratified Sampler for Monte Carlo Simulation
 - [`flow_frequency_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/flow_frequency_sampler.md)
   : Flow Frequency Sampler
 - [`flow_frequency_sampler_expected()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/flow_frequency_sampler_expected.md)
   : Flow Frequency Sampler (Expected Only)
-- [`hydrograph_setup()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/hydrograph_setup.md)
-  : Hydrograph Setup for RFA Simulation
+- [`rfa_simulate()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/rfa_simulate.md)
+  : RFA Stage-Frequency Simulation
+- [`stage_frequency_curve()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stage_frequency_curve.md)
+  : Compute Stage-Frequency Curve
+- [`bootstrap_vfc()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/bootstrap_vfc.md)
+  : Bootstrap option for VFC (RFA-style w/ ERL)
+- [`qp3()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/qp3.md)
+  : Pearson Type III Inverse CDF (Quantile Function)
+- [`aep2stage()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/aep2stage.md)
+  : Interpolate Stage from AEP
+- [`stage2aep()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stage2aep.md)
+  : Interpolate AEP from Stage
+- [`interpolate_aep_matrix()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/interpolate_aep_matrix.md)
+  : Interpolate AEPs at Target Stages Across Realizations
+- [`interpolate_stage_matrix()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/interpolate_stage_matrix.md)
+  : Interpolate Stages at Target AEPs Across Realizations
+- [`power_function()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/power_function.md)
+  : Power Function
+- [`theme_rfar_conceptual()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/theme_rfar_conceptual.md)
+  : rfaR ggplot theme for conceptual example
+
+## Datasets
+
+Example datasets included with rfaR
+
 - [`jmd_bf_parameter_sets`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/jmd_bf_parameter_sets.md)
   : Jay McGraw Dam BestFit Parameter Sets
 - [`jmd_empirical_stage_wy1980_pt`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/jmd_empirical_stage_wy1980_pt.md)
@@ -58,17 +77,13 @@
   : Jay McGraw Dam VFC Parameters
 - [`jmd_wy1980_stage`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/jmd_wy1980_stage.md)
   : Jay McGraw Dam Stage (WY 1980-2024)
-- [`mod_puls_routing()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/mod_puls_routing.md)
-  : Modified Puls Reservoir Routing
-- [`qp3()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/qp3.md)
-  : Pearson Type III Inverse CDF (Quantile Function)
-- [`rfa_simulate()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/rfa_simulate.md)
-  : RFA Stage-Frequency Simulation
-- [`scale_hydrograph()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/scale_hydrograph.md)
-  : Scale Hydrograph
-- [`stage2aep()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stage2aep.md)
-  : Interpolate AEP from Stage
-- [`stratified_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stratified_sampler.md)
-  : Stratified Sampler for Monte Carlo Simulation
-- [`theme_rfar_conceptual()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/theme_rfar_conceptual.md)
-  : rfaR ggplot theme for conceptual example
+- [`cc_hms_results`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/cc_hms_results.md)
+  : Cherry Cricket Dam HEC-HMS Routing Results
+- [`cc_inflowhydro`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/cc_inflowhydro.md)
+  : Cherry Cricket Dam Inflow Hydrograph
+- [`cc_init_elev`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/cc_init_elev.md)
+  : Cherry Cricket Dam Initial Elevation
+- [`cc_resmodel`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/cc_resmodel.md)
+  : Cherry Cricket Dam Reservoir Model
+- [`example_stratified`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/example_stratified.md)
+  : Stratified Sampling - Example Data
