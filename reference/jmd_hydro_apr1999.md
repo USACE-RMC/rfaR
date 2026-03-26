@@ -1,4 +1,4 @@
-# Jay McGraw Dam April 1999 Hydrograph
+# JMD April 1999 Hydrograph
 
 Inflow hydrograph shape from April 1999 flood event.
 

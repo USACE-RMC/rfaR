@@ -1,4 +1,4 @@
-# Jay McGraw Dam Monthly Stage Duration Curves
+# JMD Monthly Stage Duration Curves
 
 Monthly stage duration curves from Water Year 1980-2024.
 

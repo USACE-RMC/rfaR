@@ -1,4 +1,4 @@
-# Jay McGraw Dam SDF Hydrograph
+# JMD SDF Hydrograph
 
 Inflow hydrograph shape for Spillway Design Flood (SDF).
 

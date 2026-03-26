@@ -1,4 +1,4 @@
-# Jay McGraw Dam May 1955 Hydrograph
+# JMD May 1955 Hydrograph
 
 Inflow hydrograph shape from May 1955 flood event.
 

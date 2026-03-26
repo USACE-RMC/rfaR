@@ -1,6 +1,6 @@
-# Jay McGraw Dam Flood Seasonality
+# JMD Flood Seasonality
 
-Results of flood seasonality analysis from the full Jay McGraw Dam
+Results of flood seasonality analysis from the full John McGraw Dam
 period of record. Determined using: threshold flow of 5,000 cfs,
 critical duration of 2 days, max events per year of 5, minimum days
 between events of 7.

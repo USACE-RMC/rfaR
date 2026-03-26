@@ -1,6 +1,6 @@
-# Jay McGraw Dam Reservoir Model
+# JMD Reservoir Model
 
-Elevation-storage-discharge relationship for Jay McGraw Reservoir.
+Elevation-storage-discharge relationship for John McGraw Reservoir.
 Reservoir models must be monotonic.
 
 ## Usage

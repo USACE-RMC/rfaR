@@ -1,6 +1,6 @@
-# Jay McGraw Dam RFA Results - Full Uncertainty
+# JMD RFA Results - Full Uncertainty
 
-Jay McGraw Dam, full uncertainty stage-frequency results from RFA.
+JMD full uncertainty stage-frequency results from RFA.
 
 ## Usage
 
