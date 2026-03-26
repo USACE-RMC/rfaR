@@ -1,3 +1,61 @@
 url: https://ideal-broccoli-1q9y47z.pages.github.io/
 template:
   bootstrap: 5
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+  components:
+    articles:
+      text: Articles
+      menu:
+      - text: Validation
+        href: articles/index.html
+      - text: Technical Reference
+        href: articles/rfaR-Realization-Conceptual.html
+
+reference:
+- title: "Functions"
+  desc: "Core functions for reservoir frequency analysis"
+  contents:
+  - mod_puls_routing
+  - scale_hydrograph
+  - hydrograph_setup
+  - stratified_sampler
+  - flow_frequency_sampler
+  - flow_frequency_sampler_expected
+  - rfa_simulate
+  - stage_frequency_curve
+  - bootstrap_vfc
+  - qp3
+  - aep2stage
+  - stage2aep
+  - interpolate_aep_matrix
+  - interpolate_stage_matrix
+  - power_function
+  - theme_rfar_conceptual
+
+- title: "Datasets"
+  desc: "Example datasets included with rfaR"
+  contents:
+  - starts_with("jmd_")
+  - starts_with("cc_")
+  - example_stratified
+
+articles:
+- title: Validation
+  navbar: Validation
+  contents:
+  - "validation-hydrograph_sampling"
+  - "validation-hydrograph_scaling"
+  - "validation-mod_puls_routing"
+  - "validation-seasonality_sampling"
+  - "validation-starting_stage"
+  - "validation-stratified_sampler"
+  - "validation-vfc_parameter_sets"
+
+- title: Technical Reference
+  navbar: Technical Reference
+  contents:
+  - rfaR-Realization-Conceptual
+  - project-setup
