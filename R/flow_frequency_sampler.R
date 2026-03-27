@@ -82,12 +82,13 @@ flow_frequency_sampler <- function(bestfit_params, freq_dist = "LP3",
 
   #GEV DISTRIBUTION - additional distributions will come later
     # Params from vector
-    xi <- bestfit_params[1]
-    alfa <- bestfit_params[2]
-    k <- bestfit_params[3]
+    xi <- unlist(unname(bestfit_params[1]))
+    alfa <- unlist(unname(bestfit_params[2]))
+    k <- unlist(unname(bestfit_params[3]))
 
     # Uses lmom package
-    Q_matrix <- lmom::quagev(pnorm(z_matrix),c(xi, alfa, k))
+    #Q_matrix <- lmom::quagev(pnorm(z_matrix),c(xi, alfa, k))
+    Q_matrix <- pmax(lmom::quagev(pnorm(z_matrix), c(xi, alfa, k)), 0)
 
   }
 

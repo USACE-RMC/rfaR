@@ -119,10 +119,11 @@ flow_frequency_sampler_expected <- function(bestfit_params, freq_dist = "LP3",
         idx <- (j - 1) * nrow(z_matrix) + i
 
         # Sampled Flow (lmom package)
-        Q_matrix[i, j] <- lmom::quagev(pnorm(z_var),
-                                       c(bestfit_params[idx, 1],
-                                         bestfit_params[idx, 2],
-                                         bestfit_params[idx, 3]))
+        Q_matrix[i, j] <- max(lmom::quagev(pnorm(z_var),
+                                           c(bestfit_params[idx, 1],
+                                             bestfit_params[idx, 2],
+                                             bestfit_params[idx, 3])), 0)
+
       }
     }
   }
