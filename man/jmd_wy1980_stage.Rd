@@ -20,6 +20,10 @@ jmd_wy1980_stage
 Daily stage data from Water Year 1980-2024.
 }
 \examples{
+sapply(jmd_wy1980_stage,class)
 head(jmd_wy1980_stage)
+plot(as.Date(jmd_wy1980_stage$date,tryFormats = c("\%m/\%d/\%Y")), jmd_wy1980_stage$stage_ft,
+      xlab = "Year", ylab = "Inflow (cfs)",
+      type = "l")
 }
 \keyword{datasets}

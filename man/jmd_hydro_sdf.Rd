@@ -20,11 +20,10 @@ jmd_hydro_sdf
 Inflow hydrograph shape for Spillway Design Flood (SDF).
 }
 \examples{
+sapply(jmd_hydro_sdf,class)
 head(jmd_hydro_sdf)
-\donttest{
 plot(jmd_hydro_sdf$Ordinate, jmd_hydro_sdf$Flow,
-     xlab = "Ordinate", ylab = "Inflow (cfs)",
+     xlab = "Hour", ylab = "Inflow (cfs)",
      type = "l")
-}
 }
 \keyword{datasets}

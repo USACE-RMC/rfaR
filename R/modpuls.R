@@ -2,9 +2,6 @@
 #'
 #' Performs Modified Puls (level pool) routing of inflow hydrograph given
 #' a defined reservoir geometry (Stage (ft), Storage (ac-ft), Discharge (cfs)).
-#' The computation interval is inferred automatically from the time column of
-#' the inflow hydrograph — use \code{routable_hydrograph()} to resample to the
-#' desired computation interval before routing.
 #'
 #' @param resmodel_df Data frame with three columns: elevation/stage (ft),
 #'   storage (acre-feet), and discharge (cfs). Must be in that order.
@@ -16,7 +13,6 @@
 #'
 #' @return If `full_results = FALSE`, a named numeric vector with
 #'   `peak_stage_ft` and `peak_discharge_cfs`.
-#'
 #'   If `full_results = TRUE`, a data frame with columns: `time_hr`,
 #'   `inflow_cfs`, `elevation_ft`, `storage_acft`, and `outflow_cfs`.
 #'
@@ -35,7 +31,8 @@
 #' mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830)
 #'
 #' # Full routing table
-#' mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830, full_results = TRUE)
+#' jmd_full_routing <- mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830, full_results = TRUE)
+#' head(jmd_full_routing)
 #'
 #' @references
 #' Chow, V.T. (1959). Open-Channel Hydraulics. McGraw-Hill.
@@ -55,8 +52,6 @@ mod_puls_routing <- function(resmodel_df, inflow_df, initial_elev, full_results 
 
   # INFER COMPUTATION INTERVAL FROM TIME COLUMN ================================
   # Time column is in hours; convert to seconds for routing math.
-  # routable_hydrograph() guarantees a uniform timestep before this is called.
-  # hours
   dt_hr <- inflow_df[2, 1] - inflow_df[1, 1]
 
   # seconds

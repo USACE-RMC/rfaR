@@ -4,7 +4,7 @@
 #' Converts date/time columns and adds sequential hour and hydrograph ID columns.
 #'
 #' @param ... Data frame representing an input hydrograph with columns: Ord, Date, Time, Flow (cfs).
-#'   Copied directly from RMC-RFA.
+#'   Copied directly from RMC-RFA. Date & Time should be \code{class() = "character"}
 #' @param critical_duration Critical duration in days.
 #' @param routing_days Desired length of routing simulation in days.
 #' @param weights Optional numeric vector of sampling weights for each hydrograph.

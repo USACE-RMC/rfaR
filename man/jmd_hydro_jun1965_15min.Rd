@@ -20,11 +20,10 @@ jmd_hydro_jun1965_15min
 Inflow hydrograph shape from June 1965 flood event (from HEC-HMS).
 }
 \examples{
+sapply(jmd_hydro_jun1965_15min,class)
 head(jmd_hydro_jun1965_15min)
-\donttest{
-plot(jmd_hydro_jun1965_15min$Ordinate, jmd_hydro_jun1965_15min$Flow,
-     xlab = "Ordinate", ylab = "Inflow (cfs)",
+plot(jmd_hydro_jun1965_15min$Ordinate/4, jmd_hydro_jun1965_15min$Flow,
+     xlab = "Hour", ylab = "Inflow (cfs)",
      type = "l")
-}
 }
 \keyword{datasets}

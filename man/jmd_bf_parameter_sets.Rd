@@ -21,6 +21,9 @@ LP3 distribution parameters sets of volume-frequency curve results from
 RMC-BestFit 2.0.
 }
 \examples{
+sapply(jmd_bf_parameter_sets,class)
 jmd_bf_parameter_sets[sample(nrow(jmd_bf_parameter_sets), 5), ]
+hist(jmd_bf_parameter_sets$mean_log,
+       xlab = "Mean Log", ylab = "Count")
 }
 \keyword{datasets}

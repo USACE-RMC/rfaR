@@ -2,7 +2,7 @@
 % Please edit documentation in R/stratified_sampler.R
 \name{stratified_sampler}
 \alias{stratified_sampler}
-\title{Stratified Sampler for Monte Carlo Simulation}
+\title{Stratified Sampler}
 \usage{
 stratified_sampler(
   minAEP = 1e-08,
@@ -17,7 +17,7 @@ stratified_sampler(
 
 \item{maxAEP}{Maximum annual exceedance probability. Default is \code{0.99}.}
 
-\item{dist}{Character. Probability space for stratification. One of:
+\item{dist}{Character. Probability space for stratification. Default is "EV1". Invalid values trigger a warning and default to "EV1".
 \describe{
 \item{"EV1"}{Extreme Value Type I (Gumbel) space. Recommended for flood
 frequency analysis. Allocates more bins to rare events through the
@@ -26,8 +26,7 @@ transformation \code{-log(-log(1-AEP))}, improving tail estimation efficiency.}
 Use when the underlying phenomenon is normally distributed.}
 \item{"Uniform"}{Uniform probability space. Equal probability width per bin.
 Generally inefficient for rare event estimation.}
-}
-Default is "EV1". Invalid values trigger a warning and default to "EV1".}
+}}
 
 \item{Nbins}{Number of stratified bins. Default is \code{20}.}
 
@@ -46,7 +45,7 @@ A list containing:
 }
 \description{
 Creates stratified bins in standard normal space for use in stratified
-Monte Carlo sampling. Stratification improves sampling efficiency by
+sampling. Stratification improves sampling efficiency by
 ensuring adequate coverage of rare events.
 }
 \details{

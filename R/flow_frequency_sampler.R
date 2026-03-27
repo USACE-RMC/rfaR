@@ -32,6 +32,7 @@
 #' result <- flow_frequency_sampler(params, freq_dist = "LP3",
 #'                                  Nbin = 20, Mevent = 500)
 #' dim(result$flow)  # 500 x 20
+#' hist(result$flow)
 
 flow_frequency_sampler <- function(bestfit_params, freq_dist = "LP3",
                                    strat_dist = "ev1",

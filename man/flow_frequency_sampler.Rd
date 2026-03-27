@@ -47,6 +47,7 @@ params <- c(4.85, 0.39, -0.15)
 result <- flow_frequency_sampler(params, freq_dist = "LP3",
                                  Nbin = 20, Mevent = 500)
 dim(result$flow)  # 500 x 20
+hist(result$flow)
 }
 \seealso{
 \code{\link[=stratified_sampler]{stratified_sampler()}}, \code{\link[=qp3]{qp3()}}, \code{\link[=rfa_simulate]{rfa_simulate()}}

@@ -21,16 +21,12 @@ stage and discharge. If \code{TRUE}, returns the complete routing result.}
 \value{
 If \code{full_results = FALSE}, a named numeric vector with
 \code{peak_stage_ft} and \code{peak_discharge_cfs}.
-
 If \code{full_results = TRUE}, a data frame with columns: \code{time_hr},
 \code{inflow_cfs}, \code{elevation_ft}, \code{storage_acft}, and \code{outflow_cfs}.
 }
 \description{
 Performs Modified Puls (level pool) routing of inflow hydrograph given
 a defined reservoir geometry (Stage (ft), Storage (ac-ft), Discharge (cfs)).
-The computation interval is inferred automatically from the time column of
-the inflow hydrograph — use \code{routable_hydrograph()} to resample to the
-desired computation interval before routing.
 }
 \examples{
 
@@ -45,7 +41,8 @@ scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
 mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830)
 
 # Full routing table
-mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830, full_results = TRUE)
+jmd_full_routing <- mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830, full_results = TRUE)
+head(jmd_full_routing)
 
 }
 \references{

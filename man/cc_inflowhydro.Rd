@@ -18,6 +18,7 @@ cc_inflowhydro
 Inflow hydrograph for an example flood event at Cherry Cricket Dam.
 }
 \examples{
+sapply(cc_inflowhydro,class)
 head(cc_inflowhydro)
 }
 \keyword{datasets}

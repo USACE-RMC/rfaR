@@ -50,8 +50,13 @@ mode.
 result <- flow_frequency_sampler_expected(jmd_bf_parameter_sets,
                                           Nbin = 20, Mevent = 500)
 dim(result$flow)  # 500 x 20
+jmd_result <- flow_frequency_sampler_expected(
+  jmd_samples$params,
+  freq_dist = "LP3",
+  Nbin      = 20,
+  Mevent    = 500)
 
-#' # Using bootstrapped parameter samples
+# Using bootstrapped parameter samples
 jmd_samples <- bootstrap_vfc(
   c(jmd_vfc_parameters$mean_log,
     jmd_vfc_parameters$sd_log,

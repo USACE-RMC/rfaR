@@ -13,7 +13,7 @@ hydrograph_setup(
 }
 \arguments{
 \item{...}{Data frame representing an input hydrograph with columns: Ord, Date, Time, Flow (cfs).
-Copied directly from RMC-RFA.}
+Copied directly from RMC-RFA. Date & Time should be \code{class() = "character"}}
 
 \item{critical_duration}{Critical duration in days.}
 

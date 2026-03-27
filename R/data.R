@@ -12,6 +12,7 @@
 #'   \item{outflow_cfs}{Cumulative discharge/outflow (CFS) corresponding to reservoir elevation (elev_ft).}
 #' }
 #' @examples
+#' sapply(cc_resmodel,class)
 #' head(cc_resmodel)
 "cc_resmodel"
 
@@ -25,6 +26,7 @@
 #'   \item{inflow_cfs}{Inflow in cubic-feet per second (CFS)}
 #' }
 #' @examples
+#' sapply(cc_inflowhydro,class)
 #' head(cc_inflowhydro)
 "cc_inflowhydro"
 
@@ -35,6 +37,7 @@
 #'
 #' @format A single numeric value representing the initial reservoir elevation (FT-NAVD88).
 #' @examples
+#' sapply(cc_init_elev,class)
 #' head(cc_init_elev)
 "cc_init_elev"
 
@@ -69,12 +72,11 @@
 #'   \item{discharge_cfs}{Cumulative discharge/outflow (CFS) corresponding to reservoir elevation (elev_ft).}
 #' }
 #' @examples
+#' sapply(jmd_resmodel,class)
 #' head(jmd_resmodel)
-#' \donttest{
 #' plot(jmd_resmodel[[1]], jmd_resmodel[[2]],
 #'      xlab = "Elevation (ft)", ylab = "Storage (acre-ft)",
 #'      type = "l")
-#' }
 "jmd_resmodel"
 
 # ==============================================================================
@@ -93,7 +95,11 @@
 #'   \item{flow_cfs}{Daily average inflow (cfs)}
 #' }
 #' @examples
+#' sapply(jmd_por_inflow,class)
 #' head(jmd_por_inflow)
+#' plot(as.Date(jmd_por_inflow$date,tryFormats = c("%m/%d/%Y")), jmd_por_inflow$flow_cfs,
+#'       xlab = "Year", ylab = "Inflow (cfs)",
+#'       type = "l")
 "jmd_por_inflow"
 
 # ==============================================================================
@@ -112,6 +118,7 @@
 #'   \item{plot_posit}{Plotting position}
 #' }
 #' @examples
+#' sapply(jmd_empirical_stage_wy1980_pt,class)
 #' head(jmd_empirical_stage_wy1980_pt)
 "jmd_empirical_stage_wy1980_pt"
 
@@ -131,12 +138,11 @@
 #'   \item{Flow}{Inflow (cfs)}
 #' }
 #' @examples
+#' sapply(jmd_hydro_apr1999,class)
 #' head(jmd_hydro_apr1999)
-#' \donttest{
 #' plot(jmd_hydro_apr1999$Ordinate, jmd_hydro_apr1999$Flow,
-#'      xlab = "Ordinate", ylab = "Inflow (cfs)",
+#'      xlab = "Hour", ylab = "Inflow (cfs)",
 #'           type = "l")
-#'}
 "jmd_hydro_apr1999"
 
 #' JMD June 1921 Hydrograph
@@ -151,12 +157,11 @@
 #'   \item{Flow}{Inflow (cfs)}
 #' }
 #' @examples
+#' sapply(jmd_hydro_jun1921,class)
 #' head(jmd_hydro_jun1921)
-#' \donttest{
 #' plot(jmd_hydro_jun1921$Ordinate, jmd_hydro_jun1921$Flow,
-#'      xlab = "Ordinate", ylab = "Inflow (cfs)",
+#'      xlab = "Hour", ylab = "Inflow (cfs)",
 #'      type = "l")
-#' }
 "jmd_hydro_jun1921"
 
 #' JMD June 1965 Hydrograph
@@ -171,12 +176,11 @@
 #'   \item{Flow}{Inflow (cfs)}
 #' }
 #' @examples
+#' sapply(jmd_hydro_jun1965,class)
 #' head(jmd_hydro_jun1965)
-#' \donttest{
 #' plot(jmd_hydro_jun1965$Ordinate, jmd_hydro_jun1965$Flow,
-#'      xlab = "Ordinate", ylab = "Inflow (cfs)",
+#'      xlab = "Hour", ylab = "Inflow (cfs)",
 #'      type = "l")
-#' }
 "jmd_hydro_jun1965"
 
 #' JMD June 1965 Hydrograph (15 minute intervals)
@@ -191,12 +195,11 @@
 #'   \item{Flow}{Inflow (cfs)}
 #' }
 #' @examples
+#' sapply(jmd_hydro_jun1965_15min,class)
 #' head(jmd_hydro_jun1965_15min)
-#' \donttest{
-#' plot(jmd_hydro_jun1965_15min$Ordinate, jmd_hydro_jun1965_15min$Flow,
-#'      xlab = "Ordinate", ylab = "Inflow (cfs)",
+#' plot(jmd_hydro_jun1965_15min$Ordinate/4, jmd_hydro_jun1965_15min$Flow,
+#'      xlab = "Hour", ylab = "Inflow (cfs)",
 #'      type = "l")
-#' }
 "jmd_hydro_jun1965_15min"
 
 #' JMD May 1955 Hydrograph
@@ -211,12 +214,11 @@
 #'   \item{Flow}{Inflow (cfs)}
 #' }
 #' @examples
+#' sapply(jmd_hydro_may1955,class)
 #' head(jmd_hydro_may1955)
-#' \donttest{
 #' plot(jmd_hydro_may1955$Ordinate, jmd_hydro_may1955$Flow,
-#'      xlab = "Ordinate", ylab = "Inflow (cfs)",
+#'      xlab = "Hour", ylab = "Inflow (cfs)",
 #'      type = "l")
-#' }
 "jmd_hydro_may1955"
 
 #' JMD PMF Hydrograph
@@ -231,12 +233,11 @@
 #'   \item{Flow}{Inflow (cfs)}
 #' }
 #' @examples
+#' sapply(jmd_hydro_pmf,class)
 #' head(jmd_hydro_pmf)
-#' \donttest{
 #' plot(jmd_hydro_pmf$Ordinate, jmd_hydro_pmf$Flow,
-#'      xlab = "Ordinate", ylab = "Inflow (cfs)",
+#'      xlab = "Hour", ylab = "Inflow (cfs)",
 #'      type = "l")
-#' }
 "jmd_hydro_pmf"
 
 #' JMD SDF Hydrograph
@@ -251,12 +252,11 @@
 #'   \item{Flow}{Inflow (cfs)}
 #' }
 #' @examples
+#' sapply(jmd_hydro_sdf,class)
 #' head(jmd_hydro_sdf)
-#' \donttest{
 #' plot(jmd_hydro_sdf$Ordinate, jmd_hydro_sdf$Flow,
-#'      xlab = "Ordinate", ylab = "Inflow (cfs)",
+#'      xlab = "Hour", ylab = "Inflow (cfs)",
 #'      type = "l")
-#' }
 "jmd_hydro_sdf"
 
 # ==============================================================================
@@ -277,6 +277,7 @@
 #'   \item{cume_rel_frequency}{Cumulative relative frequency}
 #' }
 #' @examples
+#' sapply(jmd_seasonality,class)
 #' print(jmd_seasonality)
 "jmd_seasonality"
 
@@ -324,7 +325,11 @@
 #'   \item{stage_ft}{Reservoir stage (FT-NAVD88)}
 #' }
 #' @examples
+#' sapply(jmd_wy1980_stage,class)
 #' head(jmd_wy1980_stage)
+#' plot(as.Date(jmd_wy1980_stage$date,tryFormats = c("%m/%d/%Y")), jmd_wy1980_stage$stage_ft,
+#'       xlab = "Year", ylab = "Inflow (cfs)",
+#'       type = "l")
 "jmd_wy1980_stage"
 
 # ==============================================================================
@@ -377,7 +382,10 @@
 #'   \item{log_likelihood}{Log-likelihood of parameter set}
 #' }
 #' @examples
+#' sapply(jmd_bf_parameter_sets,class)
 #' jmd_bf_parameter_sets[sample(nrow(jmd_bf_parameter_sets), 5), ]
+#' hist(jmd_bf_parameter_sets$mean_log,
+#'        xlab = "Mean Log", ylab = "Count")
 "jmd_bf_parameter_sets"
 
 #' JMD RFA Results - Expected Only

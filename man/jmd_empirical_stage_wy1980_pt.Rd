@@ -20,6 +20,7 @@ Empirical stage-frequency results for JMD (WY 1980-2024) with
 perception threshold applied.
 }
 \examples{
+sapply(jmd_empirical_stage_wy1980_pt,class)
 head(jmd_empirical_stage_wy1980_pt)
 }
 \keyword{datasets}

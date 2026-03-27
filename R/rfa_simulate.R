@@ -1,6 +1,6 @@
 #' RFA Stage-Frequency Simulation
 #'
-#' Performs reservoir flood frequency analysis using Monte Carlo simulation to
+#' Performs reservoir stage frequency analysis using Monte Carlo simulation to
 #' develop stage-frequency relationships. Combines stratified flow-frequency
 #' sampling, flood seasonality, hydrograph scaling, and Modified Puls reservoir
 #' routing to estimate annual exceedance probabilities of reservoir stage.
@@ -25,7 +25,7 @@
 #' }
 #'
 #' For all modes, natural variability is captured through stratified sampling in
-#' EV1 (Gumbel) space with \code{Nbins} bins and \code{events_per_bin} events per
+#' with \code{Nbins} bins and \code{events_per_bin} events per
 #' bin, providing reliable coverage from common events down to approximately 1e-8 AEP.
 #'
 #' @param sim_type Character string specifying the simulation mode. One of
@@ -127,9 +127,9 @@
 #'
 #' Results are automatically exported as a CSV file named
 #' \code{{sim_name}_{sim_type}_{MM_DD_YY_HHMM}.csv} in the \code{results_dir}
-#' directory. For example, a median simulation named "Jay McGraw Dam" run on
+#' directory. For example, a median simulation named "John McGraw Dam" run on
 #' June 4, 2025 at 2:30 PM would produce
-#' \code{Jay_McGraw_Dam_median_06_04_25_1430.csv}.
+#' \code{John_McGraw_Dam_median_06_04_25_1430.csv}.
 #'
 #' @seealso \code{\link{flow_frequency_sampler}},
 #'   \code{\link{flow_frequency_sampler_expected}},
@@ -182,17 +182,7 @@
 #'   sim_name       = "jmd"
 #' )
 #'
-#' # Plot full uncertainty results
-#' with(results_full$stage_frequency, {
-#'   plot(expected, stage, type = "l", log = "x",
-#'        xlab = "Annual Exceedance Probability",
-#'        ylab = "Stage (ft)", main = "Stage-Frequency with Uncertainty")
-#'   lines(median, stage, lty = 2)
-#'   lines(lower_05, stage, lty = 3, col = "blue")
-#'   lines(upper_95, stage, lty = 3, col = "red")
-#'   legend("topleft", c("Expected", "Median", "5%", "95%"),
-#'          lty = c(1, 2, 3, 3), col = c("black", "black", "blue", "red"))
-#' })
+
 #' }
 rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
                          stage_ts, seasonality, hydrographs, resmodel,

@@ -1,12 +1,12 @@
-#' Stratified Sampler for Monte Carlo Simulation
+#' Stratified Sampler
 #'
 #' Creates stratified bins in standard normal space for use in stratified
-#' Monte Carlo sampling. Stratification improves sampling efficiency by
+#' sampling. Stratification improves sampling efficiency by
 #' ensuring adequate coverage of rare events.
 #'
 #' @param minAEP Minimum annual exceedance probability. Default is `1E-8`.
 #' @param maxAEP Maximum annual exceedance probability. Default is `0.99`.
-#' @param dist Character. Probability space for stratification. One of:
+#' @param dist Character. Probability space for stratification. Default is "EV1". Invalid values trigger a warning and default to "EV1".
 #'   \describe{
 #'     \item{"EV1"}{Extreme Value Type I (Gumbel) space. Recommended for flood
 #'       frequency analysis. Allocates more bins to rare events through the
@@ -16,7 +16,6 @@
 #'     \item{"Uniform"}{Uniform probability space. Equal probability width per bin.
 #'       Generally inefficient for rare event estimation.}
 #'   }
-#'   Default is "EV1". Invalid values trigger a warning and default to "EV1".
 #' @param Nbins Number of stratified bins. Default is `20`.
 #' @param Mevents Number of events per bin. Default is `500`.
 #'

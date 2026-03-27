@@ -22,6 +22,7 @@ of record. Determined using: threshold flow of 5,000 cfs, critical duration
 of 2 days, max events per year of 5, minimum days between events of 7.
 }
 \examples{
+sapply(jmd_seasonality,class)
 print(jmd_seasonality)
 }
 \keyword{datasets}

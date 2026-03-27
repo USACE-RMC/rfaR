@@ -20,6 +20,10 @@ jmd_por_inflow
 Daily inflow at JMD for the available period of record.
 }
 \examples{
+sapply(jmd_por_inflow,class)
 head(jmd_por_inflow)
+plot(as.Date(jmd_por_inflow$date,tryFormats = c("\%m/\%d/\%Y")), jmd_por_inflow$flow_cfs,
+      xlab = "Year", ylab = "Inflow (cfs)",
+      type = "l")
 }
 \keyword{datasets}

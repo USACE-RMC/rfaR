@@ -9,6 +9,7 @@
 #' @param peakStage Matrix of peak stages `[Mevents x Nbins]` from routing.
 #' @param weights Numeric vector of bin weights from [rfaR::stratified_sampler()].
 #'   Must have length equal to `ncol(peakStage)`.
+#' @param stage_bins Numeric value of exceedance stages used to compute stage-frequency in each bin. Default is 1000.
 #'
 #' @return A data frame with columns:
 #' \describe{

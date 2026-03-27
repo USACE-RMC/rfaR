@@ -11,6 +11,8 @@ stage_frequency_curve(peakStage, weights, stage_bins = 1000)
 
 \item{weights}{Numeric vector of bin weights from \code{\link[=stratified_sampler]{stratified_sampler()}}.
 Must have length equal to \code{ncol(peakStage)}.}
+
+\item{stage_bins}{Numeric value of exceedance stages used to compute stage-frequency in each bin. Default is 1000.}
 }
 \value{
 A data frame with columns:
