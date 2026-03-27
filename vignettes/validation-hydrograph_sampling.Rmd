@@ -153,6 +153,7 @@ ggplot(decay_curve) +
        title = "Absolute Difference of Sampled and Expected Relative Frequency",
        subtitle = "Convergence to input frequencies occurs with increasing number of simulations")
 ```
+
 ## Acceptance Criterion
 
 Sampled frequencies must be within 1% relative tolerance of the expected probabilities, consistent with `expect_equal(sample_freq, hydro_probs, tolerance = 0.01)`.

@@ -41,6 +41,13 @@ Stratified sampling divides the probability space into bins to ensure adequate c
 
 The following plot illustrates how each transformation distributes bin boundaries along the z-variate axis. Tick marks show the z-lower boundary of each bin. EV1 stratification produces wider spacing at common events (left) and tighter spacing at rare events (right), concentrating sampling effort where it matters most for dam safety/risk analysis.
 
+```{r bin-spacing, fig.width=10, fig.height=5}
+ev1 <- stratified_sampler(dist = "EV1")
+normal <- stratified_sampler(dist = "Normal")
+uniform <- stratified_sampler(dist = "Uniform")
+
+```
+
 ```{r bin-spacing-plot, fig.width=10, fig.height=5}
 ev1 <- stratified_sampler(dist = "EV1")
 normal <- stratified_sampler(dist = "Normal")

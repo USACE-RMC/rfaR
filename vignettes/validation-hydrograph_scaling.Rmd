@@ -127,7 +127,6 @@ ggplot(hydro_long, aes(x = time, y = inflow, color = Type, linetype = Type)) +
   theme(legend.position  = "top")
 ```
 
-### Acceptance Criterion
 
 ```{r test1-result, echo = FALSE}
 is_df <- is.data.frame(scaled_1hr)

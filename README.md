@@ -9,7 +9,7 @@ An R implementation of the U.S. Army Corps of Engineers (USACE) Risk Management 
 
 ## Example Data
 
-The package includes example data from a hypothetical dam, Jay McGraw Dam (JMD, variables as "jmd_"):
+The package includes example data from a hypothetical dam, John McGraw Dam (JMD, variables as "jmd_"):
 
 #### Reservoir Model
 
@@ -50,7 +50,7 @@ The package includes example data from a hypothetical dam, Jay McGraw Dam (JMD, 
 ``` r
 # Install from GitHub using remotes
 install.packages("remotes")
-remotes::install_github("USACE-RMC/rfaR")
+remotes::install_github("USACE-RMC/rfaR", build_vignettes = TRUE)
 
 # Install from GitHub using devtools
 install.packages("devtools")

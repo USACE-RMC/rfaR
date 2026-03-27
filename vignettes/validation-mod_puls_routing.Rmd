@@ -124,7 +124,7 @@ p2 <- ggplot(diff_df) +
                  alpha = 0.75) + 
   scale_x_continuous(breaks = scales::breaks_pretty(n = 10))+
   geom_vline(xintercept = 0, color = "gray50", linetype = "dashed") +
-  labs(x = "Cherry Cricket Dam — Outflow Difference (rfaR − HMS)",
+  labs(x = "Cherry Cricket Dam, Outflow Difference (rfaR − HMS)",
        y = "Frequency",
        title = "Distribution of Calculation Differences") +
   theme_bw() +
