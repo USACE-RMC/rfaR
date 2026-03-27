@@ -88,7 +88,7 @@ flow_frequency_sampler <- function(bestfit_params, freq_dist = "LP3",
 
     # Uses lmom package
     #Q_matrix <- lmom::quagev(pnorm(z_matrix),c(xi, alfa, k))
-    Q_matrix <- pmax(lmom::quagev(pnorm(z_matrix), c(xi, alfa, k)), 0)
+    Q_matrix <- pmax(lmom::quagev(pnorm(z_matrix), c(xi, alfa, k)), 1E-6)
 
   }
 
