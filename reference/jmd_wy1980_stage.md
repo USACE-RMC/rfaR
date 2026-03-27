@@ -31,6 +31,9 @@ A data frame with 29,858 rows and 4 columns:
 ## Examples
 
 ``` r
+sapply(jmd_wy1980_stage,class)
+#>    timestep        date        time    stage_ft 
+#>   "integer" "character" "character"   "numeric" 
 head(jmd_wy1980_stage)
 #>   timestep      date time stage_ft
 #> 1        1 10/1/1979 0:00  3790.68
@@ -39,4 +42,7 @@ head(jmd_wy1980_stage)
 #> 4        4 10/4/1979 0:00  3790.60
 #> 5        5 10/5/1979 0:00  3790.61
 #> 6        6 10/6/1979 0:00  3790.61
+plot(as.Date(jmd_wy1980_stage$date,tryFormats = c("%m/%d/%Y")), jmd_wy1980_stage$stage_ft,
+      xlab = "Year", ylab = "Inflow (cfs)",
+      type = "l")
 ```

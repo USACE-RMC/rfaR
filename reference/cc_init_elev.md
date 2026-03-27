@@ -17,6 +17,8 @@ A single numeric value representing the initial reservoir elevation
 ## Examples
 
 ``` r
+sapply(cc_init_elev,class)
+#> [1] "numeric"
 head(cc_init_elev)
 #> [1] 5565
 ```

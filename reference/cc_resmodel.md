@@ -30,6 +30,9 @@ A data frame with 3 columns:
 ## Examples
 
 ``` r
+sapply(cc_resmodel,class)
+#>     elev_ft   stor_acft outflow_cfs 
+#>   "integer"   "integer"   "numeric" 
 head(cc_resmodel)
 #>   elev_ft stor_acft outflow_cfs
 #> 1    5524         0           0

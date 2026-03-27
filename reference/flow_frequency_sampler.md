@@ -82,4 +82,5 @@ result <- flow_frequency_sampler(params, freq_dist = "LP3",
                                  Nbin = 20, Mevent = 500)
 dim(result$flow)  # 500 x 20
 #> [1] 500  20
+hist(result$flow)
 ```

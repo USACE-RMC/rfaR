@@ -1,6 +1,6 @@
 # RFA Stage-Frequency Simulation
 
-Performs reservoir flood frequency analysis using Monte Carlo simulation
+Performs reservoir stage frequency analysis using Monte Carlo simulation
 to develop stage-frequency relationships. Combines stratified
 flow-frequency sampling, flood seasonality, hydrograph scaling, and
 Modified Puls reservoir routing to estimate annual exceedance
@@ -197,9 +197,9 @@ Three simulation modes are available:
   outer loop is parallelized using the future framework.
 
 For all modes, natural variability is captured through stratified
-sampling in EV1 (Gumbel) space with `Nbins` bins and `events_per_bin`
-events per bin, providing reliable coverage from common events down to
-approximately 1e-8 AEP.
+sampling in with `Nbins` bins and `events_per_bin` events per bin,
+providing reliable coverage from common events down to approximately
+1e-8 AEP.
 
 The stratified sampling approach divides the AEP range (default 0.99 to
 1e-8) into equal-width bins in EV1 (Gumbel reduced variate) space and
@@ -227,9 +227,9 @@ across realizations at each stage threshold.
 
 Results are automatically exported as a CSV file named
 `{sim_name}_{sim_type}_{MM_DD_YY_HHMM}.csv` in the `results_dir`
-directory. For example, a median simulation named "Jay McGraw Dam" run
+directory. For example, a median simulation named "John McGraw Dam" run
 on June 4, 2025 at 2:30 PM would produce
-`Jay_McGraw_Dam_median_06_04_25_1430.csv`.
+`John_McGraw_Dam_median_06_04_25_1430.csv`.
 
 ## See also
 
@@ -284,16 +284,5 @@ results_full <- rfa_simulate(
   sim_name       = "jmd"
 )
 
-# Plot full uncertainty results
-with(results_full$stage_frequency, {
-  plot(expected, stage, type = "l", log = "x",
-       xlab = "Annual Exceedance Probability",
-       ylab = "Stage (ft)", main = "Stage-Frequency with Uncertainty")
-  lines(median, stage, lty = 2)
-  lines(lower_05, stage, lty = 3, col = "blue")
-  lines(upper_95, stage, lty = 3, col = "red")
-  legend("topleft", c("Expected", "Median", "5%", "95%"),
-         lty = c(1, 2, 3, 3), col = c("black", "black", "blue", "red"))
-})
 } # }
 ```

@@ -28,6 +28,9 @@ A data frame with 54 rows and 3 columns:
 ## Examples
 
 ``` r
+sapply(jmd_empirical_stage_wy1980_pt,class)
+#>         wy   stage_ft plot_posit 
+#>  "integer"  "numeric"  "numeric" 
 head(jmd_empirical_stage_wy1980_pt)
 #>     wy stage_ft plot_posit
 #> 1 1948  3837.50  0.3087108

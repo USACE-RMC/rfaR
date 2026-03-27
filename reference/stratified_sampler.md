@@ -1,8 +1,8 @@
-# Stratified Sampler for Monte Carlo Simulation
+# Stratified Sampler
 
 Creates stratified bins in standard normal space for use in stratified
-Monte Carlo sampling. Stratification improves sampling efficiency by
-ensuring adequate coverage of rare events.
+sampling. Stratification improves sampling efficiency by ensuring
+adequate coverage of rare events.
 
 ## Usage
 
@@ -28,7 +28,8 @@ stratified_sampler(
 
 - dist:
 
-  Character. Probability space for stratification. One of:
+  Character. Probability space for stratification. Default is "EV1".
+  Invalid values trigger a warning and default to "EV1".
 
   "EV1"
 
@@ -46,9 +47,6 @@ stratified_sampler(
 
   :   Uniform probability space. Equal probability width per bin.
       Generally inefficient for rare event estimation.
-
-  Default is "EV1". Invalid values trigger a warning and default to
-  "EV1".
 
 - Nbins:
 

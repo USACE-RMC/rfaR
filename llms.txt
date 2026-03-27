@@ -260,26 +260,37 @@ Development References
 
 # Package index
 
-## Functions
+## Execute Reservoir Frequency Analysis
+
+Top-level function that uses primary modules to conduct
+reservoir-frequency analysis
+
+- [`rfa_simulate()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/rfa_simulate.md)
+  : RFA Stage-Frequency Simulation
+
+## Primary Reservoir Frequency Analysis Modules
 
 Core functions for reservoir frequency analysis
 
-- [`mod_puls_routing()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/mod_puls_routing.md)
-  : Modified Puls Reservoir Routing
-- [`scale_hydrograph()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/scale_hydrograph.md)
-  : Scale Hydrograph
-- [`hydrograph_setup()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/hydrograph_setup.md)
-  : Hydrograph Setup for RFA Simulation
 - [`stratified_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stratified_sampler.md)
-  : Stratified Sampler for Monte Carlo Simulation
+  : Stratified Sampler
 - [`flow_frequency_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/flow_frequency_sampler.md)
   : Flow Frequency Sampler
 - [`flow_frequency_sampler_expected()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/flow_frequency_sampler_expected.md)
   : Flow Frequency Sampler (Expected Only)
-- [`rfa_simulate()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/rfa_simulate.md)
-  : RFA Stage-Frequency Simulation
+- [`hydrograph_setup()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/hydrograph_setup.md)
+  : Hydrograph Setup for RFA Simulation
+- [`scale_hydrograph()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/scale_hydrograph.md)
+  : Scale Hydrograph
+- [`mod_puls_routing()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/mod_puls_routing.md)
+  : Modified Puls Reservoir Routing
 - [`stage_frequency_curve()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stage_frequency_curve.md)
   : Compute Stage-Frequency Curve
+
+## Additional Utilities
+
+Supporting utility functions
+
 - [`bootstrap_vfc()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/bootstrap_vfc.md)
   : Bootstrap option for VFC (RFA-style w/ ERL)
 - [`qp3()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/qp3.md)

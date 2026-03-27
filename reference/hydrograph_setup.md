@@ -20,7 +20,8 @@ hydrograph_setup(
 - ...:
 
   Data frame representing an input hydrograph with columns: Ord, Date,
-  Time, Flow (cfs). Copied directly from RMC-RFA.
+  Time, Flow (cfs). Copied directly from RMC-RFA. Date & Time should be
+  `class() = "character"`
 
 - critical_duration:
 

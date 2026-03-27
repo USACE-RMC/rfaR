@@ -30,6 +30,9 @@ A data frame with 3 columns:
 ## Examples
 
 ``` r
+sapply(jmd_resmodel,class)
+#>      stage_ft     stor_acft discharge_cfs 
+#>     "numeric"     "numeric"     "numeric" 
 head(jmd_resmodel)
 #>   stage_ft stor_acft discharge_cfs
 #> 1   3784.8         0             0
@@ -38,10 +41,7 @@ head(jmd_resmodel)
 #> 4   3787.8       182             0
 #> 5   3788.8       446             0
 #> 6   3789.8       790             0
-# \donttest{
 plot(jmd_resmodel[[1]], jmd_resmodel[[2]],
      xlab = "Elevation (ft)", ylab = "Storage (acre-ft)",
      type = "l")
-
-# }
 ```

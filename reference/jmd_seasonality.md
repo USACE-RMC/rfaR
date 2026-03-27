@@ -34,6 +34,9 @@ A data frame with 12 rows and 4 columns:
 ## Examples
 
 ``` r
+sapply(jmd_seasonality,class)
+#>              month          frequency relative_frequency cume_rel_frequency 
+#>        "character"          "integer"          "numeric"          "numeric" 
 print(jmd_seasonality)
 #>        month frequency relative_frequency cume_rel_frequency
 #> 1    January         0              0.000              0.000

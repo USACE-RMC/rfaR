@@ -24,6 +24,11 @@ stage_frequency_curve(peakStage, weights, stage_bins = 1000)
   [`stratified_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stratified_sampler.md).
   Must have length equal to `ncol(peakStage)`.
 
+- stage_bins:
+
+  Numeric value of exceedance stages used to compute stage-frequency in
+  each bin. Default is 1000.
+
 ## Value
 
 A data frame with columns:

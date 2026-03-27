@@ -31,6 +31,9 @@ A data frame with 481 rows and 4 columns:
 ## Examples
 
 ``` r
+sapply(jmd_hydro_jun1965_15min,class)
+#>    Ordinate        Date        Time        Flow 
+#>   "integer" "character" "character"   "integer" 
 head(jmd_hydro_jun1965_15min)
 #>   Ordinate      Date Time Flow
 #> 1        1 6/17/1965 7:00    0
@@ -39,10 +42,7 @@ head(jmd_hydro_jun1965_15min)
 #> 4        4 6/17/1965 7:45   73
 #> 5        5 6/17/1965 8:00  692
 #> 6        6 6/17/1965 8:15 1339
-# \donttest{
-plot(jmd_hydro_jun1965_15min$Ordinate, jmd_hydro_jun1965_15min$Flow,
-     xlab = "Ordinate", ylab = "Inflow (cfs)",
+plot(jmd_hydro_jun1965_15min$Ordinate/4, jmd_hydro_jun1965_15min$Flow,
+     xlab = "Hour", ylab = "Inflow (cfs)",
      type = "l")
-
-# }
 ```

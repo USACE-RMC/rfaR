@@ -23,6 +23,9 @@ A data frame with 2 columns:
 ## Examples
 
 ``` r
+sapply(cc_inflowhydro,class)
+#>    time_hr inflow_cfs 
+#>  "integer"  "integer" 
 head(cc_inflowhydro)
 #>   time_hr inflow_cfs
 #> 1       0         15
