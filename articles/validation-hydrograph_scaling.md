@@ -71,8 +71,6 @@ scaled_1hr <- scale_hydrograph(
 
 ![](validation-hydrograph_scaling_files/figure-html/test1-plot-1.png)
 
-### Acceptance Criterion
-
 ------------------------------------------------------------------------
 
 ## Test 2: 15-Minute Input, 1-Hour Routing (Block Average)

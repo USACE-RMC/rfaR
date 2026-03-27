@@ -76,7 +76,8 @@ Expected vs. Sampled Hydrograph Frequencies (N = 1,000,000)
 ![](validation-hydrograph_sampling_files/figure-html/results-plot-1.png)
 
 ![](validation-hydrograph_sampling_files/figure-html/nsim%20decay-1.png)
-\## Acceptance Criterion
+
+## Acceptance Criterion
 
 Sampled frequencies must be within 1% relative tolerance of the expected
 probabilities, consistent with

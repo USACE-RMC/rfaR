@@ -18,7 +18,7 @@ accordance with USACE/RMC guidance.
 
 ## Example Data
 
-The package includes example data from a hypothetical dam, Jay McGraw
+The package includes example data from a hypothetical dam, John McGraw
 Dam (JMD, variables as “jmd\_”):
 
 #### Reservoir Model
@@ -64,7 +64,7 @@ Dam (JMD, variables as “jmd\_”):
 ``` r
 # Install from GitHub using remotes
 install.packages("remotes")
-remotes::install_github("USACE-RMC/rfaR")
+remotes::install_github("USACE-RMC/rfaR", build_vignettes = TRUE)
 
 # Install from GitHub using devtools
 install.packages("devtools")

@@ -35,6 +35,12 @@ analysis.
 ev1 <- stratified_sampler(dist = "EV1")
 normal <- stratified_sampler(dist = "Normal")
 uniform <- stratified_sampler(dist = "Uniform")
+```
+
+``` r
+ev1 <- stratified_sampler(dist = "EV1")
+normal <- stratified_sampler(dist = "Normal")
+uniform <- stratified_sampler(dist = "Uniform")
 
 # Shared x-axis range
 xlim <- range(c(ev1$Zlower, ev1$Zupper,
