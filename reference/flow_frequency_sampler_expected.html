@@ -126,17 +126,11 @@ or <code>"uniform"</code>. See <code><a href="stratified_sampler.html">stratifie
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Expected only using all 10,000 parameter sets</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Using a pre-loaded parameter set (all 10,000 parameter sets)</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">flow_frequency_sampler_expected</span><span class="op">(</span><span class="va">jmd_bf_parameter_sets</span>,</span></span>
 <span class="r-in"><span>                                          Nbin <span class="op">=</span> <span class="fl">20</span>, Mevent <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">flow</span><span class="op">)</span>  <span class="co"># 500 x 20</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 500  20</span>
-<span class="r-in"><span><span class="va">jmd_result</span> <span class="op">&lt;-</span> <span class="fu">flow_frequency_sampler_expected</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">jmd_samples</span><span class="op">$</span><span class="va">params</span>,</span></span>
-<span class="r-in"><span>  freq_dist <span class="op">=</span> <span class="st">"LP3"</span>,</span></span>
-<span class="r-in"><span>  Nbin      <span class="op">=</span> <span class="fl">20</span>,</span></span>
-<span class="r-in"><span>  Mevent    <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'jmd_samples' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Using bootstrapped parameter samples</span></span></span>
 <span class="r-in"><span><span class="va">jmd_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="bootstrap_vfc.html">bootstrap_vfc</a></span><span class="op">(</span></span></span>

@@ -80,17 +80,11 @@ A list containing:
 ## Examples
 
 ``` r
-# Expected only using all 10,000 parameter sets
+# Using a pre-loaded parameter set (all 10,000 parameter sets)
 result <- flow_frequency_sampler_expected(jmd_bf_parameter_sets,
                                           Nbin = 20, Mevent = 500)
 dim(result$flow)  # 500 x 20
 #> [1] 500  20
-jmd_result <- flow_frequency_sampler_expected(
-  jmd_samples$params,
-  freq_dist = "LP3",
-  Nbin      = 20,
-  Mevent    = 500)
-#> Error: object 'jmd_samples' not found
 
 # Using bootstrapped parameter samples
 jmd_samples <- bootstrap_vfc(
