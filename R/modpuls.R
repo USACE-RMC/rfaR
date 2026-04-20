@@ -21,7 +21,9 @@
 #' @examples
 #'
 #' # Example hydrograph. Requires pre-processing
-#' hydro_example <- hydrograph_setup(jmd_hydro_jun1965_15min, critical_duration = 2, routing_days = 10)
+#' hydro_example <- hydrograph_setup(jmd_hydro_jun1965_15min,
+#'                                    critical_duration = 2,
+#'                                    routing_days = 10)
 #' hydrograph_shape <- hydro_example[[1]][, 2:3]
 #' scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
 #'                                       observed_volume = 50000,
@@ -31,7 +33,10 @@
 #' mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830)
 #'
 #' # Full routing table
-#' jmd_full_routing <- mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830, full_results = TRUE)
+#' jmd_full_routing <- mod_puls_routing(jmd_resmodel,
+#'                                      scaled_hydrograph,
+#'                                      initial_elev = 3830,
+#'                                      full_results = TRUE)
 #' head(jmd_full_routing)
 #'
 #' @references
