@@ -7,6 +7,42 @@
 
 An R implementation of the U.S. Army Corps of Engineers (USACE) Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software. This package produces reservoir stage-frequency curves with uncertainty bounds by combining deterministic flood routing (Modified Puls method) with a nested Monte Carlo framework — providing H&H engineers the tools needed for dam safety risk assessments in accordance with USACE/RMC guidance.
 
+## What's New
+
+See [`NEWS.md`](NEWS.md) for a history of user-facing changes across versions.
+
+## Installation
+
+### For users
+
+``` r
+# Install from GitHub using remotes
+install.packages("remotes")
+remotes::install_github("USACE-RMC/rfaR", build_vignettes = TRUE)
+
+# Install from GitHub using devtools
+install.packages("devtools")
+devtools::install_github("USACE-RMC/rfaR")
+```
+
+### For developers and contributors
+
+If you plan to modify the package source, clone the repository and use `devtools`:
+
+``` r
+# After cloning the repo to disk (e.g., via git clone or GitHub Desktop):
+# - Open an R session in the repo root (or an RStudio project at the repo root)
+
+# For active development — loads all functions into the session without installing
+devtools::load_all()
+
+# To install your local working copy into your R library
+devtools::install()
+```
+
+> [!NOTE]
+> Cloning the repository alone does not make `library(rfaR)` work — the package must be either installed (`devtools::install()` or `remotes::install_github()`) or loaded into the session via `devtools::load_all()`. A cloned repo on disk is source code, not an installed package
+
 ## Example Data
 
 The package includes example data from a hypothetical dam, John McGraw Dam (JMD, variables as "jmd_"):
@@ -44,18 +80,6 @@ The package includes example data from a hypothetical dam, John McGraw Dam (JMD,
 #### Methodology Illustration
 
 -   `example_stratified` - Stratified sampling example across Uniform, Normal, and EV1 distributions
-
-## Installation
-
-``` r
-# Install from GitHub using remotes
-install.packages("remotes")
-remotes::install_github("USACE-RMC/rfaR", build_vignettes = TRUE)
-
-# Install from GitHub using devtools
-install.packages("devtools")
-devtools::install_github("USACE-RMC/rfaR")
-```
 
 ## Quick Start
 
@@ -201,6 +225,16 @@ ggplot() +
         plot.title = element_text(size = 11, face = "bold"))+
   coord_cartesian(xlim = c(z_limit1, z_limit2), ylim = c(3800,3900))
 ```
+
+## License
+
+`rfaR` is released under the BSD 3-Clause License with an additional USACE government disclaimer. The license is split across two files per R packaging convention:
+
+- **`LICENSE`** — the minimal stub required by R, naming the copyright holder and year
+- **`LICENSE.note`** — the full BSD 3-Clause text along with the USACE government notice, list of conditions, and disclaimer
+
+See both files for the complete terms.
+
 </details>
 
 ## References
