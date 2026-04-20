@@ -54,7 +54,7 @@ stage_rec <- read.csv("data/stage_record.csv")
 ### Step 4 — Verify column structure
 
 Before running
-[`rfa_simulate()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/rfa_simulate.md),
+[`rfa_simulate()`](https://usace-rmc.github.io/rfaR/reference/rfa_simulate.md),
 verify your imported data matches the expected format:
 
 ``` r

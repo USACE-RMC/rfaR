@@ -3,7 +3,7 @@
 ## Purpose
 
 Validate that
-[`stratified_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stratified_sampler.md)
+[`stratified_sampler()`](https://usace-rmc.github.io/rfaR/reference/stratified_sampler.md)
 correctly creates stratified bins and weights for all three supported
 distribution transformations: Extreme Value Type I (EV1), Normal, and
 Uniform. Tests cover bin boundary accuracy against the
@@ -185,7 +185,7 @@ Weight Summation Check
 ## Test 5: Output Dimensions
 
 Verify that
-[`stratified_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stratified_sampler.md)
+[`stratified_sampler()`](https://usace-rmc.github.io/rfaR/reference/stratified_sampler.md)
 returns the correct number of bins, events, and vector lengths.
 
 ``` r

@@ -3,7 +3,7 @@
 ## Purpose
 
 Validate that
-[`mod_puls_routing()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/mod_puls_routing.md)
+[`mod_puls_routing()`](https://usace-rmc.github.io/rfaR/reference/mod_puls_routing.md)
 produces results consistent with HEC-HMS Modified Puls routing for a
 benchmark dataset at Cherry Cricket Dam. The comparison benchmark uses
 an identical reservoir model, inflow hydrograph, and initial condition

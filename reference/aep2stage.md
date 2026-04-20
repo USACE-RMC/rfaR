@@ -32,7 +32,7 @@ Numeric vector of interpolated stage values (same length as
 
 ## See also
 
-[`stage2aep`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stage2aep.md)
+[`stage2aep`](https://usace-rmc.github.io/rfaR/reference/stage2aep.md)
 for the inverse operation.
 
 ## Examples

@@ -39,7 +39,7 @@ provide a replicable guide to the realization process.
 ## `rfaR` Analysis Summary
 
 A full uncertainty run in
-[`rfa_simulate()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/rfa_simulate.md)
+[`rfa_simulate()`](https://usace-rmc.github.io/rfaR/reference/rfa_simulate.md)
 is comprised of 10,000 realizations. Each realization is compromised of
 10,000 reservoir routing computations (simulations) using the following:
 
@@ -58,7 +58,7 @@ is comprised of 10,000 realizations. Each realization is compromised of
 These module emulate the workflow and methodology from RMC-RFA. The
 subsections below will step through an rfaR realization. These sections
 represent modules and functions contained in
-[`rfa_simulate()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/rfa_simulate.md).
+[`rfa_simulate()`](https://usace-rmc.github.io/rfaR/reference/rfa_simulate.md).
 
 ## Flow-Frequency Stratified Sampling
 

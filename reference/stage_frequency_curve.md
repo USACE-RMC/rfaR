@@ -21,7 +21,7 @@ stage_frequency_curve(peakStage, weights, stage_bins = 1000)
 - weights:
 
   Numeric vector of bin weights from
-  [`stratified_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stratified_sampler.md).
+  [`stratified_sampler()`](https://usace-rmc.github.io/rfaR/reference/stratified_sampler.md).
   Must have length equal to `ncol(peakStage)`.
 
 - stage_bins:
@@ -43,6 +43,6 @@ A data frame with columns:
 
 ## See also
 
-[`stratified_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stratified_sampler.md),
-[`flow_frequency_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/flow_frequency_sampler.md),
-[`rfa_simulate()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/rfa_simulate.md)
+[`stratified_sampler()`](https://usace-rmc.github.io/rfaR/reference/stratified_sampler.md),
+[`flow_frequency_sampler()`](https://usace-rmc.github.io/rfaR/reference/flow_frequency_sampler.md),
+[`rfa_simulate()`](https://usace-rmc.github.io/rfaR/reference/rfa_simulate.md)

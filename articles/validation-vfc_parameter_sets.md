@@ -3,11 +3,10 @@
 ## Purpose
 
 Validate that the
-[`qp3()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/qp3.md)
-function and
-[`lmom::cdfpe3()`](https://rdrr.io/pkg/lmom/man/cdfpe3.html) correctly
-reproduce the volume-frequency curve (VFC) results (`jmd_vfc`) from
-RMC-BestFit from the example LP3 parameter sets. This involves two
+[`qp3()`](https://usace-rmc.github.io/rfaR/reference/qp3.md) function
+and [`lmom::cdfpe3()`](https://rdrr.io/pkg/lmom/man/cdfpe3.html)
+correctly reproduce the volume-frequency curve (VFC) results (`jmd_vfc`)
+from RMC-BestFit from the example LP3 parameter sets. This involves two
 tests:
 
 1.  **Credible Intervals** — Compute the 5th and 95th percentile flows
@@ -72,9 +71,9 @@ JMD Volume-Frequency Curve Benchmark Data
 
 For each AEP in `jmd_vfc`, compute the LP3 quantile (flow) from all
 10,000 parameter sets using
-[`qp3()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/qp3.md).
-Then take the 5th and 95th percentiles across parameter sets to form the
-credible interval. Compare against the benchmark values (`jmd_vfc`).
+[`qp3()`](https://usace-rmc.github.io/rfaR/reference/qp3.md). Then take
+the 5th and 95th percentiles across parameter sets to form the credible
+interval. Compare against the benchmark values (`jmd_vfc`).
 
 ``` r
 aeps <- jmd_vfc$aep

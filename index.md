@@ -6,7 +6,7 @@
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![R](https://img.shields.io/badge/R-%3E%3D4.1-blue)](https://cran.r-project.org/)
-[![License](https://img.shields.io/badge/License-BSD--3--Clause-blue.svg)](https://ideal-broccoli-1q9y47z.pages.github.io/LICENSE)
+[![License](https://img.shields.io/badge/License-BSD--3--Clause-blue.svg)](https://usace-rmc.github.io/rfaR/LICENSE)
 
 An R implementation of the U.S. Army Corps of Engineers (USACE) Risk
 Management Center-Reservoir Frequency Analysis (RMC-RFA)
@@ -18,8 +18,8 @@ accordance with USACE/RMC guidance.
 
 ## What’s New
 
-See [`NEWS.md`](https://ideal-broccoli-1q9y47z.pages.github.io/NEWS.md)
-for a history of user-facing changes across versions.
+See [`NEWS.md`](https://usace-rmc.github.io/rfaR/NEWS.md) for a history
+of user-facing changes across versions.
 
 ## Installation
 

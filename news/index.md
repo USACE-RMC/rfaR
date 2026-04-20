@@ -5,7 +5,7 @@
 ### Summary
 
 Fixes a bug reported by a tester where
-[`hydrograph_setup()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/hydrograph_setup.md)
+[`hydrograph_setup()`](https://usace-rmc.github.io/rfaR/reference/hydrograph_setup.md)
 produced `NA` for `obs_vol` when the input CSV contained trailing empty
 rows — a common artifact of
 [`read.csv()`](https://rdrr.io/r/utils/read.table.html) on

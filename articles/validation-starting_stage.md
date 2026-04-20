@@ -92,7 +92,7 @@ Maximum absolute difference must be less than 0.01 ft, consistent with
 
 Sample 10,000 stages using the seasonality and starting stage sampling
 process in
-[`rfa_simulate()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/rfa_simulate.md):
+[`rfa_simulate()`](https://usace-rmc.github.io/rfaR/reference/rfa_simulate.md):
 
 1.  Sample 10,000 months using the JMD seasonality distribution
     (`jmd_seasonality$relative_frequency`)

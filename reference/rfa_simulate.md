@@ -67,7 +67,7 @@ rfa_simulate(
 - hydrographs:
 
   List of hydrograph data frames as returned by
-  [`hydrograph_setup`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/hydrograph_setup.md).
+  [`hydrograph_setup`](https://usace-rmc.github.io/rfaR/reference/hydrograph_setup.md).
   Each element has columns `datetime`, `hour`, `inflow`, and
   `hydrograph_num`, with attributes `"obs_vol"` (observed max n-day
   volume) and `"dt"` (timestep in hours). The list must have a `"probs"`
@@ -92,7 +92,7 @@ rfa_simulate(
 - routing_dt:
 
   Numeric. Routing timestep in hours. Passed to
-  [`scale_hydrograph`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/scale_hydrograph.md)
+  [`scale_hydrograph`](https://usace-rmc.github.io/rfaR/reference/scale_hydrograph.md)
   to resample hydrographs before routing. Supported values are `0.25`
   (15-min), `1` (1-hour, default), `6` (6-hour), and `24` (24-hour).
 
@@ -123,7 +123,7 @@ For `"median"` and `"expected"`:
 - stage_frequency:
 
   Data frame with columns `stage` and `AEP` from
-  [`stage_frequency_curve`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stage_frequency_curve.md).
+  [`stage_frequency_curve`](https://usace-rmc.github.io/rfaR/reference/stage_frequency_curve.md).
 
 - peakStage:
 
@@ -208,7 +208,7 @@ representation of rare flood events that would require orders of
 magnitude more samples under crude Monte Carlo sampling.
 
 Post-processing uses the law of total probability via
-[`stage_frequency_curve`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stage_frequency_curve.md):
+[`stage_frequency_curve`](https://usace-rmc.github.io/rfaR/reference/stage_frequency_curve.md):
 for a grid of stage thresholds, the weighted exceedance fraction is
 computed within each bin and summed across bins.
 
@@ -233,13 +233,13 @@ on June 4, 2025 at 2:30 PM would produce
 
 ## See also
 
-[`flow_frequency_sampler`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/flow_frequency_sampler.md),
-[`flow_frequency_sampler_expected`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/flow_frequency_sampler_expected.md),
-[`stratified_sampler`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stratified_sampler.md),
-[`scale_hydrograph`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/scale_hydrograph.md),
-[`mod_puls_routing`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/mod_puls_routing.md),
-[`stage_frequency_curve`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stage_frequency_curve.md),
-[`hydrograph_setup`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/hydrograph_setup.md)
+[`flow_frequency_sampler`](https://usace-rmc.github.io/rfaR/reference/flow_frequency_sampler.md),
+[`flow_frequency_sampler_expected`](https://usace-rmc.github.io/rfaR/reference/flow_frequency_sampler_expected.md),
+[`stratified_sampler`](https://usace-rmc.github.io/rfaR/reference/stratified_sampler.md),
+[`scale_hydrograph`](https://usace-rmc.github.io/rfaR/reference/scale_hydrograph.md),
+[`mod_puls_routing`](https://usace-rmc.github.io/rfaR/reference/mod_puls_routing.md),
+[`stage_frequency_curve`](https://usace-rmc.github.io/rfaR/reference/stage_frequency_curve.md),
+[`hydrograph_setup`](https://usace-rmc.github.io/rfaR/reference/hydrograph_setup.md)
 
 ## Examples
 

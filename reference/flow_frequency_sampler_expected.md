@@ -5,7 +5,7 @@ with a different parameter set from the posterior distribution. This
 collapses the nested Monte Carlo structure into a single pass,
 simultaneously sampling natural variability (via stratified z-ordinates)
 and knowledge uncertainty (via varying parameters). Used internally by
-[`rfa_simulate()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/rfa_simulate.md)
+[`rfa_simulate()`](https://usace-rmc.github.io/rfaR/reference/rfa_simulate.md)
 for expected-only mode.
 
 ## Usage
@@ -36,9 +36,9 @@ flow_frequency_sampler_expected(
 - strat_dist:
 
   Character. Probability space for stratification bins. Passed to
-  [`stratified_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stratified_sampler.md).
+  [`stratified_sampler()`](https://usace-rmc.github.io/rfaR/reference/stratified_sampler.md).
   One of `"ev1"` (default), `"normal"`, or `"uniform"`. See
-  [`stratified_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stratified_sampler.md)
+  [`stratified_sampler()`](https://usace-rmc.github.io/rfaR/reference/stratified_sampler.md)
   for details.
 
 - Nbin:
@@ -68,14 +68,14 @@ A list containing:
 - weights:
 
   Probability weights for each bin from
-  [`stratified_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stratified_sampler.md)
+  [`stratified_sampler()`](https://usace-rmc.github.io/rfaR/reference/stratified_sampler.md)
 
 ## See also
 
-[`stratified_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stratified_sampler.md),
-[`qp3()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/qp3.md),
-[`flow_frequency_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/flow_frequency_sampler.md),
-[`rfa_simulate()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/rfa_simulate.md)
+[`stratified_sampler()`](https://usace-rmc.github.io/rfaR/reference/stratified_sampler.md),
+[`qp3()`](https://usace-rmc.github.io/rfaR/reference/qp3.md),
+[`flow_frequency_sampler()`](https://usace-rmc.github.io/rfaR/reference/flow_frequency_sampler.md),
+[`rfa_simulate()`](https://usace-rmc.github.io/rfaR/reference/rfa_simulate.md)
 
 ## Examples
 

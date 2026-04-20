@@ -3,7 +3,7 @@
 ## Purpose
 
 Validate that
-[`scale_hydrograph()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/scale_hydrograph.md)
+[`scale_hydrograph()`](https://usace-rmc.github.io/rfaR/reference/scale_hydrograph.md)
 correctly scales inflow hydrographs and converts between timesteps. This
 test covers three cases:
 

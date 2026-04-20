@@ -42,7 +42,7 @@ A data frame with 60 rows and 5 columns:
 
 ## See also
 
-[`stratified_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/stratified_sampler.md)
+[`stratified_sampler()`](https://usace-rmc.github.io/rfaR/reference/stratified_sampler.md)
 
 ## Examples
 

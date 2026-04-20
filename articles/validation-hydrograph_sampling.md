@@ -5,7 +5,7 @@
 Validate that the hydrograph shape sampling module correctly applies
 user-specified weights when selecting hydrograph shapes during
 simulation. This test validates that
-[`hydrograph_setup()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/hydrograph_setup.md)
+[`hydrograph_setup()`](https://usace-rmc.github.io/rfaR/reference/hydrograph_setup.md)
 correctly normalizes weights to probabilities and that
 [`sample()`](https://rdrr.io/r/base/sample.html) using those
 probabilities reproduces the expected distribution.
@@ -13,7 +13,7 @@ probabilities reproduces the expected distribution.
 ## Input Data
 
 Seven example hydrographs are loaded via
-[`hydrograph_setup()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/hydrograph_setup.md)
+[`hydrograph_setup()`](https://usace-rmc.github.io/rfaR/reference/hydrograph_setup.md)
 with the following user-specified weights:
 
 ``` r

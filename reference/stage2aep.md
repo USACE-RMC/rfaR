@@ -32,7 +32,7 @@ Numeric vector of interpolated AEP values (same length as
 
 ## See also
 
-[`aep2stage`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/aep2stage.md)
+[`aep2stage`](https://usace-rmc.github.io/rfaR/reference/aep2stage.md)
 for the inverse operation.
 
 ## Examples

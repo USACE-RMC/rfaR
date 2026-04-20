@@ -50,7 +50,7 @@ A list containing:
 
 ## See also
 
-[`flow_frequency_sampler()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/flow_frequency_sampler.md)
+[`flow_frequency_sampler()`](https://usace-rmc.github.io/rfaR/reference/flow_frequency_sampler.md)
 
 ## Examples
 

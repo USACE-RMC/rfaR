@@ -3,23 +3,23 @@
 ### Validation
 
 - [Hydrograph Shape Sampling
-  Validation](https://ideal-broccoli-1q9y47z.pages.github.io/articles/validation-hydrograph_sampling.md):
+  Validation](https://usace-rmc.github.io/rfaR/articles/validation-hydrograph_sampling.md):
 - [Hydrograph Scaling
-  Validation](https://ideal-broccoli-1q9y47z.pages.github.io/articles/validation-hydrograph_scaling.md):
+  Validation](https://usace-rmc.github.io/rfaR/articles/validation-hydrograph_scaling.md):
 - [Modified-Puls Routing
-  Validation](https://ideal-broccoli-1q9y47z.pages.github.io/articles/validation-mod_puls_routing.md):
+  Validation](https://usace-rmc.github.io/rfaR/articles/validation-mod_puls_routing.md):
 - [Seasonality Sampling
-  Validation](https://ideal-broccoli-1q9y47z.pages.github.io/articles/validation-seasonality_sampling.md):
+  Validation](https://usace-rmc.github.io/rfaR/articles/validation-seasonality_sampling.md):
 - [Starting Stage Sampling
-  Validation](https://ideal-broccoli-1q9y47z.pages.github.io/articles/validation-starting_stage.md):
+  Validation](https://usace-rmc.github.io/rfaR/articles/validation-starting_stage.md):
 - [Stratified Sampling
-  Validation](https://ideal-broccoli-1q9y47z.pages.github.io/articles/validation-stratified_sampler.md):
+  Validation](https://usace-rmc.github.io/rfaR/articles/validation-stratified_sampler.md):
 - [Validation of BestFit Parameter
-  Sets](https://ideal-broccoli-1q9y47z.pages.github.io/articles/validation-vfc_parameter_sets.md):
+  Sets](https://usace-rmc.github.io/rfaR/articles/validation-vfc_parameter_sets.md):
 
 ### Technical Reference
 
 - [Conceptual Computation of an rfaR
-  Realization](https://ideal-broccoli-1q9y47z.pages.github.io/articles/rfaR-Realization-Conceptual.md):
+  Realization](https://usace-rmc.github.io/rfaR/articles/rfaR-Realization-Conceptual.md):
 - [Setting Up Your rfaR
-  Project](https://ideal-broccoli-1q9y47z.pages.github.io/articles/project-setup.md):
+  Project](https://usace-rmc.github.io/rfaR/articles/project-setup.md):
