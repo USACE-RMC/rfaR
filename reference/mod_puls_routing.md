@@ -46,7 +46,9 @@ Chow, V.T. (1959). Open-Channel Hydraulics. McGraw-Hill.
 
 ``` r
 # Example hydrograph. Requires pre-processing
-hydro_example <- hydrograph_setup(jmd_hydro_jun1965_15min, critical_duration = 2, routing_days = 10)
+hydro_example <- hydrograph_setup(jmd_hydro_jun1965_15min,
+                                   critical_duration = 2,
+                                   routing_days = 10)
 hydrograph_shape <- hydro_example[[1]][, 2:3]
 scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
                                       observed_volume = 50000,
@@ -58,7 +60,10 @@ mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830)
 #>           3860.329            500.000 
 
 # Full routing table
-jmd_full_routing <- mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830, full_results = TRUE)
+jmd_full_routing <- mod_puls_routing(jmd_resmodel,
+                                     scaled_hydrograph,
+                                     initial_elev = 3830,
+                                     full_results = TRUE)
 head(jmd_full_routing)
 #>   time_hr inflow_cfs elevation_ft storage_acft outflow_cfs
 #> 1       0     40.150     3830.000     129736.8           0
