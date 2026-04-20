@@ -24,7 +24,7 @@ RMC-RFA produces a reservoir stage-frequency curve with uncertainty bounds by ut
 
 The inner loop — defined here as a realization — simulates natural variability by routing 10,000 individual flood events through the reservoir, each with randomly sampled starting stage, hydrograph shape, and stratified-sampled inflow volume drawn from the volume-frequency distribution. Together these routed events produce a single stage-frequency curve estimate. The outer loop propagates epistemic uncertainty by repeating this process across many realizations, each conditioned on a different set of volume-frequency distribution parameters drawn from the posterior.
 
-This document walks through a single realization in detail. Understanding one realization is the key to understanding the full simulation: the outer loop simply repeats this process with a different parameter set each time. The walkthrough covers the stratified sampling procedure, random sampling of starting stage and hydrograph shape, and calculation of stage exceedance probabilities — steps that are common to all simulation types. The full uncertainty simulation conducts 10,000 realizations, each comprising 10,000 flood events (100 million routing operations total), while the expected value simulation conducts 10,000 realizations, each using a one of the 10,000 BestFit parameter sets.
+This document walks through a single realization in detail. Understanding one realization is the key to understanding the full simulation: the outer loop simply repeats this process with a resampled parameter set each time (in `rfaR`, this is the *next* parameter set from the input). The walkthrough covers the stratified sampling procedure, random sampling of starting stage and hydrograph shape, and calculation of stage exceedance probabilities — steps that are common to all simulation types. The full uncertainty simulation conducts 10,000 realizations, each comprising 10,000 flood events (100 million routing operations total), while the expected value simulation conducts 10,000 realizations, each using a one of the 10,000 BestFit parameter sets.
 
 ***Note:*** Users with coding experience may find the loops in this script "inefficient". This purpose of this step-by-step guide is to provide a replicable guide to the realization process.
 
@@ -50,7 +50,7 @@ A full uncertainty run in `rfa_simulate()` is comprised of 10,000 realizations. 
 
 -   Modified-Puls routings to obtain peak stages and/or peak discharge
 
-The subsections below will step through an rfaR realization. These sections represent modules and functions contained in `rfa_simulate()`.
+These module emulate the workflow and methodology from RMC-RFA. The subsections below will step through an rfaR realization. These sections represent modules and functions contained in `rfa_simulate()`.
 
 ## Flow-Frequency Stratified Sampling
 
@@ -58,13 +58,13 @@ The subsections below will step through an rfaR realization. These sections repr
 
 Stratified sampling is used instead of simple random sampling because reliable estimates of exceedance probabilities far into the tail of the distribution — events with AEPs of 1/10,000 or rarer — are required. Simple random sampling would require an impractically large number of events to adequately populate the tail. Instead, the frequency axis is divided into `Nbins` equal-probability bins, and `Mevents` are sampled uniformly within each bin. This ensures the tail is well-represented without artificially inflating the total number of routing operations.
 
-The bin weights (`ords$Weights`) reflect the true probability mass that each bin represents. These weights are applied later to reconstruct the true exceedance probability from the stratified sample, correcting for the fact that rare-event bins were intentionally oversampled relative to their actual frequency of occurrence.
-
 ```{r}
 ords <- stratified_sampler(Nbins = 20,
                                Mevents = 500,
                                dist = "ev1")
 ```
+
+The bin weights (`ords$Weights`) reflect the true probability mass that each bin represents. These weights are applied later to reconstruct the true exceedance probability from the stratified sample, correcting for the fact that rare-event bins were intentionally oversampled relative to their actual frequency of occurrence.
 
 ### Construct a Probability Matrix from the Stratified Bins
 
@@ -75,7 +75,7 @@ z_matrix <- matrix(ncol = ords$Nbins, nrow = ords$Mevents)
 
 # Using EV1
 for (i in 1:ords$Nbins){
-  # Lower Bin Boundary (prior bin's upper boundar)
+  # Lower Bin Boundary (prior bin's upper boundary)
   bin_lower <- ords$Zlower[i]
   
   # Upper Bin Boundary
@@ -90,7 +90,7 @@ for (i in 1:ords$Nbins){
 
 The Z-variates are converted to inflow volumes using the LP3 (Log-Pearson Type III) quantile function. The conversion routes through normal probability space: Z-variates → normal CDF (`pnorm`) → LP3 quantile (`qp3`). The result is `Q_matrix`, which has the same dimensions as `z_matrix` and each cell holds an inflow volume. Each inflow volume corresponds to a sample from the inflow volume-frequency distribution.
 
-The parameter set used here (`meanlog`, `sdlog`, `skewlog`) represents a single draw from the posterior distribution of LP3 parameters — one parameter set for this realization.
+The parameter set used here (`meanlog`, `sdlog`, `skewlog`) represents a single draw from the distribution of LP3 parameters — one posterior parameter set for this realization.
 
 ```{r}
 meanlog <- 3.550399
@@ -211,7 +211,7 @@ ggplot(InitStages_df) +
 
 ## Sample Hydrograph Shape
 
-The shape of the flood hydrograph is sampled randomly from a selection of historical and synthetic hydrographs. Each hydrograph in the library is assigned a weight (default weights are uniform); the sampled shape is then scaled to match the flood volume drawn from the LP3 distribution.
+The shape of the flood hydrograph is sampled randomly from a selection of historical and synthetic hydrographs. Each hydrograph in the library is assigned a weight (default weights are uniform); the sampled shape is then scaled to match the flood volume drawn from the LP3 distribution. Note that the defined critical duration is 2-days (`critical_duration`) and the routing window has been set to 10-days (`routing_days`).
 
 ```{r}
 hydrographs <- hydrograph_setup(jmd_hydro_apr1999,
