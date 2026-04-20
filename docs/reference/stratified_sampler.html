@@ -11,7 +11,7 @@ ensuring adequate coverage of rare events."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">rfaR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,9 +59,10 @@ ensuring adequate coverage of rare events.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stratified_sampler</span><span class="op">(</span></span>
 <span>  minAEP <span class="op">=</span> <span class="fl">1e-08</span>,</span>
 <span>  maxAEP <span class="op">=</span> <span class="fl">0.99</span>,</span>
-<span>  dist <span class="op">=</span> <span class="st">"ev1"</span>,</span>
+<span>  dist <span class="op">=</span> <span class="st">"EV1"</span>,</span>
 <span>  Nbins <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  Mevents <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  Mevents <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -78,16 +79,17 @@ ensuring adequate coverage of rare events.</p>
 
 
 <dt id="arg-dist">dist<a class="anchor" aria-label="anchor" href="#arg-dist"></a></dt>
-<dd><p>Character. Probability space for stratification. Default is "EV1". Invalid values trigger a warning and default to "EV1".</p><dl><dt>"EV1"</dt>
+<dd><p>Character. Probability space for stratification. Case-insensitive.
+Default is <code>"EV1"</code>. Invalid values trigger a warning and default to <code>"EV1"</code>.</p><dl><dt><code>"EV1"</code></dt>
 <dd><p>Extreme Value Type I (Gumbel) space. Recommended for flood
 frequency analysis. Allocates more bins to rare events through the
 transformation <code>-log(-log(1-AEP))</code>, improving tail estimation efficiency.</p></dd>
 
-<dt>"Normal"</dt>
+<dt><code>"Normal"</code></dt>
 <dd><p>Standard normal (z-score) space. Uniform bins in z-space.
 Use when the underlying phenomenon is normally distributed.</p></dd>
 
-<dt>"Uniform"</dt>
+<dt><code>"Uniform"</code></dt>
 <dd><p>Uniform probability space. Equal probability width per bin.
 Generally inefficient for rare event estimation.</p></dd>
 
@@ -101,6 +103,11 @@ Generally inefficient for rare event estimation.</p></dd>
 
 <dt id="arg-mevents">Mevents<a class="anchor" aria-label="anchor" href="#arg-mevents"></a></dt>
 <dd><p>Number of events per bin. Default is <code>500</code>.</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, prints a completion message summarizing
+the stratification. Default is <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -139,7 +146,15 @@ effort to rare events critical for dam safety assessments.</p>
 <span class="r-in"><span><span class="va">strat</span> <span class="op">&lt;-</span> <span class="fu">stratified_sampler</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Custom bins and events</span></span></span>
-<span class="r-in"><span><span class="va">strat</span> <span class="op">&lt;-</span> <span class="fu">stratified_sampler</span><span class="op">(</span>minAEP <span class="op">=</span> <span class="fl">1E-6</span>, maxAEP <span class="op">=</span> <span class="fl">0.5</span>, dist <span class="op">=</span> <span class="st">"EV1"</span>, Nbins <span class="op">=</span> <span class="fl">10</span>, Mevents <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">strat</span> <span class="op">&lt;-</span> <span class="fu">stratified_sampler</span><span class="op">(</span>minAEP <span class="op">=</span> <span class="fl">1E-6</span>,</span></span>
+<span class="r-in"><span>                            maxAEP <span class="op">=</span> <span class="fl">0.5</span>,</span></span>
+<span class="r-in"><span>                            dist <span class="op">=</span> <span class="st">"EV1"</span>,</span></span>
+<span class="r-in"><span>                            Nbins <span class="op">=</span> <span class="fl">10</span>,</span></span>
+<span class="r-in"><span>                            Mevents <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># With verbose message</span></span></span>
+<span class="r-in"><span><span class="va">strat</span> <span class="op">&lt;-</span> <span class="fu">stratified_sampler</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Stratification complete: <span style="color: #0000BB;">20</span> bins, <span style="color: #0000BB;">500</span> events per bin (<span style="color: #0000BB;">"ev1"</span> space).</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
