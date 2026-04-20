@@ -41,7 +41,7 @@ devtools::install()
 ```
 
 > [!NOTE]
-> Cloning the repository alone does not make `library(rfaR)` work — the package must be either installed (`devtools::install()` or `remotes::install_github()`) or loaded into the session via `devtools::load_all()`. A cloned repo on disk is source code, not an installed package
+> Cloning the repository alone does not make `library(rfaR)` work — the package must be either installed (`devtools::install()` or `remotes::install_github()`) or loaded into the session via `devtools::load_all()`. A cloned repo on disk is source code, not an installed package.
 
 ## Example Data
 
@@ -226,6 +226,8 @@ ggplot() +
   coord_cartesian(xlim = c(z_limit1, z_limit2), ylim = c(3800,3900))
 ```
 
+</details>
+
 ## License
 
 `rfaR` is released under the BSD 3-Clause License with an additional USACE government disclaimer. The license is split across two files per R packaging convention:
@@ -234,8 +236,6 @@ ggplot() +
 - **`LICENSE.note`** — the full BSD 3-Clause text along with the USACE government notice, list of conditions, and disclaimer
 
 See both files for the complete terms.
-
-</details>
 
 ## References
 
