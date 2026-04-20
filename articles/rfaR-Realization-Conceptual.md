@@ -22,8 +22,9 @@ parameters drawn from the posterior.
 
 This document walks through a single realization in detail.
 Understanding one realization is the key to understanding the full
-simulation: the outer loop simply repeats this process with a different
-parameter set each time. The walkthrough covers the stratified sampling
+simulation: the outer loop simply repeats this process with a resampled
+parameter set each time (in `rfaR`, this is the *next* parameter set
+from the input). The walkthrough covers the stratified sampling
 procedure, random sampling of starting stage and hydrograph shape, and
 calculation of stage exceedance probabilities — steps that are common to
 all simulation types. The full uncertainty simulation conducts 10,000
@@ -54,8 +55,9 @@ is comprised of 10,000 realizations. Each realization is compromised of
 
 - Modified-Puls routings to obtain peak stages and/or peak discharge
 
-The subsections below will step through an rfaR realization. These
-sections represent modules and functions contained in
+These module emulate the workflow and methodology from RMC-RFA. The
+subsections below will step through an rfaR realization. These sections
+represent modules and functions contained in
 [`rfa_simulate()`](https://ideal-broccoli-1q9y47z.pages.github.io/reference/rfa_simulate.md).
 
 ## Flow-Frequency Stratified Sampling
@@ -71,17 +73,17 @@ divided into `Nbins` equal-probability bins, and `Mevents` are sampled
 uniformly within each bin. This ensures the tail is well-represented
 without artificially inflating the total number of routing operations.
 
-The bin weights (`ords$Weights`) reflect the true probability mass that
-each bin represents. These weights are applied later to reconstruct the
-true exceedance probability from the stratified sample, correcting for
-the fact that rare-event bins were intentionally oversampled relative to
-their actual frequency of occurrence.
-
 ``` r
 ords <- stratified_sampler(Nbins = 20,
                                Mevents = 500,
                                dist = "ev1")
 ```
+
+The bin weights (`ords$Weights`) reflect the true probability mass that
+each bin represents. These weights are applied later to reconstruct the
+true exceedance probability from the stratified sample, correcting for
+the fact that rare-event bins were intentionally oversampled relative to
+their actual frequency of occurrence.
 
 ### Construct a Probability Matrix from the Stratified Bins
 
@@ -99,7 +101,7 @@ z_matrix <- matrix(ncol = ords$Nbins, nrow = ords$Mevents)
 
 # Using EV1
 for (i in 1:ords$Nbins){
-  # Lower Bin Boundary (prior bin's upper boundar)
+  # Lower Bin Boundary (prior bin's upper boundary)
   bin_lower <- ords$Zlower[i]
   
   # Upper Bin Boundary
@@ -121,7 +123,7 @@ inflow volume corresponds to a sample from the inflow volume-frequency
 distribution.
 
 The parameter set used here (`meanlog`, `sdlog`, `skewlog`) represents a
-single draw from the posterior distribution of LP3 parameters — one
+single draw from the distribution of LP3 parameters — one posterior
 parameter set for this realization.
 
 ``` r
@@ -202,6 +204,8 @@ The shape of the flood hydrograph is sampled randomly from a selection
 of historical and synthetic hydrographs. Each hydrograph in the library
 is assigned a weight (default weights are uniform); the sampled shape is
 then scaled to match the flood volume drawn from the LP3 distribution.
+Note that the defined critical duration is 2-days (`critical_duration`)
+and the routing window has been set to 10-days (`routing_days`).
 
 ``` r
 hydrographs <- hydrograph_setup(jmd_hydro_apr1999,
