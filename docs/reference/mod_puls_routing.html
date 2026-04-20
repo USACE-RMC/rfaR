@@ -9,7 +9,7 @@ a defined reservoir geometry (Stage (ft), Storage (ac-ft), Discharge (cfs))."></
 
     <a class="navbar-brand me-2" href="../index.html">rfaR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,7 +95,9 @@ If <code>full_results = TRUE</code>, a data frame with columns: <code>time_hr</c
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Example hydrograph. Requires pre-processing</span></span></span>
-<span class="r-in"><span><span class="va">hydro_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="hydrograph_setup.html">hydrograph_setup</a></span><span class="op">(</span><span class="va">jmd_hydro_jun1965_15min</span>, critical_duration <span class="op">=</span> <span class="fl">2</span>, routing_days <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">hydro_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="hydrograph_setup.html">hydrograph_setup</a></span><span class="op">(</span><span class="va">jmd_hydro_jun1965_15min</span>,</span></span>
+<span class="r-in"><span>                                   critical_duration <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                                   routing_days <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">hydrograph_shape</span> <span class="op">&lt;-</span> <span class="va">hydro_example</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">scaled_hydrograph</span> <span class="op">&lt;-</span> <span class="fu"><a href="scale_hydrograph.html">scale_hydrograph</a></span><span class="op">(</span><span class="va">hydrograph_shape</span>,</span></span>
 <span class="r-in"><span>                                      observed_volume <span class="op">=</span> <span class="fl">50000</span>,</span></span>
@@ -107,7 +109,10 @@ If <code>full_results = TRUE</code>, a data frame with columns: <code>time_hr</c
 <span class="r-out co"><span class="r-pr">#&gt;</span>           3860.329            500.000 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Full routing table</span></span></span>
-<span class="r-in"><span><span class="va">jmd_full_routing</span> <span class="op">&lt;-</span> <span class="fu">mod_puls_routing</span><span class="op">(</span><span class="va">jmd_resmodel</span>, <span class="va">scaled_hydrograph</span>, initial_elev <span class="op">=</span> <span class="fl">3830</span>, full_results <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">jmd_full_routing</span> <span class="op">&lt;-</span> <span class="fu">mod_puls_routing</span><span class="op">(</span><span class="va">jmd_resmodel</span>,</span></span>
+<span class="r-in"><span>                                     <span class="va">scaled_hydrograph</span>,</span></span>
+<span class="r-in"><span>                                     initial_elev <span class="op">=</span> <span class="fl">3830</span>,</span></span>
+<span class="r-in"><span>                                     full_results <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">jmd_full_routing</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   time_hr inflow_cfs elevation_ft storage_acft outflow_cfs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1       0     40.150     3830.000     129736.8           0</span>
