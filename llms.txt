@@ -56,7 +56,7 @@ devtools::install()
 > package must be either installed (`devtools::install()` or
 > `remotes::install_github()`) or loaded into the session via
 > `devtools::load_all()`. A cloned repo on disk is source code, not an
-> installed package
+> installed package.
 
 ## Example Data
 
