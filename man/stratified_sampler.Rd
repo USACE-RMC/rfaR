@@ -7,9 +7,10 @@
 stratified_sampler(
   minAEP = 1e-08,
   maxAEP = 0.99,
-  dist = "ev1",
+  dist = "EV1",
   Nbins = NULL,
-  Mevents = NULL
+  Mevents = NULL,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -17,20 +18,24 @@ stratified_sampler(
 
 \item{maxAEP}{Maximum annual exceedance probability. Default is \code{0.99}.}
 
-\item{dist}{Character. Probability space for stratification. Default is "EV1". Invalid values trigger a warning and default to "EV1".
+\item{dist}{Character. Probability space for stratification. Case-insensitive.
+Default is \code{"EV1"}. Invalid values trigger a warning and default to \code{"EV1"}.
 \describe{
-\item{"EV1"}{Extreme Value Type I (Gumbel) space. Recommended for flood
+\item{\code{"EV1"}}{Extreme Value Type I (Gumbel) space. Recommended for flood
 frequency analysis. Allocates more bins to rare events through the
 transformation \code{-log(-log(1-AEP))}, improving tail estimation efficiency.}
-\item{"Normal"}{Standard normal (z-score) space. Uniform bins in z-space.
+\item{\code{"Normal"}}{Standard normal (z-score) space. Uniform bins in z-space.
 Use when the underlying phenomenon is normally distributed.}
-\item{"Uniform"}{Uniform probability space. Equal probability width per bin.
+\item{\code{"Uniform"}}{Uniform probability space. Equal probability width per bin.
 Generally inefficient for rare event estimation.}
 }}
 
 \item{Nbins}{Number of stratified bins. Default is \code{20}.}
 
 \item{Mevents}{Number of events per bin. Default is \code{500}.}
+
+\item{verbose}{Logical. If \code{TRUE}, prints a completion message summarizing
+the stratification. Default is \code{FALSE}.}
 }
 \value{
 A list containing:
@@ -59,6 +64,13 @@ effort to rare events critical for dam safety assessments.
 strat <- stratified_sampler()
 
 # Custom bins and events
-strat <- stratified_sampler(minAEP = 1E-6, maxAEP = 0.5, dist = "EV1", Nbins = 10, Mevents = 100)
+strat <- stratified_sampler(minAEP = 1E-6,
+                            maxAEP = 0.5,
+                            dist = "EV1",
+                            Nbins = 10,
+                            Mevents = 100)
+
+# With verbose message
+strat <- stratified_sampler(verbose = TRUE)
 
 }

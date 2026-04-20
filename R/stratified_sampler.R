@@ -6,18 +6,21 @@
 #'
 #' @param minAEP Minimum annual exceedance probability. Default is `1E-8`.
 #' @param maxAEP Maximum annual exceedance probability. Default is `0.99`.
-#' @param dist Character. Probability space for stratification. Default is "EV1". Invalid values trigger a warning and default to "EV1".
+#' @param dist Character. Probability space for stratification. Case-insensitive.
+#'   Default is `"EV1"`. Invalid values trigger a warning and default to `"EV1"`.
 #'   \describe{
-#'     \item{"EV1"}{Extreme Value Type I (Gumbel) space. Recommended for flood
+#'     \item{`"EV1"`}{Extreme Value Type I (Gumbel) space. Recommended for flood
 #'       frequency analysis. Allocates more bins to rare events through the
 #'       transformation `-log(-log(1-AEP))`, improving tail estimation efficiency.}
-#'     \item{"Normal"}{Standard normal (z-score) space. Uniform bins in z-space.
+#'     \item{`"Normal"`}{Standard normal (z-score) space. Uniform bins in z-space.
 #'       Use when the underlying phenomenon is normally distributed.}
-#'     \item{"Uniform"}{Uniform probability space. Equal probability width per bin.
+#'     \item{`"Uniform"`}{Uniform probability space. Equal probability width per bin.
 #'       Generally inefficient for rare event estimation.}
 #'   }
 #' @param Nbins Number of stratified bins. Default is `20`.
 #' @param Mevents Number of events per bin. Default is `500`.
+#' @param verbose Logical. If `TRUE`, prints a completion message summarizing
+#'   the stratification. Default is `FALSE`.
 #'
 #' @return A list containing:
 #' \describe{
@@ -34,15 +37,28 @@
 #' transformation. EV1 transformation is recommended for heavy-tailed distributions
 #' common in flood frequency analysis, as it naturally allocates more sampling
 #' effort to rare events critical for dam safety assessments.
+#'
 #' @examples
 #' # Default stratification
 #' strat <- stratified_sampler()
 #'
 #' # Custom bins and events
-#' strat <- stratified_sampler(minAEP = 1E-6, maxAEP = 0.5, dist = "EV1", Nbins = 10, Mevents = 100)
+#' strat <- stratified_sampler(minAEP = 1E-6,
+#'                             maxAEP = 0.5,
+#'                             dist = "EV1",
+#'                             Nbins = 10,
+#'                             Mevents = 100)
+#'
+#' # With verbose message
+#' strat <- stratified_sampler(verbose = TRUE)
 #'
 #' @export
-stratified_sampler <- function(minAEP = 1E-8, maxAEP = 0.99, dist = "ev1", Nbins = NULL, Mevents = NULL){
+stratified_sampler <- function(minAEP = 1E-8,
+                               maxAEP = 0.99,
+                               dist = "EV1",
+                               Nbins = NULL,
+                               Mevents = NULL,
+                               verbose = FALSE){
   if(is.null(Nbins)){
     Nbins = 20
   }
@@ -59,11 +75,18 @@ stratified_sampler <- function(minAEP = 1E-8, maxAEP = 0.99, dist = "ev1", Nbins
     dist = dist
   } else {
     dist = NULL
-    cli::cli_warn("Unknown stratification selected. Defaulting to EV1")
+    cli::cli_warn("Unknown stratification selected. Defaulted to EV1")
   }
 
   if(is.null(dist)){
     dist = "ev1"
+  }
+
+  # Verbose message
+  if (verbose) {
+    cli::cli_inform(c(
+      "v" = "Stratification complete: {.val {Nbins}} bin{?s}, {.val {Mevents}} event{?s} per bin ({.val {dist}} space)."
+    ))
   }
 
   if(dist == "ev1"){
