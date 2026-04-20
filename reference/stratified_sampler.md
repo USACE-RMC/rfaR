@@ -10,9 +10,10 @@ adequate coverage of rare events.
 stratified_sampler(
   minAEP = 1e-08,
   maxAEP = 0.99,
-  dist = "ev1",
+  dist = "EV1",
   Nbins = NULL,
-  Mevents = NULL
+  Mevents = NULL,
+  verbose = FALSE
 )
 ```
 
@@ -28,22 +29,23 @@ stratified_sampler(
 
 - dist:
 
-  Character. Probability space for stratification. Default is "EV1".
-  Invalid values trigger a warning and default to "EV1".
+  Character. Probability space for stratification. Case-insensitive.
+  Default is `"EV1"`. Invalid values trigger a warning and default to
+  `"EV1"`.
 
-  "EV1"
+  `"EV1"`
 
   :   Extreme Value Type I (Gumbel) space. Recommended for flood
       frequency analysis. Allocates more bins to rare events through the
       transformation `-log(-log(1-AEP))`, improving tail estimation
       efficiency.
 
-  "Normal"
+  `"Normal"`
 
   :   Standard normal (z-score) space. Uniform bins in z-space. Use when
       the underlying phenomenon is normally distributed.
 
-  "Uniform"
+  `"Uniform"`
 
   :   Uniform probability space. Equal probability width per bin.
       Generally inefficient for rare event estimation.
@@ -55,6 +57,11 @@ stratified_sampler(
 - Mevents:
 
   Number of events per bin. Default is `500`.
+
+- verbose:
+
+  Logical. If `TRUE`, prints a completion message summarizing the
+  stratification. Default is `FALSE`.
 
 ## Value
 
@@ -99,5 +106,13 @@ assessments.
 strat <- stratified_sampler()
 
 # Custom bins and events
-strat <- stratified_sampler(minAEP = 1E-6, maxAEP = 0.5, dist = "EV1", Nbins = 10, Mevents = 100)
+strat <- stratified_sampler(minAEP = 1E-6,
+                            maxAEP = 0.5,
+                            dist = "EV1",
+                            Nbins = 10,
+                            Mevents = 100)
+
+# With verbose message
+strat <- stratified_sampler(verbose = TRUE)
+#> ✔ Stratification complete: 20 bins, 500 events per bin ("ev1" space).
 ```
