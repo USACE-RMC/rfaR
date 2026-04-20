@@ -48,10 +48,41 @@ hydrograph_setup <- function(..., critical_duration = NULL, routing_days = NULL,
 
   # Collect Hydrographs ========================================================
   input_hydrographs <- list(...)
-  hydrograph_ID <- seq(1,length(input_hydrographs),1)
   hydrograph_names <- sapply(substitute(list(...))[-1], deparse)
 
+  # Clean any potential trailing rows that are empty ===========================
+  # read.csv() from Excel-exported files often carries trailing empty rows
+  # (NA flow, "" date/time). These propagate through zoo::rollmeanr() as NA,
+  # breaking obs_vol, and break the routing extension's time sequence.
+  input_hydrographs <- lapply(seq_along(input_hydrographs), function(i) {
+    h <- input_hydrographs[[i]]
+    flow_raw <- h[, 4]
+    if(!is.numeric(flow_raw)){
+      flow_num <- suppressWarnings(as.numeric(gsub(",", "", flow_raw)))
+    } else {
+      flow_num <- flow_raw
+    }
+
+    valid_idx <- which(!is.na(flow_num))
+    if(length(valid_idx) == 0){
+      cli::cli_abort(c(
+        "Hydrograph {.val {hydrograph_names[i]}} has no valid flow values.",
+        "i" = "Check the input CSV for missing or malformed data."
+      ))
+    }
+
+    last_valid <- max(valid_idx)
+    n_dropped <- nrow(h) - last_valid
+    if(n_dropped > 0){
+      cli::cli_inform(c(
+        "i" = "Dropped {n_dropped} trailing row{?s} from {.val {hydrograph_names[i]}}."
+      ))
+    }
+    h[seq_len(last_valid), , drop = FALSE]
+  })
+
   # Set Sample Weights =========================================================
+  hydrograph_ID <- seq(1,length(input_hydrographs),1)
   if(!is.null(weights) && length(weights) != length(hydrograph_ID)){
     cli::cli_abort("Length of {.arg weights} must match number of input hydrographs.")
   }
