@@ -70,6 +70,44 @@
 <p><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <a href="https://cran.r-project.org/" class="external-link"><img src="https://img.shields.io/badge/R-%3E%3D4.1-blue" alt="R"></a> <a href="LICENSE"><img src="https://img.shields.io/badge/License-BSD--3--Clause-blue.svg" alt="License"></a></p>
 <p>An R implementation of the U.S. Army Corps of Engineers (USACE) Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software. This package produces reservoir stage-frequency curves with uncertainty bounds by combining deterministic flood routing (Modified Puls method) with a nested Monte Carlo framework — providing H&amp;H engineers the tools needed for dam safety risk assessments in accordance with USACE/RMC guidance.</p>
 <div class="section level2">
+<h2 id="whats-new">What’s New<a class="anchor" aria-label="anchor" href="#whats-new"></a>
+</h2>
+<p>See <a href="NEWS.html"><code>NEWS.md</code></a> for a history of user-facing changes across versions.</p>
+</div>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<div class="section level3">
+<h3 id="for-users">For users<a class="anchor" aria-label="anchor" href="#for-users"></a>
+</h3>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Install from GitHub using remotes</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USACE-RMC/rfaR"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Install from GitHub using devtools</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USACE-RMC/rfaR"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="for-developers-and-contributors">For developers and contributors<a class="anchor" aria-label="anchor" href="#for-developers-and-contributors"></a>
+</h3>
+<p>If you plan to modify the package source, clone the repository and use <code>devtools</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># After cloning the repo to disk (e.g., via git clone or GitHub Desktop):</span></span>
+<span><span class="co"># - Open an R session in the repo root (or an RStudio project at the repo root)</span></span>
+<span></span>
+<span><span class="co"># For active development — loads all functions into the session without installing</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># To install your local working copy into your R library</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<blockquote>
+<p>[!NOTE] Cloning the repository alone does not make <code><a href="https://github.com/USACE-RMC/rfaR" class="external-link">library(rfaR)</a></code> work — the package must be either installed (<code>devtools::install()</code> or <code>remotes::install_github()</code>) or loaded into the session via <code>devtools::load_all()</code>. A cloned repo on disk is source code, not an installed package</p>
+</blockquote>
+</div>
+</div>
+<div class="section level2">
 <h2 id="example-data">Example Data<a class="anchor" aria-label="anchor" href="#example-data"></a>
 </h2>
 <p>The package includes example data from a hypothetical dam, John McGraw Dam (JMD, variables as “jmd_”):</p>
@@ -143,21 +181,9 @@
 </div>
 </div>
 <div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Install from GitHub using remotes</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USACE-RMC/rfaR"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Install from GitHub using devtools</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USACE-RMC/rfaR"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
 <h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/USACE-RMC/rfaR" class="external-link">rfaR</a></span><span class="op">)</span></span>
 <span></span>
@@ -211,11 +237,11 @@
 <div class="section level2">
 <h2 id="quick-start-results">Quick Start Results<a class="anchor" aria-label="anchor" href="#quick-start-results"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">jmd_expected</span><span class="op">$</span><span class="va">stage_frequency</span><span class="op">)</span></span></code></pre></div>
 <details><summary>
 Plotting Results
-</summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+</summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># ggplot is contained in tidyverse</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="co"># or</span></span>
@@ -294,6 +320,19 @@ Plotting Results
 <span>        plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">11</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">z_limit1</span>, <span class="va">z_limit2</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3800</span>,<span class="fl">3900</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </details>
+</div>
+<div class="section level2">
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h2>
+<p><code>rfaR</code> is released under the BSD 3-Clause License with an additional USACE government disclaimer. The license is split across two files per R packaging convention:</p>
+<ul>
+<li>
+<strong><code>LICENSE</code></strong> — the minimal stub required by R, naming the copyright holder and year</li>
+<li>
+<strong><code>LICENSE.note</code></strong> — the full BSD 3-Clause text along with the USACE government notice, list of conditions, and disclaimer</li>
+</ul>
+<p>See both files for the complete terms.</p>
+
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
