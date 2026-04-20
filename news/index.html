@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rfaR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,6 +43,28 @@
       <small>Source: <a href="https://github.com/USACE-RMC/rfaR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.5.1" id="rfar-051">rfaR 0.5.1<a class="anchor" aria-label="anchor" href="#rfar-051"></a></h2>
+<div class="section level3">
+<h3 id="summary-0-5-1">Summary<a class="anchor" aria-label="anchor" href="#summary-0-5-1"></a></h3>
+<p>Fixes a bug reported by a tester where <code><a href="../reference/hydrograph_setup.html">hydrograph_setup()</a></code> produced <code>NA</code> for <code>obs_vol</code> when the input CSV contained trailing empty rows — a common artifact of <code><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv()</a></code> on Excel-exported files.</p>
+</div>
+<div class="section level3">
+<h3 id="root-cause-0-5-1">Root cause<a class="anchor" aria-label="anchor" href="#root-cause-0-5-1"></a></h3>
+<p><code><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv()</a></code> reads the full padded row range from Excel exports, producing trailing rows with <code>NA</code> in the Flow column and <code>""</code> in Date/Time. These propagated through <code><a href="https://rdrr.io/pkg/zoo/man/rollmean.html" class="external-link">zoo::rollmeanr()</a></code> as <code>NA</code>, poisoning <code>obs_vol</code>, and broke the routing extension’s time sequence.</p>
+</div>
+<div class="section level3">
+<h3 id="fix-0-5-1">Fix<a class="anchor" aria-label="anchor" href="#fix-0-5-1"></a></h3>
+<p>Truncate each input hydrograph at the last row with a valid (non-NA) flow value. Interior NAs are preserved so malformed inputs fail loudly downstream, rather than being silently dropped. Emits a <code><a href="https://cli.r-lib.org/reference/cli_abort.html" class="external-link">cli::cli_inform</a></code> per hydrograph noting how many trailing rows were dropped.</p>
+</div>
+<div class="section level3">
+<h3 id="testing-0-5-1">Testing<a class="anchor" aria-label="anchor" href="#testing-0-5-1"></a></h3>
+<p>Added <code>tests/testthat/test-hydrograph_setup.R</code> with two tests:</p>
+<ol style="list-style-type: decimal"><li>Confirms <code>obs_vol</code> is finite when input has trailing empty rows, and matches the result from clean input</li>
+<li>Confirms the <code>cli_inform</code> message fires with the correct row count</li>
+</ol><p>Both pass locally under <code>devtools::test()</code> and <code>devtools::check()</code>.</p>
+</div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.5.0" id="rfar-050">rfaR 0.5.0<a class="anchor" aria-label="anchor" href="#rfar-050"></a></h2>
 <ul><li>Created news file. This feels like a big step</li>
