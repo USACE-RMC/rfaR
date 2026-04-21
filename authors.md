@@ -20,6 +20,15 @@
 - **Julian Gonzalez**. Contributor.  
   USACE RMC
 
+- **Sadie Niblett**. Reviewer.  
+  USACE RMC
+
+- **Reuben Sasaki**. Reviewer.  
+  P.E.,USACE RMC
+
+- **Bryan Robinson**. Reviewer.  
+  P.E.,USACE RMC
+
 ## Citation
 
 Source:
