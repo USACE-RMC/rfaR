@@ -13,7 +13,13 @@ Authors@R: c(
     person("Samantha", "Hartke", , "samantha.h.hartke@usace.army.mil",
            role = "ctb", comment = "PhD, USACE RMC"),
     person("Julian", "Gonzalez", , "julian.t.gonzalez@usace.army.mil",
-           role = "ctb", comment = "USACE RMC"))
+           role = "ctb", comment = "USACE RMC"),
+    person("Sadie", "Niblett", , "sadie.[...]@usace.army.mil",
+           role = "rev", comment = "USACE RMC"),
+    person("Reuben", "Sasaki", , "reuben.[...]@usace.army.mil",
+           role = "rev", comment = "USACE RMC"),
+    person("Bryan", "Robinson", , "bryan.[...]@usace.army.mil",
+           role = "rev", comment = "USACE RMC"))
 Description: An R implementation of the U.S. Army Corps of Engineers (USACE) 
     Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software. 
     This package produces reservoir stage-frequency curves with uncertainty bounds 
