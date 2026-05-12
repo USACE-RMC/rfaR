@@ -26,7 +26,7 @@ thin_samples <- function(n, z_sorted, stage_sorted) {
   thin_idx <- sort(unique(thin_idx))
   thin_idx <- thin_idx[thin_idx >= 1 & thin_idx <= n]
 
-  tibble(
+  data.frame(
     z_aep = z_sorted[thin_idx],
     stage = stage_sorted[thin_idx]
   )
