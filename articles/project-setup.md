@@ -32,6 +32,7 @@ sets the working directory automatically on open.
 required structure:
 
 ``` r
+
 # Reservoir model: elevation, storage, outflow
 head(jmd_resmodel)
 
@@ -47,6 +48,7 @@ Read your own data using
 paths:
 
 ``` r
+
 resmodel  <- read.csv("data/resmodel.csv")
 stage_rec <- read.csv("data/stage_record.csv")
 ```
@@ -58,6 +60,7 @@ Before running
 verify your imported data matches the expected format:
 
 ``` r
+
 # Check against built-in example
 str(jmd_resmodel)
 str(resmodel)  # should match

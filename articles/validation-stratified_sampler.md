@@ -32,12 +32,14 @@ concentrating sampling effort where it matters most for dam safety/risk
 analysis.
 
 ``` r
+
 ev1 <- stratified_sampler(dist = "EV1")
 normal <- stratified_sampler(dist = "Normal")
 uniform <- stratified_sampler(dist = "Uniform")
 ```
 
 ``` r
+
 ev1 <- stratified_sampler(dist = "EV1")
 normal <- stratified_sampler(dist = "Normal")
 uniform <- stratified_sampler(dist = "Uniform")
@@ -98,6 +100,7 @@ Compare computed z-lower bin boundaries against the `stratified_example`
 dataset.
 
 ``` r
+
 ev1_idx <- which(example_stratified$distribution == "ev1")
 normal_idx <- which(example_stratified$distribution == "normal")
 uniform_idx <- which(example_stratified$distribution == "uniform")
@@ -119,7 +122,7 @@ diff_uniform <- uniform$Zlower - z_lower_valid[uniform_idx]
 | Normal       |             5.0e-10 |
 | Uniform      |             4.9e-09 |
 
-Z-Lower Bin Boundary Differences vs. Validation Data
+Z-Lower Bin Boundary Differences vs. Validation Data {.table}
 
 ### Acceptance Criterion
 
@@ -135,6 +138,7 @@ Z-Lower Bin Boundary Differences vs. Validation Data
 Compare computed bin weights against the `stratified_example` dataset.
 
 ``` r
+
 wt_diff_ev1 <- ev1$Weights - example_stratified$weight[ev1_idx]
 wt_diff_normal <- normal$Weights - example_stratified$weight[normal_idx]
 wt_diff_uniform <- uniform$Weights - example_stratified$weight[uniform_idx]
@@ -146,7 +150,7 @@ wt_diff_uniform <- uniform$Weights - example_stratified$weight[uniform_idx]
 | Normal       |            3.79e-08 |
 | Uniform      |            5.00e-10 |
 
-Weight Differences vs. Validation Data
+Weight Differences vs. Validation Data {.table}
 
 ### Acceptance Criterion
 
@@ -160,6 +164,7 @@ Weight Differences vs. Validation Data
 ## Test 4: Weights Sum to 1
 
 ``` r
+
 sum_ev1 <- sum(ev1$Weights)
 sum_normal <- sum(normal$Weights)
 sum_uniform <- sum(uniform$Weights)
@@ -171,7 +176,7 @@ sum_uniform <- sum(uniform$Weights)
 | Normal       |              1 |           0 |
 | Uniform      |              1 |           0 |
 
-Weight Summation Check
+Weight Summation Check {.table}
 
 ### Acceptance Criterion
 
@@ -189,6 +194,7 @@ Verify that
 returns the correct number of bins, events, and vector lengths.
 
 ``` r
+
 test_custom <- stratified_sampler(Nbins = 10, Mevents = 100)
 
 dim_results <- data.frame(
@@ -209,7 +215,7 @@ dim_results <- data.frame(
 | length(Zupper)  |       10 |     10 | TRUE |
 | length(Weights) |       10 |     10 | TRUE |
 
-Output Dimension Verification (Nbins=10, Mevents=100)
+Output Dimension Verification (Nbins=10, Mevents=100) {.table}
 
 ### Acceptance Criterion
 
@@ -229,11 +235,12 @@ Verify that all bin lower bounds are strictly less than upper bounds.
 | Normal       | TRUE                 |
 | Uniform      | TRUE                 |
 
-Bin Ordering Verification
+Bin Ordering Verification {.table}
 
 ### Acceptance Criterion
 
 ``` r
+
 pass_order <- all(order_results$All_Ordered)
 ```
 

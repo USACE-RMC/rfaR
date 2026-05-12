@@ -26,6 +26,7 @@ of user-facing changes across versions.
 ### For users
 
 ``` r
+
 # Install from GitHub using remotes
 install.packages("remotes")
 remotes::install_github("USACE-RMC/rfaR", build_vignettes = TRUE)
@@ -41,6 +42,7 @@ If you plan to modify the package source, clone the repository and use
 `devtools`:
 
 ``` r
+
 # After cloning the repo to disk (e.g., via git clone or GitHub Desktop):
 # - Open an R session in the repo root (or an RStudio project at the repo root)
 
@@ -104,6 +106,7 @@ Dam (JMD, variables as “jmd\_”):
 ## Quick Start
 
 ``` r
+
 # Load the package
 library(rfaR)
 
@@ -158,12 +161,14 @@ jmd_fulluncert <- rfa_simulate(sim_type       = "full",
 ## Quick Start Results
 
 ``` r
+
 print(jmd_expected$stage_frequency)
 ```
 
 Plotting Results
 
 ``` r
+
 # ggplot is contained in tidyverse
 library(tidyverse)
 # or

@@ -17,6 +17,7 @@ test covers three cases:
 ## Setup
 
 ``` r
+
 hydrographs <- hydrograph_setup(jmd_hydro_apr1999,
                                 jmd_hydro_jun1921,
                                 jmd_hydro_jun1965,
@@ -42,7 +43,7 @@ sampled_vol_15_2x <- obs_vol_15 * 2
 | April 1999 (1-hr)  |          1.00 |  241 |        25313.96 |
 | June 1965 (15-min) |          0.25 |  961 |        53445.41 |
 
-Input Hydrograph Summary
+Input Hydrograph Summary {.table}
 
 ------------------------------------------------------------------------
 
@@ -52,6 +53,7 @@ Scale the April 1999 hydrograph by a factor of 2 with matching input and
 routing timesteps (1-hour).
 
 ``` r
+
 scaled_1hr <- scale_hydrograph(
   hydrograph_shape = hydro_1hr[, c("hour", "inflow")],
   observed_volume  = obs_vol,
@@ -67,7 +69,7 @@ scaled_1hr <- scale_hydrograph(
 | Row count preserved                          | TRUE   |
 | Scale factor applied (all ordinates doubled) | TRUE   |
 
-1-Hour Input / 1-Hour Routing Checks
+1-Hour Input / 1-Hour Routing Checks {.table}
 
 ![](validation-hydrograph_scaling_files/figure-html/test1-plot-1.png)
 
@@ -79,6 +81,7 @@ Scale the June 1965 (15-min) hydrograph by a factor of 1 with block
 averaging to 1-hour routing timestep.
 
 ``` r
+
 scaled_15min <- scale_hydrograph(
   hydrograph_shape = hydro_15min[, c("hour", "inflow")],
   observed_volume  = obs_vol_15,
@@ -97,7 +100,7 @@ expected_first <- mean(hydro_15min$inflow[1:4]) * 1
 | Time starts at 0                                    | 0        | 0      | TRUE |
 | First ordinate matches manual block average × scale | 36.5     | 36.5   | TRUE |
 
-15-Minute Input / 1-Hour Routing Checks
+15-Minute Input / 1-Hour Routing Checks {.table}
 
 ![](validation-hydrograph_scaling_files/figure-html/test2-plot-1.png)
 
@@ -123,6 +126,7 @@ routing by implying water is being withdrawn from the reservoir by the
 inflow boundary condition.
 
 ``` r
+
 # Scale factor = 1 (same volume)
 scaled_unity <- scale_hydrograph(
   hydrograph_shape = hydro_1hr[, c("hour", "inflow")],
@@ -149,7 +153,7 @@ all_nonneg <- all(scaled_2x$inflow_cfs >= 0)
 | Scale factor = 1 returns unchanged ordinates     | TRUE   |
 | All flows non-negative for positive scale factor | TRUE   |
 
-Edge Case Checks
+Edge Case Checks {.table}
 
 ### Acceptance Criterion
 

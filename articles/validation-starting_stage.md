@@ -32,6 +32,7 @@ pre-computed monthly stage duration curves at specified exceedance
 probabilities.
 
 ``` r
+
 stage_ts <- jmd_wy1980_stage
 stage_ts$months <- lubridate::month(lubridate::mdy(jmd_wy1980_stage$date))
 stage_ts <- stage_ts[!is.na(stage_ts$months), ]
@@ -48,6 +49,7 @@ month and compare against `jmd_stage_duration` (“Observed Stage
 Duration”).
 
 ``` r
+
 obs_quantiles <- sapply(1:12, function(m) {
   unname(quantile(stage_ts$stage_ft[stage_ts$months == m],
                   probs, na.rm = TRUE))
@@ -74,6 +76,7 @@ max_diff_obs <- max(abs(diff_matrix), na.rm = TRUE)
 | December  | Dec   |                       0.0050 |
 
 Maximum Difference Between Computed and Observed Stage Duration Curves
+{.table}
 
 ### Acceptance Criterion
 
@@ -102,6 +105,7 @@ process in
 Compare the resulting stage duration curves against the observed curves.
 
 ``` r
+
 set.seed(42)
 
 seasonality_prob <- jmd_seasonality$relative_frequency
@@ -130,6 +134,7 @@ sample_stages <- data.frame(months = InitMonths, stage_ft = InitStages)
 | Sep   |                     0.0673 |
 
 Maximum Percent Difference Between Sampled and Observed Stage Quantiles
+{.table}
 
 **Months not sampled** (zero seasonality probability): Jan, Feb, Mar,
 Oct, Nov, Dec. These months correctly produce no samples.

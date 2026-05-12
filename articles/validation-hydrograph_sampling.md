@@ -17,6 +17,7 @@ Seven example hydrographs are loaded via
 with the following user-specified weights:
 
 ``` r
+
 hydrograph_names <- c("April 1999", "June 1921", "June 1965 (1hr)",
                       "June 1965 (15min)", "May 1955", "PMF", "SDF")
 weights <- c(0.5, 1, 1, 2, 2, 2, 4)
@@ -33,7 +34,7 @@ expected_probs <- weights / sum(weights)
 | PMF               |    2.0 |           0.16 | 2/12.5                  |
 | SDF               |    4.0 |           0.32 | 4/12.5                  |
 
-Hydrograph Sampling Weights and Normalized Probabilities
+Hydrograph Sampling Weights and Normalized Probabilities {.table}
 
 ## Test
 
@@ -41,6 +42,7 @@ Set up hydrographs with weights, then sample 1,000,000 times and compare
 the sampled frequencies to the expected probabilities.
 
 ``` r
+
 set.seed(42)
 
 hydrographs <- hydrograph_setup(jmd_hydro_apr1999,
@@ -71,7 +73,7 @@ sample_freq <- tabulate(hydroSamps, nbins = length(hydro_probs)) / Nsims
 | PMF               |    2.0 |           0.16 |        0.1600 |      0e+00 |
 | SDF               |    4.0 |           0.32 |        0.3196 |     -4e-04 |
 
-Expected vs. Sampled Hydrograph Frequencies (N = 1,000,000)
+Expected vs. Sampled Hydrograph Frequencies (N = 1,000,000) {.table}
 
 ![](validation-hydrograph_sampling_files/figure-html/results-plot-1.png)
 

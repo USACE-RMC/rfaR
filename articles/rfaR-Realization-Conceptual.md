@@ -74,6 +74,7 @@ uniformly within each bin. This ensures the tail is well-represented
 without artificially inflating the total number of routing operations.
 
 ``` r
+
 ords <- stratified_sampler(Nbins = 20,
                                Mevents = 500,
                                dist = "ev1")
@@ -97,6 +98,7 @@ uniformly within each bin. The resulting `z_matrix` is an `Mevents` ×
 populated across its corresponding probability/z-variate range.
 
 ``` r
+
 z_matrix <- matrix(ncol = ords$Nbins, nrow = ords$Mevents)
 
 # Using EV1
@@ -127,6 +129,7 @@ single draw from the distribution of LP3 parameters — one posterior
 parameter set for this realization.
 
 ``` r
+
 meanlog <- 3.550399
 sdlog <- 0.3717982
 skewlog <- 0.7555138
@@ -146,6 +149,7 @@ will be executed in the realization. The default is 10,00 simulations
 to change the number of simulations or realizations.
 
 ``` r
+
 Nsims <- nrow(Q_matrix) * ncol(Q_matrix)
 ```
 
@@ -162,6 +166,7 @@ The sample is a pre-allocated vector/sequence of months that is `Nsims`
 long.
 
 ``` r
+
 InitMonths <- sample(1:12, size = Nsims, replace = TRUE, prob = jmd_seasonality$relative_frequency)
 
 UniqMonths <- sort(unique(InitMonths))
@@ -184,6 +189,7 @@ The sample is a pre-allocated vector/sequence of starting stages that is
 `Nsims` long.
 
 ``` r
+
 InitStages <- numeric(Nsims)
 
 stage_ts <- jmd_wy1980_stage
@@ -208,6 +214,7 @@ Note that the defined critical duration is 2-days (`critical_duration`)
 and the routing window has been set to 10-days (`routing_days`).
 
 ``` r
+
 hydrographs <- hydrograph_setup(jmd_hydro_apr1999,
                                 jmd_hydro_jun1921,
                                 jmd_hydro_jun1965,
@@ -242,6 +249,7 @@ applying the stratified bin weights during the stage-frequency
 estimation.
 
 ``` r
+
 peakStage <- matrix(NA, nrow = nrow(Q_matrix), ncol = ncol(Q_matrix))
 
 realiz <- 0
@@ -284,6 +292,7 @@ exceedance probability calculations (within the realization) are bounded
 by these values.
 
 ``` r
+
 min_stage <- min(peakStage)
 max_stage <- max(peakStage)
 ```
@@ -302,6 +311,7 @@ exceedance stages can be any length (ex. `n_exceedance_stages` could be
 1,000).
 
 ``` r
+
 n_exceedance_stages <- ords$Mevents
 stage_vect <- rep(NA, n_exceedance_stages)
 
@@ -337,6 +347,7 @@ events in the bin (`mstages`) to represent a probability of exceedance
 stage in `stage_vect`, within each bin.
 
 ``` r
+
 stage_exceedance_matrix <- matrix(nrow = length(stage_vect), ncol = ncol(Q_matrix))
 
 for(m in 1:ncol(peakStage)){
@@ -377,6 +388,7 @@ stage-frequency curve. This curve can be interpolated using stages or
 AEPs.
 
 ``` r
+
 stage_aep_vect <- rep(NA,length(stage_vect))
 
 for(m in 1:nrow(stage_exceedance_matrix)){

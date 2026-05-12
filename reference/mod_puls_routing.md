@@ -45,6 +45,7 @@ Chow, V.T. (1959). Open-Channel Hydraulics. McGraw-Hill.
 ## Examples
 
 ``` r
+
 # Example hydrograph. Requires pre-processing
 hydro_example <- hydrograph_setup(jmd_hydro_jun1965_15min,
                                    critical_duration = 2,

@@ -26,13 +26,16 @@ indicator at time *t*. The storage indicator uses the
 stage-storage-discharge relationship (`your_res_model`) to determine the
 outflow at time *t*.
 
-$$SI_{t} = \frac{I_{t - 1} + I_{t}}{2} + \left( \frac{S_{t - 1}}{\Delta t} - \frac{O_{t - 1}}{2} \right)$$
+``` math
+SI_t = \frac{I_{t-1} + I_t}{2} + \left(\frac{S_{t-1}}{\Delta t} - \frac{O_{t-1}}{2}\right)
+```
 
 ------------------------------------------------------------------------
 
 ## Test
 
 ``` r
+
 cc_routing <- mod_puls_routing(resmodel_df = cc_resmodel,
                                inflow_df = cc_inflowhydro,
                                initial_elev = cc_init_elev,
@@ -52,7 +55,7 @@ cc_max_diff_outflow <- max(abs(cc_diff_outflow))
 | Max Abs Diff Elevation (ft) |    0.000 |       NA |
 | Max Abs Diff Outflow (cfs)  |    0.000 |       NA |
 
-Cherry Creek Dam Routing Comparison
+Cherry Creek Dam Routing Comparison {.table}
 
 ![](validation-mod_puls_routing_files/figure-html/cc-plot-1.png)
 

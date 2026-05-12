@@ -33,7 +33,7 @@ including credible intervals and posterior predictive values.
 |     3.5085 |   0.3586 |     0.7270 |      -1093.707 |
 |     3.5592 |   0.3891 |     0.4078 |      -1093.874 |
 
-First 5 of 10,000 BestFit LP3 Parameter Sets
+First 5 of 10,000 BestFit LP3 Parameter Sets {.table}
 
 |  AEP |      CI_95 |      CI_5 | Posterior_Predictive |
 |-----:|-----------:|----------:|---------------------:|
@@ -63,7 +63,7 @@ First 5 of 10,000 BestFit LP3 Parameter Sets
 | 0.98 |     992.04 |    646.89 |               823.32 |
 | 0.99 |     902.49 |    540.57 |               712.88 |
 
-JMD Volume-Frequency Curve Benchmark Data
+JMD Volume-Frequency Curve Benchmark Data {.table}
 
 ------------------------------------------------------------------------
 
@@ -76,6 +76,7 @@ the 5th and 95th percentiles across parameter sets to form the credible
 interval. Compare against the benchmark values (`jmd_vfc`).
 
 ``` r
+
 aeps <- jmd_vfc$aep
 
 ci_matrix <- matrix(nrow = nrow(jmd_bf_parameter_sets), ncol = length(aeps))
@@ -125,7 +126,7 @@ for (i in 1:ncol(ci_matrix)) {
 | 9.8E-01 |        992.04 |       992.04 |     0.00 |       646.89 |      646.89 |       0 |
 | 9.9E-01 |        902.49 |       902.49 |     0.00 |       540.57 |      540.57 |       0 |
 
-Credible Interval Comparison (cfs)
+Credible Interval Comparison (cfs) {.table}
 
 ![](validation-vfc_parameter_sets_files/figure-html/test1-plot-1.png)
 
@@ -137,6 +138,7 @@ attributable to interpolation methods between the Excel-based
 RMC-BestFit and direct R computation.
 
 ``` r
+
 max_diff_95 <- max(abs(ci_95 - jmd_vfc$ci_95))
 max_diff_5 <- max(abs(ci_5 - jmd_vfc$ci_5))
 pass_95 <- max_diff_95 < 0.05
@@ -163,6 +165,7 @@ average to obtain the posterior predictive AEP. Compare against the
 benchmark AEPs (`jmd_vfc`).
 
 ``` r
+
 discharges <- jmd_vfc$posterior_predictive
 log_discharge <- log(discharges, base = 10)
 
@@ -211,7 +214,7 @@ for (i in 1:ncol(posterior_matrix)) {
 |        823.3155 |       9.8e-01 |   0.97999938 |  -6.20e-07 |
 |        712.8795 |       9.9e-01 |   0.99000058 |   5.80e-07 |
 
-Posterior Predictive AEP Comparison
+Posterior Predictive AEP Comparison {.table}
 
 ### Acceptance Criterion
 
@@ -219,6 +222,7 @@ Maximum absolute difference between computed and benchmark AEPs must be
 less than 1e-4.
 
 ``` r
+
 max_diff_post <- max(abs(post_pred - aeps))
 pass_post <- max_diff_post < 1e-4
 ```

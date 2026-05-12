@@ -19,6 +19,7 @@ The input seasonality distribution is stored in
 probabilities that sum to 1.
 
 ``` r
+
 seasonality_prob <- jmd_seasonality$relative_frequency
 
 input_df <- data.frame(Month = month.abb,
@@ -40,7 +41,7 @@ input_df <- data.frame(Month = month.abb,
 | November  |         0 |              0.000 |                     1.000 |
 | December  |         0 |              0.000 |                     1.000 |
 
-JMD Seasonality Input Distribution
+JMD Seasonality Input Distribution {.table}
 
 ## Test
 
@@ -48,6 +49,7 @@ Sample 1,000,000 months using the input probabilities, then compare the
 sampled relative frequencies to the input.
 
 ``` r
+
 set.seed(42)
 Nsims <- 1000000
 
@@ -70,7 +72,7 @@ sample_freq <- tabulate(InitMonths, nbins = 12) / Nsims
 | Nov   |           0.000 |            0.0000 |      0e+00 |                NaN |
 | Dec   |           0.000 |            0.0000 |      0e+00 |                NaN |
 
-Input vs. Sampled Seasonality Frequencies (N = 1,000,000)
+Input vs. Sampled Seasonality Frequencies (N = 1,000,000) {.table}
 
 ![](validation-seasonality_sampling_files/figure-html/results-plot-1.png)![](validation-seasonality_sampling_files/figure-html/nsim-decay-plot-1.png)
 
