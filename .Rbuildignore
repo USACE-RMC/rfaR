@@ -10,4 +10,4 @@
 ^pkgdown$
 ^\.github$
 ^vignettes/articles$
-"^Results$" 
+^Results$
