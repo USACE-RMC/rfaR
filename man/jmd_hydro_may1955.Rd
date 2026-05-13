@@ -5,7 +5,7 @@
 \alias{jmd_hydro_may1955}
 \title{JMD May 1955 Hydrograph}
 \format{
-A data frame with 241 rows and 2 columns:
+A data frame with 241 rows and 4 columns:
 \describe{
 \item{Ordinate}{Timeseries Ordinate}
 \item{Date}{Date mm/dd/yyyy}
@@ -20,7 +20,7 @@ jmd_hydro_may1955
 Inflow hydrograph shape from May 1955 flood event.
 }
 \examples{
-sapply(jmd_hydro_may1955,class)
+sapply(jmd_hydro_may1955, class)
 head(jmd_hydro_may1955)
 plot(jmd_hydro_may1955$Ordinate, jmd_hydro_may1955$Flow,
      xlab = "Hour", ylab = "Inflow (cfs)",

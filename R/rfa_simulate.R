@@ -143,6 +143,10 @@
 #'
 #' @examples
 #' \dontrun{
+#' # Not run: Expected and Median modes take ~15s; Full uncert
+#' # runs ~10,000 parameter realizations and takes 3-4 hours on a
+#' # typical machine.
+#'
 #' # --- Setup ---
 #' hydros <- hydrograph_setup(jmd_hydro_apr1999, jmd_hydro_jun1965,
 #'                            jmd_hydro_may1955, jmd_hydro_pmf,
@@ -151,7 +155,7 @@
 #' # --- Expected only (default) ---
 #' results_exp <- rfa_simulate(
 #'   sim_type       = "expected",
-#'   bestfit_params = jmd_vfc_parameters,
+#'   bestfit_params = jmd_bf_parameter_sets,
 #'   stage_ts       = jmd_wy1980_stage,
 #'   seasonality    = jmd_seasonality$relative_frequency,
 #'   hydrographs    = hydros,
@@ -162,7 +166,7 @@
 #' # --- Median only ---
 #' results_med <- rfa_simulate(
 #'   sim_type       = "median",
-#'   bestfit_params = jmd_vfc_parameters,
+#'   bestfit_params = jmd_bf_parameter_sets,
 #'   stage_ts       = jmd_wy1980_stage,
 #'   seasonality    = jmd_seasonality$relative_frequency,
 #'   hydrographs    = hydros,
@@ -173,7 +177,7 @@
 #' # --- Full uncertainty (parallelized) ---
 #' results_full <- rfa_simulate(
 #'   sim_type       = "full",
-#'   bestfit_params = jmd_vfc_parameters,
+#'   bestfit_params = jmd_bf_parameter_sets,
 #'   stage_ts       = jmd_wy1980_stage,
 #'   seasonality    = jmd_seasonality$relative_frequency,
 #'   hydrographs    = hydros,
@@ -181,8 +185,6 @@
 #'   Ncores         = 4,
 #'   sim_name       = "jmd"
 #' )
-#'
-
 #' }
 rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
                          stage_ts, seasonality, hydrographs, resmodel,

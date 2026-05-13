@@ -5,7 +5,7 @@
 \alias{jmd_hydro_pmf}
 \title{JMD PMF Hydrograph}
 \format{
-A data frame with 192 rows and 2 columns:
+A data frame with 192 rows and 4 columns:
 \describe{
 \item{Ordinate}{Timeseries Ordinate}
 \item{Date}{Date mm/dd/yyyy}
@@ -20,7 +20,7 @@ jmd_hydro_pmf
 Inflow hydrograph shape for Probable Maximum Flood (PMF).
 }
 \examples{
-sapply(jmd_hydro_pmf,class)
+sapply(jmd_hydro_pmf, class)
 head(jmd_hydro_pmf)
 plot(jmd_hydro_pmf$Ordinate, jmd_hydro_pmf$Flow,
      xlab = "Hour", ylab = "Inflow (cfs)",

@@ -206,7 +206,7 @@
 #'
 #' Inflow hydrograph shape from May 1955 flood event.
 #'
-#' @format A data frame with 241 rows and 2 columns:
+#' @format A data frame with 241 rows and 4 columns:
 #' \describe{
 #'   \item{Ordinate}{Timeseries Ordinate}
 #'   \item{Date}{Date mm/dd/yyyy}
@@ -214,7 +214,7 @@
 #'   \item{Flow}{Inflow (cfs)}
 #' }
 #' @examples
-#' sapply(jmd_hydro_may1955,class)
+#' sapply(jmd_hydro_may1955, class)
 #' head(jmd_hydro_may1955)
 #' plot(jmd_hydro_may1955$Ordinate, jmd_hydro_may1955$Flow,
 #'      xlab = "Hour", ylab = "Inflow (cfs)",
@@ -225,7 +225,7 @@
 #'
 #' Inflow hydrograph shape for Probable Maximum Flood (PMF).
 #'
-#' @format A data frame with 192 rows and 2 columns:
+#' @format A data frame with 192 rows and 4 columns:
 #' \describe{
 #'   \item{Ordinate}{Timeseries Ordinate}
 #'   \item{Date}{Date mm/dd/yyyy}
@@ -233,7 +233,7 @@
 #'   \item{Flow}{Inflow (cfs)}
 #' }
 #' @examples
-#' sapply(jmd_hydro_pmf,class)
+#' sapply(jmd_hydro_pmf, class)
 #' head(jmd_hydro_pmf)
 #' plot(jmd_hydro_pmf$Ordinate, jmd_hydro_pmf$Flow,
 #'      xlab = "Hour", ylab = "Inflow (cfs)",
@@ -244,7 +244,7 @@
 #'
 #' Inflow hydrograph shape for Spillway Design Flood (SDF).
 #'
-#' @format A data frame with 337 rows and 2 columns:
+#' @format A data frame with 337 rows and 4 columns:
 #' \describe{
 #'   \item{Ordinate}{Timeseries Ordinate}
 #'   \item{Date}{Date mm/dd/yyyy}
@@ -252,7 +252,7 @@
 #'   \item{Flow}{Inflow (cfs)}
 #' }
 #' @examples
-#' sapply(jmd_hydro_sdf,class)
+#' sapply(jmd_hydro_sdf, class)
 #' head(jmd_hydro_sdf)
 #' plot(jmd_hydro_sdf$Ordinate, jmd_hydro_sdf$Flow,
 #'      xlab = "Hour", ylab = "Inflow (cfs)",
