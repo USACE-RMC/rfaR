@@ -2,24 +2,30 @@ Package: rfaR
 Title: RMC Reservoir Frequency Analysis in R
 Version: 0.5.1
 Authors@R: c(
-    person("Daniel", "McGraw", , "daniel.e.mcgraw@usace.army.mil", 
-           role = c("aut", "cre"), comment = "P.E., USACE RMC"),
-    person("Andrew", "Verdin", , "andrew.p.verdin@usace.army.mil", 
-           role = "aut", comment = "PhD, P.H., USACE RMC"),
-    person("C. Haden", "Smith", , "cole.h.smith@usace.army.mil", 
-           role = "aut", comment = "P.E., USACE RMC"),
+    person("Daniel", "McGraw", , "daniel.e.mcgraw@usace.army.mil",
+           role = c("aut", "cre"),
+           comment = c("P.E., USACE RMC", ORCID = "0009-0006-4859-0179")),
+    person("Andrew", "Verdin", , "andrew.p.verdin@usace.army.mil",
+           role = "aut",
+           comment = c("PhD, P.H., USACE RMC", ORCID = "0000-0003-1967-9626")),
+    person("C. Haden", "Smith", , "cole.h.smith@usace.army.mil",
+           role = "aut",
+           comment = c("P.E., USACE RMC", ORCID = "0000-0002-4651-9890")),
     person("Allen", "Avance", , "allen.avance@usace.army.mil",
            role = "ctb", comment = "P.E., USACE RMC"),
     person("Samantha", "Hartke", , "samantha.h.hartke@usace.army.mil",
-           role = "ctb", comment = "PhD, USACE RMC"),
+           role = "ctb",
+           comment = c("PhD, USACE RMC", ORCID = "0000-0002-0239-4723")),
     person("Julian", "Gonzalez", , "julian.t.gonzalez@usace.army.mil",
-           role = "ctb", comment = "USACE RMC"),
+           role = "ctb",
+           comment = c("USACE RMC", ORCID = "0009-0009-9058-7653")),
     person("Sadie", "Niblett", , "sadie.s.niblett@usace.army.mil",
-           role = "rev", comment = "USACE RMC"),
+           role = "rev",
+           comment = c("USACE RMC", ORCID = "0009-0008-8588-4816")),
     person("Reuben", "Sasaki", , "reuben.a.sasaki@usace.army.mil",
-           role = "rev", comment = "P.E.,USACE RMC"),
+           role = "rev", comment = "P.E., USACE RMC"),
     person("Bryan", "Robinson", , "bryan.j.robinson@usace.army.mil",
-           role = "rev", comment = "P.E.,USACE RMC"))
+           role = "rev", comment = "P.E., USACE RMC"))
 Description: An R implementation of the U.S. Army Corps of Engineers (USACE) 
     Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software. 
     This package produces reservoir stage-frequency curves with uncertainty bounds 
