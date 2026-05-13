@@ -23,11 +23,17 @@ Given a stage-frequency curve, interpolates AEP values at target stages.
 Interpolation is performed in standard normal (z-variate) space for
 better behavior across orders of magnitude in AEP.
 }
-\examples{
-\dontrun{
-# Get AEP at stage 3850 ft
-stage2aep(curve$AEP, curve$stage, 3850)
+\details{
+Stage-frequency curves typically flatten at very rare AEPs once
+the reservoir reaches the reservoir model discharge capacity.
+This produces tied stage values.
+\code{approx()} handles these by averaging the
+corresponding AEPs, which may emit a "collapsing to unique 'x'
+values" warning. This is expected behavior.
 }
+\examples{
+# Get AEP at stage 3862.0-ft and 3872-ft
+stage2aep(jmd_rfa_expected$AEP, jmd_rfa_expected$Expected, c(3862.0, 3872))
 }
 \seealso{
 \code{\link{aep2stage}} for the inverse operation.

@@ -46,7 +46,10 @@ by \code{\link[=rfa_simulate]{rfa_simulate()}} for median-only and full uncertai
 params <- c(4.85, 0.39, -0.15)
 result <- flow_frequency_sampler(params, freq_dist = "LP3",
                                  Nbin = 20, Mevent = 500)
+# Dimensions of result
 dim(result$flow)  # 500 x 20
+
+# Distribution of Sampled Flows
 hist(result$flow)
 }
 \seealso{

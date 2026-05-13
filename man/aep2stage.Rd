@@ -24,10 +24,8 @@ Interpolation is performed in standard normal (z-variate) space for
 better behavior across orders of magnitude in AEP.
 }
 \examples{
-\dontrun{
-# Get stage at the 1\% and 0.1\% AEP
-aep2stage(curve$AEP, curve$stage, c(0.01, 0.001))
-}
+# Get stage at the 1.12\% and 0.175\% AEP
+aep2stage(jmd_rfa_expected$AEP, jmd_rfa_expected$Expected, c(0.0112,1.75E-3))
 }
 \seealso{
 \code{\link{stage2aep}} for the inverse operation.
