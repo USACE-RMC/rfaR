@@ -72,10 +72,8 @@ interpolate_stage_matrix <- function(results_list, target_aeps) {
 #' @seealso \code{\link{stage2aep}} for the inverse operation.
 #'
 #' @examples
-#' \dontrun{
-#' # Get stage at the 1% and 0.1% AEP
-#' aep2stage(curve$AEP, curve$stage, c(0.01, 0.001))
-#' }
+#' # Get stage at the 1.12% and 0.175% AEP
+#' aep2stage(jmd_rfa_expected$AEP, jmd_rfa_expected$Expected, c(0.0112,1.75E-3))
 aep2stage <- function(aep, stage, interp_aep) {
   z_aep <- qnorm(1 - aep)
   interp_stage <- approx(x = z_aep, y = stage,
@@ -90,6 +88,14 @@ aep2stage <- function(aep, stage, interp_aep) {
 #' Interpolation is performed in standard normal (z-variate) space for
 #' better behavior across orders of magnitude in AEP.
 #'
+#' @details
+#' Stage-frequency curves typically flatten at very rare AEPs once
+#' the reservoir reaches the reservoir model discharge capacity.
+#' This produces tied stage values.
+#' \code{approx()} handles these by averaging the
+#' corresponding AEPs, which may emit a "collapsing to unique 'x'
+#' values" warning. This is expected behavior.
+#'
 #' @param aep Numeric vector of annual exceedance probabilities from the
 #'   known curve.
 #' @param stage Numeric vector of stage values corresponding to \code{aep}.
@@ -103,10 +109,8 @@ aep2stage <- function(aep, stage, interp_aep) {
 #' @seealso \code{\link{aep2stage}} for the inverse operation.
 #'
 #' @examples
-#' \dontrun{
-#' # Get AEP at stage 3850 ft
-#' stage2aep(curve$AEP, curve$stage, 3850)
-#' }
+#' # Get AEP at stage 3862.0-ft and 3872-ft
+#' stage2aep(jmd_rfa_expected$AEP, jmd_rfa_expected$Expected, c(3862.0, 3872))
 stage2aep <- function(aep, stage, interp_stage) {
   z_aep <- qnorm(1 - aep)
   z_interp <- approx(x = stage, y = z_aep,
