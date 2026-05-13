@@ -12,7 +12,7 @@ power_function(x)
 
 - x:
 
-  Highest power of 10 to us
+  Highest power of 10 to use
 
 ## Value
 

@@ -47,6 +47,10 @@ Supporting utility functions
   : Power Function
 - [`theme_rfar_conceptual()`](https://usace-rmc.github.io/rfaR/reference/theme_rfar_conceptual.md)
   : rfaR ggplot theme for conceptual example
+- [`pmf_stage_lognormal()`](https://usace-rmc.github.io/rfaR/reference/pmf_stage_lognormal.md)
+  : Parameterize a Three-Parameter Lognormal PMF for Stage
+- [`rejection_sampling_stage()`](https://usace-rmc.github.io/rfaR/reference/rejection_sampling_stage.md)
+  : Rejection Sampling of Stage Bounded by a Probabilistic Maximum Stage
 
 ## Datasets
 

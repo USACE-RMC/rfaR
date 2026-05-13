@@ -20,7 +20,7 @@ Useful links:
 
 - <https://github.com/USACE-RMC/rfaR>
 
-- <https://ideal-broccoli-1q9y47z.pages.github.io/>
+- <https://usace-rmc.github.io/rfaR/>
 
 - Report bugs at <https://github.com/USACE-RMC/rfaR/issues>
 
@@ -45,3 +45,12 @@ Other contributors:
 
 - Julian Gonzalez <julian.t.gonzalez@usace.army.mil> (USACE RMC)
   \[contributor\]
+
+- Sadie Niblett <sadie.s.niblett@usace.army.mil> (USACE RMC)
+  \[reviewer\]
+
+- Reuben Sasaki <reuben.a.sasaki@usace.army.mil> (P.E.,USACE RMC)
+  \[reviewer\]
+
+- Bryan Robinson <bryan.j.robinson@usace.army.mil> (P.E.,USACE RMC)
+  \[reviewer\]

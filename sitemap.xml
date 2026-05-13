@@ -47,8 +47,10 @@
 <url><loc>https://usace-rmc.github.io/rfaR/reference/jmd_vfc_parameters.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/jmd_wy1980_stage.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/mod_puls_routing.html</loc></url>
+<url><loc>https://usace-rmc.github.io/rfaR/reference/pmf_stage_lognormal.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/power_function.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/qp3.html</loc></url>
+<url><loc>https://usace-rmc.github.io/rfaR/reference/rejection_sampling_stage.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/rfaR-package.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/rfa_simulate.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/scale_hydrograph.html</loc></url>
@@ -56,5 +58,6 @@
 <url><loc>https://usace-rmc.github.io/rfaR/reference/stage_frequency_curve.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/stratified_sampler.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/theme_rfar_conceptual.html</loc></url>
+<url><loc>https://usace-rmc.github.io/rfaR/reference/thin_samples.html</loc></url>
 </urlset>
 
