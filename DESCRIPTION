@@ -39,7 +39,7 @@ Description: An R implementation of the U.S. Army Corps of Engineers (USACE)
     parameters (stage, discharge, duration) and their associated annual exceedance 
     probabilities.
 Nickname: Friday
-License: BSD_3_clause + file LICENSE
+License: file LICENSE
 URL: https://github.com/USACE-RMC/rfaR, https://usace-rmc.github.io/rfaR/
 BugReports: https://github.com/USACE-RMC/rfaR/issues
 Encoding: UTF-8
