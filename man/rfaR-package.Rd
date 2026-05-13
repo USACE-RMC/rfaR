@@ -18,22 +18,22 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Daniel McGraw \email{daniel.e.mcgraw@usace.army.mil} (P.E., USACE RMC)
+\strong{Maintainer}: Daniel McGraw \email{daniel.e.mcgraw@usace.army.mil} (\href{https://orcid.org/0009-0006-4859-0179}{ORCID}) (P.E., USACE RMC)
 
 Authors:
 \itemize{
-  \item Andrew Verdin \email{andrew.p.verdin@usace.army.mil} (PhD, P.H., USACE RMC)
-  \item C. Haden Smith \email{cole.h.smith@usace.army.mil} (P.E., USACE RMC)
+  \item Andrew Verdin \email{andrew.p.verdin@usace.army.mil} (\href{https://orcid.org/0000-0003-1967-9626}{ORCID}) (PhD, P.H., USACE RMC)
+  \item C. Haden Smith \email{cole.h.smith@usace.army.mil} (\href{https://orcid.org/0000-0002-4651-9890}{ORCID}) (P.E., USACE RMC)
 }
 
 Other contributors:
 \itemize{
   \item Allen Avance \email{allen.avance@usace.army.mil} (P.E., USACE RMC) [contributor]
-  \item Samantha Hartke \email{samantha.h.hartke@usace.army.mil} (PhD, USACE RMC) [contributor]
-  \item Julian Gonzalez \email{julian.t.gonzalez@usace.army.mil} (USACE RMC) [contributor]
-  \item Sadie Niblett \email{sadie.s.niblett@usace.army.mil} (USACE RMC) [reviewer]
-  \item Reuben Sasaki \email{reuben.a.sasaki@usace.army.mil} (P.E.,USACE RMC) [reviewer]
-  \item Bryan Robinson \email{bryan.j.robinson@usace.army.mil} (P.E.,USACE RMC) [reviewer]
+  \item Samantha Hartke \email{samantha.h.hartke@usace.army.mil} (\href{https://orcid.org/0000-0002-0239-4723}{ORCID}) (PhD, USACE RMC) [contributor]
+  \item Julian Gonzalez \email{julian.t.gonzalez@usace.army.mil} (\href{https://orcid.org/0009-0009-9058-7653}{ORCID}) (USACE RMC) [contributor]
+  \item Sadie Niblett \email{sadie.s.niblett@usace.army.mil} (\href{https://orcid.org/0009-0008-8588-4816}{ORCID}) (USACE RMC) [reviewer]
+  \item Reuben Sasaki \email{reuben.a.sasaki@usace.army.mil} (P.E., USACE RMC) [reviewer]
+  \item Bryan Robinson \email{bryan.j.robinson@usace.army.mil} (P.E., USACE RMC) [reviewer]
 }
 
 }
