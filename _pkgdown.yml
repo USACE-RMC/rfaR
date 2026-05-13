@@ -40,6 +40,8 @@ reference:
   - interpolate_stage_matrix
   - power_function
   - theme_rfar_conceptual
+  - pmf_stage_lognormal
+  - rejection_sampling_stage
 - title: "Datasets"
   desc: "Example datasets included with rfaR"
   contents:

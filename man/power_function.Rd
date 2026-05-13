@@ -7,7 +7,7 @@
 power_function(x)
 }
 \arguments{
-\item{x}{Highest power of 10 to us}
+\item{x}{Highest power of 10 to use}
 }
 \value{
 Vector of 10 raised sequentially from the 1st to the nth power.
