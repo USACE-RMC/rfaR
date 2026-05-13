@@ -5,7 +5,7 @@
 \alias{jmd_hydro_sdf}
 \title{JMD SDF Hydrograph}
 \format{
-A data frame with 337 rows and 2 columns:
+A data frame with 337 rows and 4 columns:
 \describe{
 \item{Ordinate}{Timeseries Ordinate}
 \item{Date}{Date mm/dd/yyyy}
@@ -20,7 +20,7 @@ jmd_hydro_sdf
 Inflow hydrograph shape for Spillway Design Flood (SDF).
 }
 \examples{
-sapply(jmd_hydro_sdf,class)
+sapply(jmd_hydro_sdf, class)
 head(jmd_hydro_sdf)
 plot(jmd_hydro_sdf$Ordinate, jmd_hydro_sdf$Flow,
      xlab = "Hour", ylab = "Inflow (cfs)",

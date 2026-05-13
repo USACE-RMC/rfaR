@@ -44,12 +44,10 @@ Depends:
 LazyData: true
 Suggests: 
     gt,
-    ggplot2,
     knitr,
     rmarkdown,
     scales,
     testthat (>= 3.0.0),
-    tidyverse,
     dplyr,
     tidyr,
     kableExtra,
@@ -60,6 +58,7 @@ Imports:
     cli,
     future,
     future.apply,
+    ggplot2,
     lmom,
     lubridate,
     progressr,
