@@ -12,7 +12,7 @@ An R implementation of the U.S. Army Corps of Engineers (USACE) Risk Management 
 Useful links:
 \itemize{
   \item \url{https://github.com/USACE-RMC/rfaR}
-  \item \url{https://ideal-broccoli-1q9y47z.pages.github.io/}
+  \item \url{https://usace-rmc.github.io/rfaR/}
   \item Report bugs at \url{https://github.com/USACE-RMC/rfaR/issues}
 }
 
@@ -31,6 +31,9 @@ Other contributors:
   \item Allen Avance \email{allen.avance@usace.army.mil} (P.E., USACE RMC) [contributor]
   \item Samantha Hartke \email{samantha.h.hartke@usace.army.mil} (PhD, USACE RMC) [contributor]
   \item Julian Gonzalez \email{julian.t.gonzalez@usace.army.mil} (USACE RMC) [contributor]
+  \item Sadie Niblett \email{sadie.s.niblett@usace.army.mil} (USACE RMC) [reviewer]
+  \item Reuben Sasaki \email{reuben.a.sasaki@usace.army.mil} (P.E.,USACE RMC) [reviewer]
+  \item Bryan Robinson \email{bryan.j.robinson@usace.army.mil} (P.E.,USACE RMC) [reviewer]
 }
 
 }
