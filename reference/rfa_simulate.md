@@ -245,6 +245,10 @@ on June 4, 2025 at 2:30 PM would produce
 
 ``` r
 if (FALSE) { # \dontrun{
+# Not run: Expected and Median modes take ~15s; Full uncert
+# runs ~10,000 parameter realizations and takes 3-4 hours on a
+# typical machine.
+
 # --- Setup ---
 hydros <- hydrograph_setup(jmd_hydro_apr1999, jmd_hydro_jun1965,
                            jmd_hydro_may1955, jmd_hydro_pmf,
@@ -253,7 +257,7 @@ hydros <- hydrograph_setup(jmd_hydro_apr1999, jmd_hydro_jun1965,
 # --- Expected only (default) ---
 results_exp <- rfa_simulate(
   sim_type       = "expected",
-  bestfit_params = jmd_vfc_parameters,
+  bestfit_params = jmd_bf_parameter_sets,
   stage_ts       = jmd_wy1980_stage,
   seasonality    = jmd_seasonality$relative_frequency,
   hydrographs    = hydros,
@@ -264,7 +268,7 @@ results_exp <- rfa_simulate(
 # --- Median only ---
 results_med <- rfa_simulate(
   sim_type       = "median",
-  bestfit_params = jmd_vfc_parameters,
+  bestfit_params = jmd_bf_parameter_sets,
   stage_ts       = jmd_wy1980_stage,
   seasonality    = jmd_seasonality$relative_frequency,
   hydrographs    = hydros,
@@ -275,7 +279,7 @@ results_med <- rfa_simulate(
 # --- Full uncertainty (parallelized) ---
 results_full <- rfa_simulate(
   sim_type       = "full",
-  bestfit_params = jmd_vfc_parameters,
+  bestfit_params = jmd_bf_parameter_sets,
   stage_ts       = jmd_wy1980_stage,
   seasonality    = jmd_seasonality$relative_frequency,
   hydrographs    = hydros,
@@ -283,6 +287,5 @@ results_full <- rfa_simulate(
   Ncores         = 4,
   sim_name       = "jmd"
 )
-
 } # }
 ```

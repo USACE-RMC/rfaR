@@ -105,6 +105,7 @@ For GEV: columns are location, scale, shape.</p></dd>
 <span class="r-in"><span>                                dist <span class="op">=</span> <span class="st">"LP3"</span>,</span></span>
 <span class="r-in"><span>                                ERL <span class="op">=</span> <span class="va">jmd_vfc_parameters</span><span class="op">$</span><span class="va">erl</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># GEV Example with parent distribution parameters</span></span></span>
 <span class="r-in"><span><span class="va">gev_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3.0</span>, <span class="fl">1.0</span>, <span class="op">-</span><span class="fl">0.1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">gev_samples</span> <span class="op">&lt;-</span> <span class="fu">bootstrap_vfc</span><span class="op">(</span><span class="va">gev_example</span>,</span></span>
 <span class="r-in"><span>                              dist <span class="op">=</span> <span class="st">"GEV"</span>,</span></span>
@@ -113,6 +114,7 @@ For GEV: columns are location, scale, shape.</p></dd>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">gev_samples</span><span class="op">$</span><span class="va">params</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="bootstrap_vfc-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># LP3 Example with parent distribution parameters</span></span></span>
 <span class="r-in"><span><span class="va">lp3_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3.5</span>, <span class="fl">0.22</span>, <span class="fl">0.1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">lp3_samples</span> <span class="op">&lt;-</span> <span class="fu">bootstrap_vfc</span><span class="op">(</span><span class="va">lp3_example</span>,</span></span>
 <span class="r-in"><span>                              dist <span class="op">=</span> <span class="st">"LP3"</span>,</span></span>

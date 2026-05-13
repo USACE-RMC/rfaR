@@ -38,8 +38,7 @@ for the inverse operation.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-# Get stage at the 1% and 0.1% AEP
-aep2stage(curve$AEP, curve$stage, c(0.01, 0.001))
-} # }
+# Get stage at the 1.12% and 0.175% AEP
+aep2stage(jmd_rfa_expected$AEP, jmd_rfa_expected$Expected, c(0.0112,1.75E-3))
+#> [1] 3861.990 3871.998
 ```

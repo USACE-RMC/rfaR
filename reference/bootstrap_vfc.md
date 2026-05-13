@@ -62,6 +62,7 @@ jmd_samples <- bootstrap_vfc(c(jmd_vfc_parameters$mean_log,
                                 dist = "LP3",
                                 ERL = jmd_vfc_parameters$erl)
 
+# GEV Example with parent distribution parameters
 gev_example <- c(3.0, 1.0, -0.1)
 gev_samples <- bootstrap_vfc(gev_example,
                               dist = "GEV",
@@ -70,6 +71,7 @@ gev_samples <- bootstrap_vfc(gev_example,
 hist(gev_samples$params[,1])
 
 
+# LP3 Example with parent distribution parameters
 lp3_example <- c(3.5, 0.22, 0.1)
 lp3_samples <- bootstrap_vfc(lp3_example,
                               dist = "LP3",

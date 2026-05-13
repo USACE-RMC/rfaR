@@ -10,7 +10,7 @@ jmd_hydro_may1955
 
 ## Format
 
-A data frame with 241 rows and 2 columns:
+A data frame with 241 rows and 4 columns:
 
 - Ordinate:
 
@@ -31,7 +31,7 @@ A data frame with 241 rows and 2 columns:
 ## Examples
 
 ``` r
-sapply(jmd_hydro_may1955,class)
+sapply(jmd_hydro_may1955, class)
 #>    Ordinate        Date        Time        Flow 
 #>   "integer" "character" "character"   "integer" 
 head(jmd_hydro_may1955)
