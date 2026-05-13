@@ -2,32 +2,37 @@
 
 ## Authors
 
-- **Daniel McGraw**. Author, maintainer.  
+- **Daniel McGraw**. Author, maintainer.
+  [](https://orcid.org/0009-0006-4859-0179)  
   P.E., USACE RMC
 
-- **Andrew Verdin**. Author.  
+- **Andrew Verdin**. Author. [](https://orcid.org/0000-0003-1967-9626)  
   PhD, P.H., USACE RMC
 
-- **C. Haden Smith**. Author.  
+- **C. Haden Smith**. Author.
+  [](https://orcid.org/0000-0002-4651-9890)  
   P.E., USACE RMC
 
 - **Allen Avance**. Contributor.  
   P.E., USACE RMC
 
-- **Samantha Hartke**. Contributor.  
+- **Samantha Hartke**. Contributor.
+  [](https://orcid.org/0000-0002-0239-4723)  
   PhD, USACE RMC
 
-- **Julian Gonzalez**. Contributor.  
+- **Julian Gonzalez**. Contributor.
+  [](https://orcid.org/0009-0009-9058-7653)  
   USACE RMC
 
-- **Sadie Niblett**. Reviewer.  
+- **Sadie Niblett**. Reviewer.
+  [](https://orcid.org/0009-0008-8588-4816)  
   USACE RMC
 
 - **Reuben Sasaki**. Reviewer.  
-  P.E.,USACE RMC
+  P.E., USACE RMC
 
 - **Bryan Robinson**. Reviewer.  
-  P.E.,USACE RMC
+  P.E., USACE RMC
 
 ## Citation
 
@@ -44,6 +49,6 @@ Lakewood, CO. <https://github.com/USACE-RMC/rfaR>.
       organization = {U.S. Army Corps of Engineers, Risk Management Center},
       address = {Lakewood, CO},
       year = {2026},
-      version = {0.1.3},
+      version = {0.5.1},
       url = {https://github.com/USACE-RMC/rfaR},
     }
