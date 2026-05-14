@@ -1,12 +1,13 @@
 # rfaR
 
-> \[!WARNING\] This package is currently under active development. The
-> API may change without notice.
+> **NOTE** This package is currently under active development. The API
+> may change without notice.
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![R](https://img.shields.io/badge/R-%3E%3D4.1-blue)](https://cran.r-project.org/)
-[![License](https://img.shields.io/badge/License-BSD--3--Clause-blue.svg)](https://usace-rmc.github.io/rfaR/LICENSE)
+[![License:
+0BSD](https://img.shields.io/badge/License-0BSD-blue.svg)](https://opensource.org/licenses/0BSD)
 
 An R implementation of the U.S. Army Corps of Engineers (USACE) Risk
 Management Center-Reservoir Frequency Analysis (RMC-RFA)
@@ -53,7 +54,7 @@ devtools::load_all()
 devtools::install()
 ```
 
-> \[!NOTE\] Cloning the repository alone does not make
+> **NOTE** Cloning the repository alone does not make
 > [`library(rfaR)`](https://github.com/USACE-RMC/rfaR) work — the
 > package must be either installed (`devtools::install()` or
 > `remotes::install_github()`) or loaded into the session via
