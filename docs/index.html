@@ -5,20 +5,20 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>RMC Reservoir Frequency Analysis in R • rfaR</title>
-<script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>rfaR — Reservoir Frequency Analysis • rfaR</title>
+<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="RMC Reservoir Frequency Analysis in R">
-<meta name="description" content="An R implementation of the U.S. Army Corps of Engineers (USACE) Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software. This package produces reservoir stage-frequency curves with uncertainty bounds by combining deterministic flood routing (Modified Puls method) with a nested Monte Carlo framework. The outer loop quantifies knowledge uncertainty in inflow volume frequency distributions, while the inner loop simulates natural variability across thousands of flood events. Uncertain variables include inflow volume, flood hydrograph shape, seasonal occurrence, and antecedent reservoir stage. The resulting stage-frequency curves provide critical hydrologic hazard assessment data for dam safety risk analyses, enabling evaluation of loading parameters (stage, discharge, duration) and their associated annual exceedance probabilities.">
-<meta property="og:description" content="An R implementation of the U.S. Army Corps of Engineers (USACE) Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software. This package produces reservoir stage-frequency curves with uncertainty bounds by combining deterministic flood routing (Modified Puls method) with a nested Monte Carlo framework. The outer loop quantifies knowledge uncertainty in inflow volume frequency distributions, while the inner loop simulates natural variability across thousands of flood events. Uncertain variables include inflow volume, flood hydrograph shape, seasonal occurrence, and antecedent reservoir stage. The resulting stage-frequency curves provide critical hydrologic hazard assessment data for dam safety risk analyses, enabling evaluation of loading parameters (stage, discharge, duration) and their associated annual exceedance probabilities.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="rfaR — Reservoir Frequency Analysis">
+<meta name="description" content="Stratified Monte Carlo stage-frequency analysis for dam &amp; levee safety applications">
+<meta property="og:description" content="Stratified Monte Carlo stage-frequency analysis for dam &amp; levee safety applications">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="index.html">rfaR</a>
 
@@ -46,14 +46,6 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/USACE-RMC/rfaR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
-  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
-<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
-    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
-    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
-  </ul>
-</li>
       </ul>
 </div>
 
@@ -67,7 +59,7 @@
 <blockquote>
 <p>[!WARNING] This package is currently under active development. The API may change without notice.</p>
 </blockquote>
-<p><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <a href="https://cran.r-project.org/" class="external-link"><img src="https://img.shields.io/badge/R-%3E%3D4.1-blue" alt="R"></a> <a href="LICENSE"><img src="https://img.shields.io/badge/License-BSD--3--Clause-blue.svg" alt="License"></a></p>
+<p><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <a href="https://cran.r-project.org/" class="external-link"><img src="https://img.shields.io/badge/R-%3E%3D4.1-blue" alt="R"></a> <a href="https://opensource.org/licenses/0BSD" class="external-link"><img src="https://img.shields.io/badge/License-0BSD-blue.svg" alt="License: 0BSD"></a></p>
 <p>An R implementation of the U.S. Army Corps of Engineers (USACE) Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software. This package produces reservoir stage-frequency curves with uncertainty bounds by combining deterministic flood routing (Modified Puls method) with a nested Monte Carlo framework — providing H&amp;H engineers the tools needed for dam safety risk assessments in accordance with USACE/RMC guidance.</p>
 <div class="section level2">
 <h2 id="whats-new">What’s New<a class="anchor" aria-label="anchor" href="#whats-new"></a>
@@ -386,18 +378,24 @@ Development References
 <ul class="list-unstyled">
 <li><a href="https://github.com/USACE-RMC/rfaR/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/USACE-RMC/rfaR/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://www.rmc.usace.army.mil/Software/RMC-RFA/" class="external-link">USACE Risk Management Center</a></li>
 </ul>
 </div>
 
 <div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li>
-<a href="https://opensource.org/licenses/BSD-3-Clause" class="external-link">BSD_3_clause</a> + file <a href="LICENSE-text.html">LICENSE</a>
+<li>file <a href="LICENSE-text.html">LICENSE</a>
 </li>
 </ul>
 </div>
 
+<div class="community">
+<h2 data-toc-skip>Community</h2>
+<ul class="list-unstyled">
+<li><a href="CONTRIBUTING.html">Contributing guide</a></li>
+</ul>
+</div>
 
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
@@ -409,9 +407,9 @@ Development References
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Daniel McGraw <br><small class="roles"> Author, maintainer </small>   </li>
-<li>Andrew Verdin <br><small class="roles"> Author </small>   </li>
-<li>C. Haden Smith <br><small class="roles"> Author </small>   </li>
+<li>Daniel McGraw <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0009-0006-4859-0179" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Andrew Verdin <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-1967-9626" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>C. Haden Smith <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-4651-9890" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>

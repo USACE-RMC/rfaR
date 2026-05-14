@@ -1,8 +1,14 @@
 url: https://usace-rmc.github.io/rfaR/
 template:
   bootstrap: 5
-  bootswatch: flatly
-  light-switch: true
+  bootswatch: yeti
+  light-switch: false
+home:
+  title: "rfaR — Reservoir Frequency Analysis"
+  description: "Stratified Monte Carlo stage-frequency analysis for dam & levee safety applications"
+  links:
+  - text: USACE Risk Management Center
+    href: https://www.rmc.usace.army.mil/Software/RMC-RFA/
 navbar:
   structure:
     left: [intro, reference, articles, news]
