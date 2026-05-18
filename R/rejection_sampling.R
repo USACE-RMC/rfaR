@@ -28,19 +28,26 @@ thin_samples <- function(n, z_sorted, stage_sorted) {
 #'
 #' Computes the parameters of a three-parameter lognormal distribution for use
 #' as a probabilistic maximum stage (PMF) in rejection sampling. The shift
-#' parameter defines the lower bound of the distribution.
+#' parameter defines the lower or upper bound of the distribution (typically, the lower value).
+#' The function supports two modes: (1) supplying a best estimate and assuming sigma, or
+#' (2) supplying a best estimate, low, and high to solve for sigma numerically.
 #'
-#' @param pmf_shift Numeric. Lower bound (shift) of the lognormal distribution.
-#'   Must be greater than \code{pmf_mean}.
-#' @param pmf_mean Numeric. Mean of the PMF stage distribution. Must be less
-#'   than \code{pmf_shift}.
-#' @param pmf_sigma Numeric. Standard deviation on the log scale. Defaults to
-#'   \code{0.5}.
+#' @param pmf_shift Numeric. Hard lower bound (shift) of the lognormal
+#'   distribution. Must be less than all of \code{pmf_best}, \code{pmf_low},
+#'   and \code{pmf_high}.
+#' @param pmf_best Numeric. Best estimate (mean) of the PMF stage distribution.
+#' @param pmf_sigma Numeric. Assumed standard deviation on the log scale. Required if
+#'   \code{pmf_low} and \code{pmf_high} are not supplied. Defaults to
+#'   \code{NULL}. Suggested value = 0.5.
+#' @param pmf_low Numeric. Low estimate of PMF stage (assumed 5th percentile). Optional.
+#'   If supplied, \code{pmf_high} must also be supplied.
+#' @param pmf_high Numeric. High estimate of PMF stage (assumed 95th percentile).
+#'   Optional. If supplied, \code{pmf_low} must also be supplied.
 #'
 #' @return A named list with the following elements:
 #' \describe{
-#'   \item{pmf_shift}{Lower bound of the distribution.}
-#'   \item{pmf_mean}{Mean of the distribution.}
+#'   \item{pmf_shift}{Hard lower bound of the distribution.}
+#'   \item{pmf_best}{Best estimate of PMF stage.}
 #'   \item{pmf_sigma}{Standard deviation on the log scale.}
 #'   \item{pmf_mu}{Derived location parameter on the log scale.}
 #'   \item{pmf_p05}{5th percentile of the PMF stage distribution.}
@@ -48,37 +55,84 @@ thin_samples <- function(n, z_sorted, stage_sorted) {
 #' }
 #'
 #' @examples
-#' pmf <- pmf_stage_lognormal(pmf_shift = 1200, pmf_mean = 1150, pmf_sigma = 0.5)
-#' pmf$pmf_p05
-#' pmf$pmf_p95
+#' # Mode 1: assume sigma
+#' pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_best = 241.9, pmf_sigma = 0.5)
 #'
+#' # Mode 2: solve for sigma from low/high estimates
+#' pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_best = 241.9,
+#'                             pmf_low = 239, pmf_high = 245)
 #' @export
-pmf_stage_lognormal <- function(pmf_shift, pmf_mean, pmf_sigma = 0.5){
-  if (pmf_mean >= pmf_shift) {
-    cli::cli_abort(c(
-      "{.arg pmf_mean} must be less than {.arg pmf_shift}.",
-      "x" = "{.arg pmf_mean} is {.val {pmf_mean}} but {.arg pmf_shift} is {.val {pmf_shift}}."
-    ))
+pmf_stage_lognormal <- function(pmf_shift, pmf_best,
+                                pmf_sigma = NULL,
+                                pmf_low   = NULL,
+                                pmf_high  = NULL) {
+
+  # Use inputs to determine which functional mode.
+  # No pmf_low or pmf high? -> Must assume sigma = 0.5
+  if (!is.null(pmf_low) && !is.null(pmf_high)) {
+    if (pmf_shift > pmf_low) {
+      cli::cli_abort(c(
+        "{.arg pmf_shift} must be less than {.arg pmf_low}.",
+        "x" = "{.arg pmf_shift} is {.val {pmf_shift}} but {.arg pmf_low} is {.val {pmf_low}}."
+      ))
+    }
+    if (pmf_low >= pmf_best) {
+      cli::cli_abort(c(
+        "{.arg pmf_low} must be less than {.arg pmf_best}.",
+        "x" = "{.arg pmf_low} is {.val {pmf_low}} but {.arg pmf_best} is {.val {pmf_best}}."
+      ))
+    }
+    if (pmf_best >= pmf_high) {
+      cli::cli_abort(c(
+        "{.arg pmf_best} must be less than {.arg pmf_high}.",
+        "x" = "{.arg pmf_best} is {.val {pmf_best}} but {.arg pmf_high} is {.val {pmf_high}}."
+      ))
+    }
+
+    # --- Mode 2: solve for sigma ---
+    sigma_obj <- function(sigma) {
+      mu          <- log(pmf_best - pmf_shift) - sigma^2 / 2
+      implied_p05 <- pmf_shift + qlnorm(0.05, mu, sigma)
+      implied_p95 <- pmf_shift + qlnorm(0.95, mu, sigma)
+      (implied_p05 - pmf_low)^2 + (implied_p95 - pmf_high)^2
+    }
+    pmf_sigma <- optimise(sigma_obj, interval = c(1e-6, 10))$minimum
+
+  } else {
+
+    # --- Mode 1: sigma supplied ---
+    if (is.null(pmf_sigma)) {
+      cli::cli_abort(
+        "Either {.arg pmf_sigma} or both {.arg pmf_low} and {.arg pmf_high} must be supplied."
+      )
+    }
+    if (pmf_sigma <= 0) {
+      cli::cli_abort(c(
+        "{.arg pmf_sigma} must be positive.",
+        "x" = "{.arg pmf_sigma} is {.val {pmf_sigma}}."
+      ))
+    }
+    if (pmf_shift >= pmf_best) {
+      cli::cli_abort(c(
+        "{.arg pmf_shift} must be less than {.arg pmf_best}.",
+        "x" = "{.arg pmf_shift} is {.val {pmf_shift}} but {.arg pmf_best} is {.val {pmf_best}}."
+      ))
+    }
   }
 
-  # Derive mu ====
-  pmf_mu    <- log(pmf_mean - pmf_shift) - (pmf_sigma^2 / 2)
+  # --- Derive mu and quantiles ---
+  pmf_mu  <- log(pmf_best - pmf_shift) - (pmf_sigma^2 / 2)
+  pmf_p05 <- pmf_shift + qlnorm(0.05, pmf_mu, pmf_sigma)
+  pmf_p95 <- pmf_shift + qlnorm(0.95, pmf_mu, pmf_sigma)
 
-  # Summary stats
-  # pmf_median <- pmf_shift + exp(pmf_mu)
-  # pmf_sd     <- sqrt((exp(pmf_sigma^2) - 1) * exp(2 * pmf_mu + pmf_sigma^2))
-  pmf_p05    <- pmf_shift + qlnorm(0.05, pmf_mu, pmf_sigma)
-  pmf_p95    <- pmf_shift + qlnorm(0.95, pmf_mu, pmf_sigma)
-
-  # create pmf_stage_LN as a list
-  pmf_stage_LN <- list(pmf_shift = pmf_shift,
-                       pmf_mean = pmf_mean,
-                       pmf_sigma = pmf_sigma,
-                       pmf_mu = pmf_mu,
-                       pmf_p05 = pmf_p05,
-                       pmf_p95 = pmf_p95)
-
-  return(pmf_stage_LN)
+  list(
+    pmf_shift = pmf_shift,
+    pmf_best  = pmf_best,
+    pmf_sigma = pmf_sigma,
+    pmf_mu    = pmf_mu,
+    pmf_p05   = pmf_p05,
+    pmf_p95   = pmf_p95
+  )
 }
 
 #' Rejection Sampling of Stage Bounded by a Probabilistic Maximum Stage
@@ -106,27 +160,28 @@ pmf_stage_lognormal <- function(pmf_shift, pmf_mean, pmf_sigma = 0.5){
 #'
 #' @examples
 #' \dontrun{
-#' pmf <- pmf_stage_lognormal(pmf_shift = 1200, pmf_mean = 1150, pmf_sigma = 0.5)
+#' pmf_ln <- pmf_stage_lognormal(pmf_shift = 239, pmf_best = 241.9, pmf_sigma = 0.5)
 #'
 #' result <- rejection_sampling_stage(
-#'   pmf_stage_LN  = pmf,
+#'   pmf_stage_LN  = pmf_ln,
 #'   stage_freq_df = my_stage_freq_df,
 #'   n_samples     = 1e7
 #' )
 #' }
 #'
 #' @export
-rejection_sampling_stage <- function(pmf_stage_LN, stage_freq_df = NULL, aep = NULL, stage = NULL, n_samples = 1E7){
+rejection_sampling_stage <- function(pmf_stage_LN, stage_freq_df = NULL, aep = NULL, stage = NULL, n_samples = 1e7){
   # Resolve inputs
   if (!is.null(stage_freq_df)) {
     if (!is.null(aep) || !is.null(stage)) {
       cli::cli_abort("Provide either {.arg stage_freq_df} or {.arg aep}/{.arg stage}, not both.")
     }
-    aep   <- stage_freq_df[[1]]
-    stage <- stage_freq_df[[2]]
+    aep_vals   <- stage_freq_df[[1]]
+    stage_vals <- stage_freq_df[[2]]
 
   } else if (!is.null(aep) && !is.null(stage)) {
-    # use as-is
+    aep_vals   <- aep
+    stage_vals <- stage
 
   } else {
     cli::cli_abort(c(
@@ -141,8 +196,8 @@ rejection_sampling_stage <- function(pmf_stage_LN, stage_freq_df = NULL, aep = N
   pmf_sigma <- pmf_stage_LN[["pmf_sigma"]]
 
   # Transform to z-space for interpolation function ============================
-  z_aep <- qnorm(1-aep)
-  zaep_stage <- approxfun(z_aep, stage, rule = 2)
+  z_aep <- qnorm(1-aep_vals)
+  zaep_stage <- approxfun(z_aep, stage_vals, rule = 2)
 
   # First sample rejection =====================================================
   # Sample AEPs
