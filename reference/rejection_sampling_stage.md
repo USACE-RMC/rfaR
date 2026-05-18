@@ -59,10 +59,10 @@ curve. Output is produced by
 
 ``` r
 if (FALSE) { # \dontrun{
-pmf <- pmf_stage_lognormal(pmf_shift = 1200, pmf_mean = 1150, pmf_sigma = 0.5)
+pmf_ln <- pmf_stage_lognormal(pmf_shift = 239, pmf_best = 241.9, pmf_sigma = 0.5)
 
 result <- rejection_sampling_stage(
-  pmf_stage_LN  = pmf,
+  pmf_stage_LN  = pmf_ln,
   stage_freq_df = my_stage_freq_df,
   n_samples     = 1e7
 )
