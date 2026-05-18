@@ -4,23 +4,36 @@
 \alias{pmf_stage_lognormal}
 \title{Parameterize a Three-Parameter Lognormal PMF for Stage}
 \usage{
-pmf_stage_lognormal(pmf_shift, pmf_mean, pmf_sigma = 0.5)
+pmf_stage_lognormal(
+  pmf_shift,
+  pmf_best,
+  pmf_sigma = NULL,
+  pmf_low = NULL,
+  pmf_high = NULL
+)
 }
 \arguments{
-\item{pmf_shift}{Numeric. Lower bound (shift) of the lognormal distribution.
-Must be greater than \code{pmf_mean}.}
+\item{pmf_shift}{Numeric. Hard lower bound (shift) of the lognormal
+distribution. Must be less than all of \code{pmf_best}, \code{pmf_low},
+and \code{pmf_high}.}
 
-\item{pmf_mean}{Numeric. Mean of the PMF stage distribution. Must be less
-than \code{pmf_shift}.}
+\item{pmf_best}{Numeric. Best estimate (mean) of the PMF stage distribution.}
 
-\item{pmf_sigma}{Numeric. Standard deviation on the log scale. Defaults to
-\code{0.5}.}
+\item{pmf_sigma}{Numeric. Assumed standard deviation on the log scale. Required if
+\code{pmf_low} and \code{pmf_high} are not supplied. Defaults to
+\code{NULL}. Suggested value = 0.5.}
+
+\item{pmf_low}{Numeric. Low estimate of PMF stage (assumed 5th percentile). Optional.
+If supplied, \code{pmf_high} must also be supplied.}
+
+\item{pmf_high}{Numeric. High estimate of PMF stage (assumed 95th percentile).
+Optional. If supplied, \code{pmf_low} must also be supplied.}
 }
 \value{
 A named list with the following elements:
 \describe{
-\item{pmf_shift}{Lower bound of the distribution.}
-\item{pmf_mean}{Mean of the distribution.}
+\item{pmf_shift}{Hard lower bound of the distribution.}
+\item{pmf_best}{Best estimate of PMF stage.}
 \item{pmf_sigma}{Standard deviation on the log scale.}
 \item{pmf_mu}{Derived location parameter on the log scale.}
 \item{pmf_p05}{5th percentile of the PMF stage distribution.}
@@ -30,11 +43,15 @@ A named list with the following elements:
 \description{
 Computes the parameters of a three-parameter lognormal distribution for use
 as a probabilistic maximum stage (PMF) in rejection sampling. The shift
-parameter defines the lower bound of the distribution.
+parameter defines the lower or upper bound of the distribution (typically, the lower value).
+The function supports two modes: (1) supplying a best estimate and assuming sigma, or
+(2) supplying a best estimate, low, and high to solve for sigma numerically.
 }
 \examples{
-pmf <- pmf_stage_lognormal(pmf_shift = 1200, pmf_mean = 1150, pmf_sigma = 0.5)
-pmf$pmf_p05
-pmf$pmf_p95
+# Mode 1: assume sigma
+pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_best = 241.9, pmf_sigma = 0.5)
 
+# Mode 2: solve for sigma from low/high estimates
+pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_best = 241.9,
+                            pmf_low = 239, pmf_high = 245)
 }

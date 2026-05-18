@@ -28,20 +28,20 @@ thin_samples <- function(n, z_sorted, stage_sorted) {
 #'
 #' Computes the parameters of a three-parameter lognormal distribution for use
 #' as a probabilistic maximum stage (PMF) in rejection sampling. The shift
-#' parameter defines the hard lower bound of the distribution. The function
-#' supports two modes: (1) supplying a best estimate and assuming sigma, or
+#' parameter defines the lower or upper bound of the distribution (typically, the lower value).
+#' The function supports two modes: (1) supplying a best estimate and assuming sigma, or
 #' (2) supplying a best estimate, low, and high to solve for sigma numerically.
 #'
 #' @param pmf_shift Numeric. Hard lower bound (shift) of the lognormal
 #'   distribution. Must be less than all of \code{pmf_best}, \code{pmf_low},
 #'   and \code{pmf_high}.
 #' @param pmf_best Numeric. Best estimate (mean) of the PMF stage distribution.
-#' @param pmf_sigma Numeric. Standard deviation on the log scale. Required if
+#' @param pmf_sigma Numeric. Assumed standard deviation on the log scale. Required if
 #'   \code{pmf_low} and \code{pmf_high} are not supplied. Defaults to
-#'   \code{NULL}.
-#' @param pmf_low Numeric. Low estimate of PMF stage (5th percentile). Optional.
+#'   \code{NULL}. Suggested value = 0.5.
+#' @param pmf_low Numeric. Low estimate of PMF stage (assumed 5th percentile). Optional.
 #'   If supplied, \code{pmf_high} must also be supplied.
-#' @param pmf_high Numeric. High estimate of PMF stage (95th percentile).
+#' @param pmf_high Numeric. High estimate of PMF stage (assumed 95th percentile).
 #'   Optional. If supplied, \code{pmf_low} must also be supplied.
 #'
 #' @return A named list with the following elements:
