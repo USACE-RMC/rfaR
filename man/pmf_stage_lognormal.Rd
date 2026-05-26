@@ -6,18 +6,18 @@
 \usage{
 pmf_stage_lognormal(
   pmf_shift,
-  pmf_best,
+  pmf_mean,
   pmf_sigma = NULL,
   pmf_low = NULL,
   pmf_high = NULL
 )
 }
 \arguments{
-\item{pmf_shift}{Numeric. Hard lower bound (shift) of the lognormal
-distribution. Must be less than all of \code{pmf_best}, \code{pmf_low},
+\item{pmf_shift}{Numeric. Assumed lower-bound of the lognormal
+distribution. This will define the shift value. Must be less than all of \code{pmf_mean}, \code{pmf_low},
 and \code{pmf_high}.}
 
-\item{pmf_best}{Numeric. Best estimate (mean) of the PMF stage distribution.}
+\item{pmf_mean}{Numeric. Assumed mean of the shifted PMF stage distribution.}
 
 \item{pmf_sigma}{Numeric. Assumed standard deviation on the log scale. Required if
 \code{pmf_low} and \code{pmf_high} are not supplied. Defaults to
@@ -33,7 +33,7 @@ Optional. If supplied, \code{pmf_low} must also be supplied.}
 A named list with the following elements:
 \describe{
 \item{pmf_shift}{Hard lower bound of the distribution.}
-\item{pmf_best}{Best estimate of PMF stage.}
+\item{pmf_mean}{Assumed mean of shifted PMF stage distribution.}
 \item{pmf_sigma}{Standard deviation on the log scale.}
 \item{pmf_mu}{Derived location parameter on the log scale.}
 \item{pmf_p05}{5th percentile of the PMF stage distribution.}
@@ -49,9 +49,9 @@ The function supports two modes: (1) supplying a best estimate and assuming sigm
 }
 \examples{
 # Mode 1: assume sigma
-pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_best = 241.9, pmf_sigma = 0.5)
+pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9, pmf_sigma = 0.5)
 
 # Mode 2: solve for sigma from low/high estimates
-pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_best = 241.9,
+pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9,
                             pmf_low = 239, pmf_high = 245)
 }
