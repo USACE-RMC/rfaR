@@ -17,7 +17,7 @@ See [`NEWS.md`](NEWS.md) for a history of user-facing changes across versions.
 ``` r
 # Install from GitHub using remotes
 install.packages("remotes")
-remotes::install_github("USACE-RMC/rfaR", build_vignettes = TRUE)
+remotes::install_github("USACE-RMC/rfaR", build_vignettes = FALSE)
 
 # Install from GitHub using devtools
 install.packages("devtools")
