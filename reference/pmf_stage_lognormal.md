@@ -12,7 +12,7 @@ estimate, low, and high to solve for sigma numerically.
 ``` r
 pmf_stage_lognormal(
   pmf_shift,
-  pmf_best,
+  pmf_mean,
   pmf_sigma = NULL,
   pmf_low = NULL,
   pmf_high = NULL
@@ -23,12 +23,13 @@ pmf_stage_lognormal(
 
 - pmf_shift:
 
-  Numeric. Hard lower bound (shift) of the lognormal distribution. Must
-  be less than all of `pmf_best`, `pmf_low`, and `pmf_high`.
+  Numeric. Assumed lower-bound of the lognormal distribution. This will
+  define the shift value. Must be less than all of `pmf_mean`,
+  `pmf_low`, and `pmf_high`.
 
-- pmf_best:
+- pmf_mean:
 
-  Numeric. Best estimate (mean) of the PMF stage distribution.
+  Numeric. Assumed mean of the shifted PMF stage distribution.
 
 - pmf_sigma:
 
@@ -54,9 +55,9 @@ A named list with the following elements:
 
   Hard lower bound of the distribution.
 
-- pmf_best:
+- pmf_mean:
 
-  Best estimate of PMF stage.
+  Assumed mean of shifted PMF stage distribution.
 
 - pmf_sigma:
 
@@ -78,9 +79,9 @@ A named list with the following elements:
 
 ``` r
 # Mode 1: assume sigma
-pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_best = 241.9, pmf_sigma = 0.5)
+pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9, pmf_sigma = 0.5)
 
 # Mode 2: solve for sigma from low/high estimates
-pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_best = 241.9,
+pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9,
                             pmf_low = 239, pmf_high = 245)
 ```

@@ -58,7 +58,7 @@ The function supports two modes: (1) supplying a best estimate and assuming sigm
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pmf_stage_lognormal</span><span class="op">(</span></span>
 <span>  <span class="va">pmf_shift</span>,</span>
-<span>  <span class="va">pmf_best</span>,</span>
+<span>  <span class="va">pmf_mean</span>,</span>
 <span>  pmf_sigma <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pmf_low <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pmf_high <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -70,13 +70,13 @@ The function supports two modes: (1) supplying a best estimate and assuming sigm
 
 
 <dl><dt id="arg-pmf-shift">pmf_shift<a class="anchor" aria-label="anchor" href="#arg-pmf-shift"></a></dt>
-<dd><p>Numeric. Hard lower bound (shift) of the lognormal
-distribution. Must be less than all of <code>pmf_best</code>, <code>pmf_low</code>,
+<dd><p>Numeric. Assumed lower-bound of the lognormal
+distribution. This will define the shift value. Must be less than all of <code>pmf_mean</code>, <code>pmf_low</code>,
 and <code>pmf_high</code>.</p></dd>
 
 
-<dt id="arg-pmf-best">pmf_best<a class="anchor" aria-label="anchor" href="#arg-pmf-best"></a></dt>
-<dd><p>Numeric. Best estimate (mean) of the PMF stage distribution.</p></dd>
+<dt id="arg-pmf-mean">pmf_mean<a class="anchor" aria-label="anchor" href="#arg-pmf-mean"></a></dt>
+<dd><p>Numeric. Assumed mean of the shifted PMF stage distribution.</p></dd>
 
 
 <dt id="arg-pmf-sigma">pmf_sigma<a class="anchor" aria-label="anchor" href="#arg-pmf-sigma"></a></dt>
@@ -100,8 +100,8 @@ Optional. If supplied, <code>pmf_low</code> must also be supplied.</p></dd>
     <p>A named list with the following elements:</p><dl><dt>pmf_shift</dt>
 <dd><p>Hard lower bound of the distribution.</p></dd>
 
-<dt>pmf_best</dt>
-<dd><p>Best estimate of PMF stage.</p></dd>
+<dt>pmf_mean</dt>
+<dd><p>Assumed mean of shifted PMF stage distribution.</p></dd>
 
 <dt>pmf_sigma</dt>
 <dd><p>Standard deviation on the log scale.</p></dd>
@@ -121,10 +121,10 @@ Optional. If supplied, <code>pmf_low</code> must also be supplied.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Mode 1: assume sigma</span></span></span>
-<span class="r-in"><span><span class="va">pmf</span> <span class="op">&lt;-</span> <span class="fu">pmf_stage_lognormal</span><span class="op">(</span>pmf_shift <span class="op">=</span> <span class="fl">239</span>, pmf_best <span class="op">=</span> <span class="fl">241.9</span>, pmf_sigma <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pmf</span> <span class="op">&lt;-</span> <span class="fu">pmf_stage_lognormal</span><span class="op">(</span>pmf_shift <span class="op">=</span> <span class="fl">239</span>, pmf_mean <span class="op">=</span> <span class="fl">241.9</span>, pmf_sigma <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Mode 2: solve for sigma from low/high estimates</span></span></span>
-<span class="r-in"><span><span class="va">pmf</span> <span class="op">&lt;-</span> <span class="fu">pmf_stage_lognormal</span><span class="op">(</span>pmf_shift <span class="op">=</span> <span class="fl">239</span>, pmf_best <span class="op">=</span> <span class="fl">241.9</span>,</span></span>
+<span class="r-in"><span><span class="va">pmf</span> <span class="op">&lt;-</span> <span class="fu">pmf_stage_lognormal</span><span class="op">(</span>pmf_shift <span class="op">=</span> <span class="fl">239</span>, pmf_mean <span class="op">=</span> <span class="fl">241.9</span>,</span></span>
 <span class="r-in"><span>                            pmf_low <span class="op">=</span> <span class="fl">239</span>, pmf_high <span class="op">=</span> <span class="fl">245</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
