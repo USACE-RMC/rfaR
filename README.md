@@ -14,7 +14,7 @@ See [`NEWS.md`](NEWS.md) for a history of user-facing changes across versions.
 
 ### For users
 
-``` r
+```r
 # Install from GitHub using remotes
 install.packages("remotes")
 remotes::install_github("USACE-RMC/rfaR", build_vignettes = FALSE)
@@ -28,7 +28,7 @@ devtools::install_github("USACE-RMC/rfaR")
 
 If you plan to modify the package source, clone the repository and use `devtools`:
 
-``` r
+```r
 # After cloning the repo to disk (e.g., via git clone or GitHub Desktop):
 # - Open an R session in the repo root (or an RStudio project at the repo root)
 
@@ -43,49 +43,49 @@ devtools::install()
 
 ## Example Data
 
-The package includes example data from a hypothetical dam, John McGraw Dam (JMD, variables as "jmd_"):
+The package includes example data from a hypothetical dam, John McGraw Dam (JMD, variables as "jmd\_"):
 
 #### Reservoir Model
 
--   `jmd_resmodel` - Elevation-storage-discharge relationship
+- `jmd_resmodel` - Elevation-storage-discharge relationship
 
 #### Stage & Inflow Records
 
--   `jmd_wy1980_stage` - Daily reservoir stage (WY 1980–2024)
--   `jmd_por_inflow` - Daily inflow for the full period of record
+- `jmd_wy1980_stage` - Daily reservoir stage (WY 1980–2024)
+- `jmd_por_inflow` - Daily inflow for the full period of record
 
 #### Flood Frequency
 
--   `jmd_bf_parameter_sets` - 10,000 LP3 parameter sets from RMC-BestFit 2.0
--   `jmd_seasonality` - Flood seasonality analysis results
+- `jmd_bf_parameter_sets` - 10,000 LP3 parameter sets from RMC-BestFit 2.0
+- `jmd_seasonality` - Flood seasonality analysis results
 
 #### Inflow Hydrographs
 
--   `jmd_hydro_pmf` - Probable Maximum Flood (PMF)
--   `jmd_hydro_sdf` - Spillway Design Flood (SDF)
--   `jmd_hydro_jun1965` - June 1965 flood event
--   `jmd_hydro_jun1965_15min` - June 1965 flood event (15-minute intervals)
--   `jmd_hydro_may1955` - May 1955 flood event
--   `jmd_hydro_apr1999` - April 1999 flood event
--   `jmd_hydro_jun1921` - June 1921 flood event
+- `jmd_hydro_pmf` - Probable Maximum Flood (PMF)
+- `jmd_hydro_sdf` - Spillway Design Flood (SDF)
+- `jmd_hydro_jun1965` - June 1965 flood event
+- `jmd_hydro_jun1965_15min` - June 1965 flood event (15-minute intervals)
+- `jmd_hydro_may1955` - May 1955 flood event
+- `jmd_hydro_apr1999` - April 1999 flood event
+- `jmd_hydro_jun1921` - June 1921 flood event
 
 #### Empirical & Benchmark Results
 
--   `jmd_empirical_stage_wy1980_pt` - Observed stage-frequency with perception threshold
--   `jmd_rfa_expected` - RMC-RFA expected stage-frequency curve
--   `jmd_rfa_full` - RMC-RFA full uncertainty benchmark curve
+- `jmd_empirical_stage_wy1980_pt` - Observed stage-frequency with perception threshold
+- `jmd_rfa_expected` - RMC-RFA expected stage-frequency curve
+- `jmd_rfa_full` - RMC-RFA full uncertainty benchmark curve
 
 #### Methodology Illustration
 
--   `example_stratified` - Stratified sampling example across Uniform, Normal, and EV1 distributions
+- `example_stratified` - Stratified sampling example across Uniform, Normal, and EV1 distributions
 
 ## Quick Start
 
-``` r
+```r
 # Load the package
 library(rfaR)
 
-# Example stage timeseries data 
+# Example stage timeseries data
 head(jmd_wy1980_stage)
 
 # Example BestFit LP3 parameter sets (10,000 sets)
@@ -107,15 +107,15 @@ jmd_hydrographs <- hydrograph_setup(jmd_hydro_pmf,
                                     jmd_hydro_jun1921,
                                     critical_duration = 2,
                                     routing_days = 10)
-                                
-# Expected Only 
+
+# Expected Only
 jmd_expected <- rfa_simulate(sim_type        = "expected",
                               bestfit_params = jmd_bf_parameter_sets,
                               stage_ts       = jmd_wy1980_stage,
                               seasonality    = jmd_seasonality$relative_frequency,
                               hydrographs    = jmd_hydrographs,
                               resmodel       = jmd_resmodel,
-                              Nbins          = 50, 
+                              Nbins          = 50,
                               events_per_bin = 200,
                               sim_name       = "jmd")
 
@@ -126,11 +126,10 @@ jmd_fulluncert <- rfa_simulate(sim_type       = "full",
                                seasonality    = jmd_seasonality$relative_frequency,
                                hydrographs    = jmd_hydrographs,
                                resmodel       = jmd_resmodel,
-                               Nbins          = 50, 
+                               Nbins          = 50,
                                events_per_bin = 200,
-                               sim_name       = "jmd",
-                               Ncores         = 26)
-                              
+                               sim_name       = "jmd")
+
 ```
 
 ## Quick Start Results
@@ -144,7 +143,7 @@ print(jmd_expected$stage_frequency)
 
 <summary>Plotting Results</summary>
 
-``` r
+```r
 # ggplot is contained in tidyverse
 library(tidyverse)
 # or
@@ -239,30 +238,30 @@ See both files for the complete terms.
 
 #### RMC-RFA Methodology
 
--   Smith, C. H. (2020). *RMC-RFA User's Guide* (v1.1). U.S. Army Corps of Engineers, Risk Management Center, Lakewood, CO.
+- Smith, C. H. (2020). _RMC-RFA User's Guide_ (v1.1). U.S. Army Corps of Engineers, Risk Management Center, Lakewood, CO.
 
 #### Flood Frequency Analysis
 
--   England, J. F., Cohn, T. A., Faber, B. A., Stedinger, J. R., Thomas, W. O., Veilleux, A. G., Kiang, J. E., & Mason, R. R. (2019). *Guidelines for Determining Flood Flow Frequency — Bulletin 17C* (Techniques and Methods 4–B5). U.S. Geological Survey. <https://doi.org/10.3133/tm4B5>
+- England, J. F., Cohn, T. A., Faber, B. A., Stedinger, J. R., Thomas, W. O., Veilleux, A. G., Kiang, J. E., & Mason, R. R. (2019). _Guidelines for Determining Flood Flow Frequency — Bulletin 17C_ (Techniques and Methods 4–B5). U.S. Geological Survey. <https://doi.org/10.3133/tm4B5>
 
 #### Flood Routing
 
--   U.S. Army Corps of Engineers, Hydrologic Engineering Center. (n.d.). Modified Puls Model. *HEC-HMS Technical Reference Manual*. <https://www.hec.usace.army.mil/confluence/hmsdocs/hmstrm/channel-flow/modified-puls-model>
+- U.S. Army Corps of Engineers, Hydrologic Engineering Center. (n.d.). Modified Puls Model. _HEC-HMS Technical Reference Manual_. <https://www.hec.usace.army.mil/confluence/hmsdocs/hmstrm/channel-flow/modified-puls-model>
 
 #### Statistical Foundations
 
--   Chow, V. T. (1954). The log-probability law and its engineering applications. *Proceedings of the ASCE*, 80, 1–25.
--   Efron, B. (1979). Bootstrap methods: another look at the jackknife. *The Annals of Statistics*, 7, 1–26.
--   Efron, B., & Tibshirani, R. J. (1998). *An Introduction to the Bootstrap*. CRC Press.
--   Nathan, R., et al. (2016). Estimating the exceedance probability of extreme rainfalls up to the probable maximum precipitation. *Journal of Hydrology*.
--   Nathan, R., & Weinmann, E. (2013). *Monte Carlo Simulation Techniques*. Australian Rainfall and Runoff Discussion Paper. Engineers Australia.
--   Vose, D. (2008). *Risk Analysis: A Quantitative Guide*. John Wiley & Sons, West Sussex, England.
+- Chow, V. T. (1954). The log-probability law and its engineering applications. _Proceedings of the ASCE_, 80, 1–25.
+- Efron, B. (1979). Bootstrap methods: another look at the jackknife. _The Annals of Statistics_, 7, 1–26.
+- Efron, B., & Tibshirani, R. J. (1998). _An Introduction to the Bootstrap_. CRC Press.
+- Nathan, R., et al. (2016). Estimating the exceedance probability of extreme rainfalls up to the probable maximum precipitation. _Journal of Hydrology_.
+- Nathan, R., & Weinmann, E. (2013). _Monte Carlo Simulation Techniques_. Australian Rainfall and Runoff Discussion Paper. Engineers Australia.
+- Vose, D. (2008). _Risk Analysis: A Quantitative Guide_. John Wiley & Sons, West Sussex, England.
 
 <details>
 
 <summary>Development References</summary>
 
--   Wickham, H., & Bryan, J. (2023). *R Packages* (2nd ed.). O'Reilly. <https://r-pkgs.org/>
--   Wickham, H. (2019). *Advanced R* (2nd ed.). CRC Press. <https://adv-r.hadley.nz/>
+- Wickham, H., & Bryan, J. (2023). _R Packages_ (2nd ed.). O'Reilly. <https://r-pkgs.org/>
+- Wickham, H. (2019). _Advanced R_ (2nd ed.). CRC Press. <https://adv-r.hadley.nz/>
 
 </details>
