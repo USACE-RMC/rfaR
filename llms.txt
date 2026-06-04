@@ -111,7 +111,7 @@ Dam (JMD, variables as “jmd\_”):
 # Load the package
 library(rfaR)
 
-# Example stage timeseries data 
+# Example stage timeseries data
 head(jmd_wy1980_stage)
 
 # Example BestFit LP3 parameter sets (10,000 sets)
@@ -133,15 +133,15 @@ jmd_hydrographs <- hydrograph_setup(jmd_hydro_pmf,
                                     jmd_hydro_jun1921,
                                     critical_duration = 2,
                                     routing_days = 10)
-                                
-# Expected Only 
+
+# Expected Only
 jmd_expected <- rfa_simulate(sim_type        = "expected",
                               bestfit_params = jmd_bf_parameter_sets,
                               stage_ts       = jmd_wy1980_stage,
                               seasonality    = jmd_seasonality$relative_frequency,
                               hydrographs    = jmd_hydrographs,
                               resmodel       = jmd_resmodel,
-                              Nbins          = 50, 
+                              Nbins          = 50,
                               events_per_bin = 200,
                               sim_name       = "jmd")
 
@@ -152,11 +152,9 @@ jmd_fulluncert <- rfa_simulate(sim_type       = "full",
                                seasonality    = jmd_seasonality$relative_frequency,
                                hydrographs    = jmd_hydrographs,
                                resmodel       = jmd_resmodel,
-                               Nbins          = 50, 
+                               Nbins          = 50,
                                events_per_bin = 200,
-                               sim_name       = "jmd",
-                               Ncores         = 26)
-                              
+                               sim_name       = "jmd")
 ```
 
 ## Quick Start Results
