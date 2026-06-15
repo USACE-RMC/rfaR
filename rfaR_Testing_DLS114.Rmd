@@ -1,0 +1,812 @@
+---
+title: "rfaR DLS-114 RFA Exercise Tutorial"
+output:
+  html_notebook:
+    toc: true
+    toc_depth: 2
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 8,
+  fig.height = 5,
+  warning = FALSE,
+  message = FALSE
+)
+
+set.seed(20260603)
+```
+
+```{r packages}
+library(tidyverse)
+library(lubridate)
+library(scales)
+
+# Prefer the local package source while developing this notebook. This avoids
+# accidentally using an older installed rfaR where function arguments differ.
+if (requireNamespace("devtools", quietly = TRUE) && file.exists("DESCRIPTION")) {
+  devtools::load_all(".")
+} else {
+  library(rfaR)
+}
+
+theme_set(theme_bw())
+```
+
+```{r helpers}
+sample_flow_frequency <- function(bestfit_params,
+                                  dist = "LP3",
+                                  expected_only = TRUE,
+                                  Nbin = NULL,
+                                  Mevent = NULL) {
+  sampler_args <- names(formals(flow_frequency_sampler))
+  call_args <- list()
+
+  if ("bestfit_params" %in% sampler_args) {
+    call_args$bestfit_params <- bestfit_params
+  } else {
+    call_args[[1]] <- bestfit_params
+  }
+
+  if ("dist" %in% sampler_args) call_args$dist <- dist
+  if ("ExpectedOnly" %in% sampler_args) call_args$ExpectedOnly <- expected_only
+  if ("Nbin" %in% sampler_args && !is.null(Nbin)) call_args$Nbin <- Nbin
+  if ("Mevent" %in% sampler_args && !is.null(Mevent)) call_args$Mevent <- Mevent
+
+  do.call(flow_frequency_sampler, call_args)
+}
+```
+
+# Purpose
+
+This notebook translates the DLS-114 RMC-RFA exercises into a reproducible
+`rfaR` workflow. The original exercises are organized around four major RMC-RFA
+software tasks:
+
+```{r exercise-crosswalk}
+tibble::tribble(
+  ~exercise, ~rfa_process, ~rfaR_equivalent,
+  "E2.3", "Enter input data: discharge gage, inflow hydrographs, stage gage, volume-frequency curve", "Inspect bundled data and prepare hydrographs / VFC parameters",
+  "E2.8", "Compute analyses: flood seasonality, reservoir starting stage duration, empirical frequency curve", "Sample flood months, sample starting stages, compare empirical stages",
+  "E2.16", "Build reservoir models and run expected-only simulations", "Route hydrographs with Modified Puls and compare stage-frequency curves",
+  "E2.24", "Run sensitivity analyses and full uncertainty simulation", "Compare model, duration, ERL, seasonality, starting-stage, and uncertainty choices"
+)
+```
+
+The example data in this package use John Martin Dam (JMD), while the DLS-114
+exercise files use "Example Dam." The process is the same: build input data,
+compute supporting analyses, route scaled hydrographs, and interpret the
+stage-frequency result.
+
+# Example Dam Exercise Files
+
+The DLS-114 exercise files also contain completed RMC-RFA project databases.
+Those `.rfa.sqlite` files store the same objects shown in the RMC-RFA interface:
+input data, analyses, reservoir models, simulations, and stage-frequency
+results.
+
+To make this notebook easy to run without sqlite packages, selected Example Dam
+objects have been extracted to CSV files under `inst/extdata/example_dam`.
+
+```{r example-dam-paths}
+example_dam_dir <- file.path("inst", "extdata", "example_dam")
+can_read_example_dam <- dir.exists(example_dam_dir)
+
+example_dam_files <- tibble(
+  file = list.files(example_dam_dir, pattern = "[.]csv$", full.names = FALSE)
+)
+
+example_dam_files
+```
+
+## Example Dam Project Inventory
+
+This inventory mirrors the four DLS-114 exercises:
+
+- E2.3 input data live in the `2.*` tables.
+- E2.8 analyses live in the `3.*` tables.
+- E2.16 reservoir models live in the `4.*` tables.
+- E2.16 and E2.24 simulations/results live in the `5.*` tables.
+
+```{r example-dam-inventory}
+if (can_read_example_dam) {
+  example_input_inventory <- read_csv(
+    file.path(example_dam_dir, "input_inventory.csv"),
+    show_col_types = FALSE
+  )
+
+  example_analysis_inventory <- read_csv(
+    file.path(example_dam_dir, "analysis_inventory.csv"),
+    show_col_types = FALSE
+  )
+
+  example_reservoir_inventory <- read_csv(
+    file.path(example_dam_dir, "reservoir_inventory.csv"),
+    show_col_types = FALSE
+  )
+
+  example_simulation_inventory <- read_csv(
+    file.path(example_dam_dir, "simulation_inventory.csv"),
+    show_col_types = FALSE
+  )
+
+  list(
+    input_data = example_input_inventory,
+    analyses = example_analysis_inventory,
+    reservoir_models = example_reservoir_inventory,
+    simulations = example_simulation_inventory
+  )
+}
+```
+
+## Example Dam rfaR-Style Objects
+
+The completed sqlite project can be used to reconstruct the objects that a
+native `rfaR` workflow expects.
+
+```{r example-dam-objects}
+if (can_read_example_dam) {
+  example_por_inflow <- read_csv(
+    file.path(example_dam_dir, "por_inflow.csv"),
+    show_col_types = FALSE
+  ) |>
+    transmute(
+      timestep = Ordinate,
+      date = Data_Date,
+      time = Data_Time,
+      flow_cfs = Value
+    )
+
+  example_stage <- read_csv(
+    file.path(example_dam_dir, "stage_gage.csv"),
+    show_col_types = FALSE
+  ) |>
+    transmute(
+      timestep = Ordinate,
+      date = Data_Date,
+      time = Data_Time,
+      stage_ft = Value
+    )
+
+  example_vfc_parameters <- read_csv(
+    file.path(example_dam_dir, "vfc_parameters.csv"),
+    show_col_types = FALSE
+  ) |>
+    transmute(
+      mean_log = Mean,
+      sd_log = StDev,
+      skew_log = Skew,
+      erl = EYR,
+      duration = Duration
+    )
+
+  example_resmodel_full_capacity <- read_csv(
+    file.path(example_dam_dir, "resmodel_full_capacity.csv"),
+    show_col_types = FALSE
+  ) |>
+    transmute(
+      elev_ft = Stage,
+      stor_acft = Storage,
+      outflow_cfs = Discharge
+    )
+
+  example_resmodel_no_outlet_works <- read_csv(
+    file.path(example_dam_dir, "resmodel_no_outlet_works.csv"),
+    show_col_types = FALSE
+  ) |>
+    transmute(
+      elev_ft = Stage,
+      stor_acft = Storage,
+      outflow_cfs = Discharge
+    )
+
+  list(
+    inflow = head(example_por_inflow),
+    stage = head(example_stage),
+    vfc_parameters = example_vfc_parameters,
+    full_capacity_reservoir_model = head(example_resmodel_full_capacity),
+    no_outlet_works_reservoir_model = head(example_resmodel_no_outlet_works)
+  )
+}
+```
+
+## Example Dam Hydrograph Setup
+
+The 4-day hydrograph shapes from the RMC-RFA project can be passed through
+`hydrograph_setup()` after renaming the sqlite fields to the format expected by
+the helper.
+
+```{r example-dam-hydrographs}
+if (can_read_example_dam) {
+  example_hydro_apr2008 <- read_csv(
+    file.path(example_dam_dir, "hydro_apr2008.csv"),
+    col_types = cols(.default = col_character()),
+    show_col_types = FALSE
+  ) |>
+    as.data.frame()
+
+  example_hydro_apr2017 <- read_csv(
+    file.path(example_dam_dir, "hydro_apr2017.csv"),
+    col_types = cols(.default = col_character()),
+    show_col_types = FALSE
+  ) |>
+    as.data.frame()
+
+  example_hydro_dec2015 <- read_csv(
+    file.path(example_dam_dir, "hydro_dec2015.csv"),
+    col_types = cols(.default = col_character()),
+    show_col_types = FALSE
+  ) |>
+    as.data.frame()
+
+  example_hydrographs <- hydrograph_setup(
+    example_hydro_apr2008,
+    example_hydro_apr2017,
+    example_hydro_dec2015,
+    critical_duration = 4,
+    routing_days = 6
+  )
+
+  tibble(
+    hydrograph_id = seq_along(example_hydrographs),
+    rows = map_int(example_hydrographs, nrow),
+    observed_critical_volume = map_dbl(example_hydrographs, ~ attr(.x, "obs_vol"))
+  )
+}
+```
+
+## Example Dam RFA Results
+
+The completed project stores stage-frequency results from the RMC-RFA software.
+These curves are useful for checking that the R workflow is representing the
+same exercise process.
+
+```{r example-dam-stage-frequency}
+if (can_read_example_dam) {
+  example_full_capacity_sf <- read_csv(
+    file.path(example_dam_dir, "stage_frequency_full_capacity.csv"),
+    show_col_types = FALSE
+  ) |>
+    mutate(simulation = "Full Capacity")
+
+  example_no_outlet_sf <- read_csv(
+    file.path(example_dam_dir, "stage_frequency_no_outlet_works.csv"),
+    show_col_types = FALSE
+  ) |>
+    mutate(simulation = "No Outlet Works")
+
+  example_stage_frequency <- bind_rows(
+    example_full_capacity_sf,
+    example_no_outlet_sf
+  ) |>
+    mutate(Z_var = qnorm(1 - Probability))
+
+  ggplot(example_stage_frequency, aes(x = Z_var, y = Expected, color = simulation)) +
+    geom_line(linewidth = 0.9) +
+    scale_x_continuous(
+      breaks = qnorm(1 - c(9.9e-1, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6)),
+      labels = c(9.9e-1, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6)
+    ) +
+    scale_y_continuous(labels = comma) +
+    labs(
+      title = "Example Dam RMC-RFA Expected Stage-Frequency Curves",
+      x = "AEP",
+      y = "Stage (ft)",
+      color = "Simulation"
+    )
+}
+```
+
+# E2.3: RFA Input Data
+
+Exercise 2.3 focuses on entering the four core RMC-RFA input objects:
+
+- Systematic inflow record.
+- Inflow hydrograph shapes.
+- Stage gage record.
+- Volume-frequency curve from RMC-BestFit.
+
+In `rfaR`, these same concepts are represented by package datasets.
+
+```{r inspect-input-data}
+input_inventory <- tibble::tribble(
+  ~rfa_object, ~jmd_dataset, ~role,
+  "Discharge Gage", "jmd_por_inflow", "Period-of-record inflow data",
+  "Inflow Hydrographs", "jmd_hydro_*", "Candidate flood hydrograph shapes",
+  "Stage Gage", "jmd_wy1980_stage", "Historical reservoir starting stages",
+  "Volume Frequency Curve", "jmd_bf_parameter_sets / jmd_vfc", "BestFit LP3 parameters and tabular VFC",
+  "Reservoir Model", "jmd_resmodel", "Stage-storage-discharge relationship"
+)
+
+input_inventory
+```
+
+```{r preview-inputs}
+head(jmd_por_inflow)
+head(jmd_wy1980_stage)
+head(jmd_bf_parameter_sets)
+jmd_seasonality
+head(jmd_resmodel)
+```
+
+## Discharge Gage
+
+The discharge gage is the period-of-record inflow series. In RMC-RFA, it is
+entered as a dated time series. In R, first convert the date and time columns
+into a real datetime field.
+
+```{r discharge-gage}
+jmd_inflow_record <- jmd_por_inflow |>
+  mutate(
+    datetime = mdy_hm(paste(date, time)),
+    flow_cfs = as.numeric(flow_cfs)
+  )
+
+ggplot(jmd_inflow_record, aes(x = datetime, y = flow_cfs)) +
+  geom_line(linewidth = 0.3, color = "#3B4992FF") +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "JMD Period-of-Record Inflow",
+    x = "Date",
+    y = "Flow (cfs)"
+  )
+```
+
+## Inflow Hydrographs
+
+Exercise 2.3 asks users to enter several flood hydrograph shapes. `rfaR` uses
+`hydrograph_setup()` to standardize copied RMC-RFA-style hydrographs and attach
+the observed critical-duration volume used for later scaling.
+
+```{r hydrograph-setup}
+critical_duration_days <- 2
+routing_duration_days <- 10
+
+jmd_hydrographs <- hydrograph_setup(
+  jmd_hydro_apr1999,
+  jmd_hydro_jun1921,
+  jmd_hydro_jun1965,
+  jmd_hydro_may1955,
+  jmd_hydro_pmf,
+  jmd_hydro_sdf,
+  critical_duration = critical_duration_days,
+  routing_days = routing_duration_days
+)
+
+tibble(
+  hydrograph_id = seq_along(jmd_hydrographs),
+  rows = map_int(jmd_hydrographs, nrow),
+  observed_critical_volume = map_dbl(jmd_hydrographs, ~ attr(.x, "obs_vol"))
+)
+```
+
+```{r plot-hydrograph-shapes}
+map2_dfr(jmd_hydrographs, seq_along(jmd_hydrographs), function(hydro, id) {
+  hydro |>
+    transmute(
+      hydrograph_id = factor(id),
+      hour,
+      inflow
+    )
+}) |>
+  ggplot(aes(x = hour, y = inflow, color = hydrograph_id)) +
+  geom_line(linewidth = 0.7) +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Candidate Hydrograph Shapes",
+    x = "Hour",
+    y = "Inflow (cfs)",
+    color = "Hydrograph"
+  )
+```
+
+## Stage Gage
+
+The stage gage provides the historical reservoir stages used to sample
+antecedent starting pool conditions.
+
+```{r stage-gage}
+jmd_stage_record <- jmd_wy1980_stage |>
+  mutate(
+    stage_date = as.Date(date),
+    stage_date = if_else(
+      is.na(stage_date),
+      as.Date(mdy(as.character(date))),
+      stage_date
+    ),
+    month = month(stage_date)
+  ) |>
+  filter(!is.na(month), !is.na(stage_ft))
+
+ggplot(jmd_stage_record, aes(x = stage_date, y = stage_ft)) +
+  geom_line(linewidth = 0.3, color = "#008280FF") +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "JMD Stage Gage",
+    x = "Date",
+    y = "Stage (ft-NAVD88)"
+  )
+```
+
+## Volume-Frequency Curve
+
+The DLS-114 exercise uses BestFit LP3 parameters and asks users to compute /
+compare RMC-RFA volume-frequency results. In `rfaR`, the LP3 parameter sets feed
+the volume-frequency sampler.
+
+```{r vfc-parameters}
+jmd_bf_parameter_sets |>
+  pivot_longer(everything(), names_to = "parameter", values_to = "value") |>
+  ggplot(aes(x = value)) +
+  geom_density(fill = "gray80", color = "gray25") +
+  facet_wrap(vars(parameter), scales = "free") +
+  labs(
+    title = "BestFit LP3 Parameter Sets",
+    x = "Parameter value",
+    y = "Density"
+  )
+```
+
+```{r vfc-sample}
+q_samp <- sample_flow_frequency(
+  bestfit_params = jmd_bf_parameter_sets,
+  dist = "LP3",
+  expected_only = TRUE
+)
+
+q_samp_df <- tibble(sampled_volume = q_samp$flow[, 1])
+
+ggplot(q_samp_df, aes(x = sampled_volume)) +
+  geom_histogram(bins = 80, fill = "lightblue2", color = "gray25") +
+  scale_x_log10(labels = comma) +
+  labs(
+    title = "Expected-Only Stratified Volume Sample",
+    x = "Sampled inflow volume",
+    y = "Count"
+  )
+```
+
+# E2.8: RFA Analyses
+
+Exercise 2.8 computes the analyses that support simulation:
+
+- Flood seasonality.
+- Reservoir starting stage duration.
+- Empirical frequency curve.
+- Optional alternate seasonality based on stage information.
+
+## Flood Seasonality
+
+Flood seasonality controls the probability that a simulated flood occurs in each
+month.
+
+```{r flood-seasonality}
+seasonality_df <- jmd_seasonality |>
+  mutate(month_abbr = factor(month.abb[month], levels = month.abb))
+
+ggplot(seasonality_df, aes(x = month_abbr, y = relative_frequency)) +
+  geom_col(fill = "#3B4992FF", color = "gray25") +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "Flood Seasonality",
+    x = "Month",
+    y = "Relative frequency"
+  )
+```
+
+```{r sample-flood-months}
+n_tutorial_samples <- 10000
+
+sampled_months <- sample(
+  1:12,
+  size = n_tutorial_samples,
+  replace = TRUE,
+  prob = jmd_seasonality$relative_frequency
+)
+
+tibble(sampled_month = sampled_months) |>
+  count(sampled_month) |>
+  mutate(
+    month_abbr = factor(month.abb[sampled_month], levels = month.abb),
+    sampled_relative_frequency = n / sum(n)
+  ) |>
+  ggplot(aes(x = month_abbr, y = sampled_relative_frequency)) +
+  geom_col(fill = "#008B45FF", color = "gray25") +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "Sampled Flood Months",
+    x = "Month",
+    y = "Sampled relative frequency"
+  )
+```
+
+## Reservoir Starting Stage Duration
+
+Reservoir starting stage duration curves are used with the sampled flood month
+to sample an antecedent pool stage.
+
+```{r starting-stage-sampling}
+sampled_stages <- map_dbl(sampled_months, function(sample_month) {
+  month_stages <- jmd_stage_record$stage_ft[jmd_stage_record$month == sample_month]
+
+  if (length(month_stages) == 0) {
+    return(NA_real_)
+  }
+
+  sample(
+    month_stages,
+    size = 1,
+    replace = TRUE
+  )
+})
+
+stage_samples <- tibble(
+  sampled_month = sampled_months,
+  month_abbr = factor(month.abb[sampled_months], levels = month.abb),
+  sampled_stage_ft = sampled_stages
+)
+
+stage_samples |>
+  group_by(month_abbr) |>
+  summarize(
+    n = n(),
+    q25 = quantile(sampled_stage_ft, 0.25, na.rm = TRUE),
+    median = median(sampled_stage_ft, na.rm = TRUE),
+    q75 = quantile(sampled_stage_ft, 0.75, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+```{r plot-starting-stage-samples}
+ggplot(stage_samples, aes(x = sampled_stage_ft, fill = month_abbr)) +
+  geom_histogram(binwidth = 5, color = "gray30") +
+  facet_wrap(vars(month_abbr), scales = "free_y") +
+  coord_cartesian(xlim = c(3780, 3870)) +
+  theme(legend.position = "none") +
+  labs(
+    title = "Sampled Starting Stage By Flood Month",
+    x = "Starting stage (ft-NAVD88)",
+    y = "Count"
+  )
+```
+
+## Empirical Frequency Curve
+
+The empirical frequency curve is used as an observed-data check against the
+simulated stage-frequency curve.
+
+```{r empirical-frequency}
+jmd_empirical_plot <- jmd_empirical_stage_wy1980_pt |>
+  mutate(Z_var = qnorm(1 - plot_posit))
+
+ggplot(jmd_empirical_plot, aes(x = Z_var, y = stage_ft)) +
+  geom_point(size = 1.8, alpha = 0.75, color = "#1B1919FF") +
+  scale_x_continuous(labels = label_number()) +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Empirical Stage-Frequency Points",
+    x = "Standard normal variate",
+    y = "Stage (ft-NAVD88)"
+  )
+```
+
+# E2.16: Reservoir Model And Expected Simulation
+
+Exercise 2.16 moves from analyses to reservoir modeling and expected-only
+simulation. In RMC-RFA, the user compares "Full Capacity Releases" and "No
+Outlet Works" reservoir models. In `rfaR`, the core computational step is
+Modified Puls routing through a stage-storage-discharge table.
+
+```{r reservoir-model}
+head(jmd_resmodel)
+
+jmd_resmodel_plot <- as.data.frame(jmd_resmodel[, 1:3])
+names(jmd_resmodel_plot) <- c("elev_ft", "stor_acft", "outflow_cfs")
+
+ggplot(jmd_resmodel_plot, aes(x = elev_ft)) +
+  geom_line(aes(y = outflow_cfs, color = "Outflow (cfs)"), linewidth = 0.8) +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Reservoir Rating Curve",
+    x = "Stage (ft-NAVD88)",
+    y = "Outflow (cfs)",
+    color = NULL
+  )
+```
+
+## Route One Event
+
+This is the smallest end-to-end event simulation: choose a volume, scale a
+hydrograph, select a starting stage, and route.
+
+```{r scale-and-route-one-event}
+example_hydrograph <- jmd_hydrographs[[1]]
+example_observed_volume <- attr(example_hydrograph, "obs_vol")
+example_sampled_volume <- median(q_samp_df$sampled_volume)
+example_starting_stage <- median(stage_samples$sampled_stage_ft)
+
+scaled_hydrograph <- scale_hydrograph(
+  hydrograph_shape = example_hydrograph[, c("hour", "inflow")],
+  observed_volume = example_observed_volume,
+  sampled_volume = example_sampled_volume
+)
+
+scaled_routing <- mod_puls_routing(
+  resmodel_df = jmd_resmodel,
+  inflow_df = scaled_hydrograph,
+  initial_elev = example_starting_stage,
+  full_results = TRUE
+)
+
+scaled_routing |>
+  summarize(
+    peak_stage_ft = max(elevation_ft),
+    peak_outflow_cfs = max(outflow_cfs)
+  )
+```
+
+```{r plot-scaled-routing}
+scaled_routing |>
+  pivot_longer(c(inflow_cfs, outflow_cfs), names_to = "series", values_to = "flow_cfs") |>
+  ggplot(aes(x = time_hr, y = flow_cfs, color = series)) +
+  geom_line(linewidth = 0.8) +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Scaled Hydrograph Routing",
+    x = "Time (hr)",
+    y = "Flow (cfs)",
+    color = NULL
+  )
+```
+
+## Expected Stage-Frequency Curve
+
+The full expected simulation can be slow. For a teaching notebook, use the
+packaged expected-only result to focus on plotting and interpretation.
+
+```{r expected-stage-frequency-plot}
+aep_breaks <- c(
+  9.9e-1, 9e-1, 5e-1, 1e-1, 1e-2, 1e-3,
+  1e-4, 1e-5, 1e-6, 1e-7, 1e-8
+)
+
+minor_aep_breaks <- unlist(lapply(2:9, function(i) i * 10^-(1:8)))
+
+jmd_rfa_plot <- jmd_rfa_expected |>
+  mutate(Z_var = qnorm(1 - AEP))
+
+critical_elevs <- tibble(
+  name = c("Upper PMF", "Top of Dam", "Flood Control Pool"),
+  elev_ft = c(3893.8, 3881.8, 3871.8),
+  label = paste(name, "=", elev_ft)
+)
+
+ggplot() +
+  geom_line(
+    data = jmd_rfa_plot,
+    aes(x = Z_var, y = Expected, color = "Expected RFA curve"),
+    linewidth = 0.9
+  ) +
+  geom_point(
+    data = jmd_empirical_plot,
+    aes(x = Z_var, y = stage_ft, shape = "Observed stages"),
+    size = 1.6,
+    alpha = 0.7
+  ) +
+  geom_hline(data = critical_elevs, aes(yintercept = elev_ft), linewidth = 0.4) +
+  geom_text(
+    data = critical_elevs,
+    aes(x = qnorm(1 - 0.99), y = elev_ft, label = label),
+    size = 2.8,
+    hjust = 0,
+    vjust = -0.5
+  ) +
+  scale_color_manual(values = c("Expected RFA curve" = "#3B4992FF")) +
+  scale_shape_manual(values = c("Observed stages" = 16)) +
+  scale_x_continuous(
+    breaks = qnorm(1 - aep_breaks),
+    minor_breaks = qnorm(1 - minor_aep_breaks),
+    labels = aep_breaks
+  ) +
+  scale_y_continuous(
+    breaks = seq(3700, 3910, 10),
+    minor_breaks = seq(3700, 3910, 5),
+    labels = comma
+  ) +
+  coord_cartesian(
+    xlim = c(qnorm(1 - 0.99), qnorm(1 - 1e-8)),
+    ylim = c(3800, 3900)
+  ) +
+  labs(
+    title = "JMD Expected-Only Stage-Frequency Curve",
+    x = "AEP",
+    y = "Stage (ft-NAVD88)",
+    color = NULL,
+    shape = NULL
+  ) +
+  theme(
+    legend.position = "bottom",
+    axis.text.x = element_text(angle = 30, hjust = 1)
+  )
+```
+
+# E2.24: Sensitivity And Full Uncertainty
+
+Exercise 2.24 asks users to evaluate how much the final stage-frequency curve
+changes when important modeling decisions change.
+
+```{r sensitivity-crosswalk}
+tibble::tribble(
+  ~sensitivity, ~rfa_question, ~rfaR_way_to_test,
+  "Reservoir model", "Full capacity versus no outlet works", "Route the same scaled hydrographs through alternate stage-storage-discharge tables",
+  "Critical inflow duration", "4-day versus 5-day setup", "Change hydrograph set, critical duration, routing duration, and VFC duration",
+  "Effective record length", "ERL 80 versus 150 versus 500", "Change BestFit parameter sets / VFC uncertainty inputs before sampling",
+  "Flood seasonality", "Flow-threshold seasonality versus stage-informed seasonality", "Change monthly sampling probabilities",
+  "Starting stage duration", "Alternate antecedent pool sampling assumptions", "Change stage record or monthly duration curves used for sampling",
+  "Full uncertainty", "Expected, median, and 90 percent interval", "Run `rfaR(..., expected_only = FALSE)` when runtime is acceptable"
+)
+```
+
+## Simple Sensitivity Pattern
+
+The reusable pattern is:
+
+1. Change one input assumption.
+2. Re-run the same simulation workflow.
+3. Compare the stage-frequency curve at decision elevations such as top of dam.
+
+The following toy sensitivity changes only the starting stage used for one
+routed event. It is not a replacement for a full RFA sensitivity run, but it
+shows the mechanics.
+
+```{r starting-stage-sensitivity}
+starting_stage_sensitivity <- quantile(
+  stage_samples$sampled_stage_ft,
+  probs = c(0.05, 0.50, 0.95)
+)
+
+map_dfr(names(starting_stage_sensitivity), function(label) {
+  route <- mod_puls_routing(
+    resmodel_df = jmd_resmodel,
+    inflow_df = scaled_hydrograph,
+    initial_elev = unname(starting_stage_sensitivity[label]),
+    full_results = TRUE
+  )
+
+  route |>
+    summarize(
+      starting_stage_case = label,
+      initial_elev = unname(starting_stage_sensitivity[label]),
+      peak_stage_ft = max(elevation_ft),
+      peak_outflow_cfs = max(outflow_cfs)
+    )
+})
+```
+
+## Optional Full Simulation
+
+The package-level full simulation is intentionally left unevaluated here because
+it can take a long time. Run it when you are ready to test runtime and outputs.
+This is through the Quick Start tab in the README on GitHub but be wary on the 
+Full uncertainty because the computation time takes a while depending on the Nbins
+and events_per_bin hyperparameter choices. 
+
+
+You can plot `jmd_expected$stage_frequency`, `jmd_median$stage_frequency`, or
+`jmd_full_uncertainty$stage_frequency` using the same AEP plotting setup shown
+in the E2.16 section.
+
+# Takeaways
+
+The DLS-114 exercises are best represented in R Markdown as a process map:
+
+1. E2.3 builds the model inputs.
+2. E2.8 computes seasonality, starting stage, and empirical checks.
+3. E2.16 routes through the reservoir model and creates an expected
+   stage-frequency curve.
+4. E2.24 varies key assumptions to understand sensitivity and uncertainty.
+
+Keep tutorial chunks small, set seeds, avoid hard-coded output paths, and use
+stored package results for expensive full-run comparisons.
