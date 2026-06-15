@@ -3,33 +3,31 @@
 ## Executive Summary
 
 RMC-RFA produces a reservoir stage-frequency curve with uncertainty
-bounds by utilizing a deterministic flood routing model while treating
-the inflow volume, flood hydrograph shape, seasonal occurrence, and
-antecedent reservoir stage as uncertain variables rather than fixed
-values. To quantify both the natural variability and epistemic
-uncertainty in reservoir stage-frequency estimates, RMC-RFA employs a
-two-looped, nested Monte Carlo methodology.
+bounds by utilizing a deterministic flood routing model within a nested
+Monte Carlo simulation. The nested Monte Carlo simulation quantifies
+natural variability and epistemic uncertainty by treating inflow volume,
+flood hydrograph shape, seasonal occurrence, and antecedent reservoir
+stage as uncertain variables.
 
 The inner loop — defined here as a realization — simulates natural
 variability by routing 10,000 individual flood events through the
-reservoir, each with randomly sampled starting stage, hydrograph shape,
-and stratified-sampled inflow volume drawn from the volume-frequency
-distribution. Together these routed events produce a single
-stage-frequency curve estimate. The outer loop propagates epistemic
-uncertainty by repeating this process across many realizations, each
-conditioned on a different set of volume-frequency distribution
-parameters drawn from the posterior.
+reservoir, each with a randomly sampled starting stage, hydrograph
+shape, and inflow volume. Together the 10,000 routed events produce a
+single stage-frequency curve estimate. The outer loop propagates
+epistemic uncertainty by repeating this process across many
+realizations, each conditioned on a different set of volume-frequency
+distribution parameters drawn from the posterior.
 
 This document walks through a single realization in detail.
 Understanding one realization is the key to understanding the full
-simulation: the outer loop simply repeats this process with a resampled
-parameter set each time (in `rfaR`, this is the *next* parameter set
-from the input). The walkthrough covers the stratified sampling
-procedure, random sampling of starting stage and hydrograph shape, and
-calculation of stage exceedance probabilities — steps that are common to
-all simulation types. The full uncertainty simulation conducts 10,000
-realizations, each comprising 10,000 flood events (100 million routing
-operations total), while the expected value simulation conducts 10,000
+simulation: the outer loop repeats realizations with a resampled
+parameter sets (in `rfaR`, this is the *next* parameter set from the
+input). The walkthrough covers the stratified sampling procedure, random
+sampling of starting stage and hydrograph shape, and calculation of
+stage exceedance probabilities. These steps are common to all simulation
+types. The full uncertainty simulation conducts 10,000 realizations,
+each comprising 10,000 flood events (100 million routing operations
+total), while the expected value simulation conducts 10,000
 realizations, each using a one of the 10,000 BestFit parameter sets.
 
 ***Note:*** Users with coding experience may find the loops in this
@@ -40,20 +38,19 @@ provide a replicable guide to the realization process.
 
 A full uncertainty run in
 [`rfa_simulate()`](https://usace-rmc.github.io/rfaR/reference/rfa_simulate.md)
-is comprised of 10,000 realizations. Each realization is compromised of
-10,000 reservoir routing computations (simulations) using the following:
+is the result of 10,000 realizations. An individual realization is
+comprised of 10,000 deterministic routing simulations. Each simulation
+contains:
 
-- Stratified samples (10,000 samples comprised of 20 bins with 500
-  events each) from an inflow volume-frequency curve (VFC). The VFC is
-  estimated using one parameter set
+- Stratified sample from an inflow volume-frequency curve (VFC)[^1]
 
-- 10,000 Seasonality samples represented by the month
+- Seasonality sample represented by the month
 
-- 10,000 Starting stage samples, dependent on the sampled month
+- Starting stage sample, dependent on the sampled month
 
 - Hydrograph Shape, scaled to sampled inflow volume
 
-- Modified-Puls routings to obtain peak stages and/or peak discharge
+- Modified-Puls routing to obtain peak stages and/or peak discharge
 
 These module emulate the workflow and methodology from RMC-RFA. The
 subsections below will step through an rfaR realization. These sections
@@ -66,18 +63,17 @@ represent modules and functions contained in
 
 Stratified sampling is used instead of simple random sampling because
 reliable estimates of exceedance probabilities far into the tail of the
-distribution — events with AEPs of 1/10,000 or rarer — are required.
+distribution (events with AEPs of 1/10,000 or rarer) are required.
 Simple random sampling would require an impractically large number of
 events to adequately populate the tail. Instead, the frequency axis is
-divided into `Nbins` equal-probability bins, and `Mevents` are sampled
-uniformly within each bin. This ensures the tail is well-represented
-without artificially inflating the total number of routing operations.
+divided into equal-probability bins (`Nbins`), and events are sampled
+uniformly within each bin (`Mevents`). This ensures the tail is
+well-represented without artificially inflating the total number of
+routing operations.
 
 ``` r
 
-ords <- stratified_sampler(Nbins = 20,
-                               Mevents = 500,
-                               dist = "ev1")
+ords <- stratified_sampler(Nbins = 20, Mevents = 500, dist = "ev1")
 ```
 
 The bin weights (`ords$Weights`) reflect the true probability mass that
@@ -102,15 +98,16 @@ populated across its corresponding probability/z-variate range.
 z_matrix <- matrix(ncol = ords$Nbins, nrow = ords$Mevents)
 
 # Using EV1
-for (i in 1:ords$Nbins){
+for (i in 1:ords$Nbins) {
   # Lower Bin Boundary (prior bin's upper boundary)
   bin_lower <- ords$Zlower[i]
-  
+
   # Upper Bin Boundary
   bin_upper <- ords$Zupper[i]
 
   # Vector of random values
-  z_matrix[,i] <- (bin_lower + (runif(500, min = 0, max = 1))*(bin_upper - bin_lower))
+  z_matrix[, i] <- (bin_lower +
+    (runif(500, min = 0, max = 1)) * (bin_upper - bin_lower))
 }
 ```
 
@@ -167,7 +164,12 @@ long.
 
 ``` r
 
-InitMonths <- sample(1:12, size = Nsims, replace = TRUE, prob = jmd_seasonality$relative_frequency)
+InitMonths <- sample(
+  1:12,
+  size = Nsims,
+  replace = TRUE,
+  prob = jmd_seasonality$relative_frequency
+)
 
 UniqMonths <- sort(unique(InitMonths))
 ```
@@ -197,8 +199,11 @@ stage_ts$months <- lubridate::month(lubridate::mdy(stage_ts$date))
 
 for (i in 1:length(UniqMonths)) {
   sampleID <- which(InitMonths == UniqMonths[i])
-  InitStages[sampleID] <- sample(stage_ts$stage[stage_ts$months %in% UniqMonths[i]],
-                                 size = sum(InitMonths == UniqMonths[i]), replace = TRUE)
+  InitStages[sampleID] <- sample(
+    stage_ts$stage[stage_ts$months %in% UniqMonths[i]],
+    size = sum(InitMonths == UniqMonths[i]),
+    replace = TRUE
+  )
 }
 ```
 
@@ -215,18 +220,24 @@ and the routing window has been set to 10-days (`routing_days`).
 
 ``` r
 
-hydrographs <- hydrograph_setup(jmd_hydro_apr1999,
-                                jmd_hydro_jun1921,
-                                jmd_hydro_jun1965,
-                                jmd_hydro_jun1965_15min,
-                                jmd_hydro_may1955,
-                                jmd_hydro_pmf,
-                                jmd_hydro_sdf,
-                                critical_duration = 2,
-                                routing_days = 10)
+hydrographs <- hydrograph_setup(
+  jmd_hydro_apr1999,
+  jmd_hydro_jun1921,
+  jmd_hydro_jun1965,
+  jmd_hydro_jun1965_15min,
+  jmd_hydro_may1955,
+  jmd_hydro_pmf,
+  jmd_hydro_sdf,
+  critical_duration = 2,
+  routing_days = 10
+)
 
-hydroSamps <- sample(1:length(hydrographs), size = Nsims, replace = TRUE,
-                     prob = attr(hydrographs, "probs"))
+hydroSamps <- sample(
+  1:length(hydrographs),
+  size = Nsims,
+  replace = TRUE,
+  prob = attr(hydrographs, "probs")
+)
 ```
 
 ## Conduct Reservoir Routing Simulations
@@ -260,21 +271,25 @@ for (i in 1:nrow(Q_matrix)) {
     realiz <- (i - 1) * ncol(Q_matrix) + j
 
     # Hydrograph shape
-    hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][,2:3]
+    hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][, 2:3]
 
     # Hydrograph observed volume
-    obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]],"obs_vol")
+    obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]], "obs_vol")
 
     # Scale hydrograph to sample volume
-    scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
-                                          obs_hydrograph_vol,
-                                          Q_matrix[i,j])
+    scaled_hydrograph <- scale_hydrograph(
+      hydrograph_shape,
+      obs_hydrograph_vol,
+      Q_matrix[i, j]
+    )
 
     # Route scaled hydrograph
-    tmpResults <- mod_puls_routing(resmodel_df = jmd_resmodel,
-                                   inflow_df = scaled_hydrograph,
-                                   initial_elev = InitStages[realiz],
-                                   full_results = FALSE)
+    tmpResults <- mod_puls_routing(
+      resmodel_df = jmd_resmodel,
+      inflow_df = scaled_hydrograph,
+      initial_elev = InitStages[realiz],
+      full_results = FALSE
+    )
 
     # Record results
     peakStage[i, j] <- tmpResults[1]
@@ -315,14 +330,14 @@ exceedance stages can be any length (ex. `n_exceedance_stages` could be
 n_exceedance_stages <- ords$Mevents
 stage_vect <- rep(NA, n_exceedance_stages)
 
-for (b in 1:(n_exceedance_stages)){
+for (b in 1:(n_exceedance_stages)) {
   # Min Stage
-  if(b < 2){
+  if (b < 2) {
     stage <- min_stage
-    
-  # Incrementally calculate the next exceedance stage  
-  }else{
-    stage <- stage_vect[b-1] + (max_stage - min_stage)/(n_exceedance_stages)
+
+    # Incrementally calculate the next exceedance stage
+  } else {
+    stage <- stage_vect[b - 1] + (max_stage - min_stage) / (n_exceedance_stages)
   }
   stage_vect[b] <- stage
 }
@@ -348,13 +363,16 @@ stage in `stage_vect`, within each bin.
 
 ``` r
 
-stage_exceedance_matrix <- matrix(nrow = length(stage_vect), ncol = ncol(Q_matrix))
+stage_exceedance_matrix <- matrix(
+  nrow = length(stage_vect),
+  ncol = ncol(Q_matrix)
+)
 
-for(m in 1:ncol(peakStage)){
+for (m in 1:ncol(peakStage)) {
   # Get Bin of peak stages, each represented by m event
-  mstages <- peakStage[,m]
+  mstages <- peakStage[, m]
 
-  for(n in 1:length(stage_vect)){
+  for (n in 1:length(stage_vect)) {
     # Get Stage
     exceedance_stage <- stage_vect[n]
 
@@ -362,10 +380,10 @@ for(m in 1:ncol(peakStage)){
     stage_exceed_count <- sum(mstages > exceedance_stage)
 
     # Exceedance Prob in Bin
-    stage_exceed_prob <- stage_exceed_count/length(mstages)
+    stage_exceed_prob <- stage_exceed_count / length(mstages)
 
-    # Save to exceedance matrix 
-    stage_exceedance_matrix[n,m] <- stage_exceed_prob
+    # Save to exceedance matrix
+    stage_exceedance_matrix[n, m] <- stage_exceed_prob
   }
 }
 ```
@@ -389,14 +407,14 @@ AEPs.
 
 ``` r
 
-stage_aep_vect <- rep(NA,length(stage_vect))
+stage_aep_vect <- rep(NA, length(stage_vect))
 
-for(m in 1:nrow(stage_exceedance_matrix)){
+for (m in 1:nrow(stage_exceedance_matrix)) {
   # Grab row of exceedances
-  stage_exceedance_probs <- stage_exceedance_matrix[m,]
+  stage_exceedance_probs <- stage_exceedance_matrix[m, ]
 
   # Sum the dot product of exceedances and weights
-  stage_aep <- sum(stage_exceedance_probs*ords$Weights)
+  stage_aep <- sum(stage_exceedance_probs * ords$Weights)
 
   #save to vector
   stage_aep_vect[m] <- stage_aep
@@ -404,9 +422,45 @@ for(m in 1:nrow(stage_exceedance_matrix)){
 
 stage_result <- tibble(
   AEP = stage_aep_vect,
-  Z_var = qnorm(1-stage_aep_vect),
+  Z_var = qnorm(1 - stage_aep_vect),
   Gumb = -log(-log(1 - AEP)),
-  Stage = stage_vect)
+  Stage = stage_vect
+)
 ```
 
 ![](rfaR-Realization-Conceptual_files/figure-html/bin_weighed_prob-plot-1.png)
+
+## Concluding Remarks
+
+### Understanding the Role of a Single Realization
+
+Understanding the inputs and calculation procedures of a single
+realization is crucial to understanding the nested Monte Carlo
+simulation process. Realization computations are used in both
+expected-only and full uncertainty stage-frequency estimates. The
+expected-only estimation consists of a single realization using 10,000
+stratified volume-frequency samples, each drawn from an individual
+volume-frequency distribution parameter set. Full uncertainty
+computations perform one realization for each volume-frequency
+distribution parameter set to satisfy the law of total probability.
+
+### Deterministic Routing Within a Probabilistic Framework
+
+RMC-RFA produces a reservoir stage-frequency curve with uncertainty
+bounds by employing a deterministic flood routing model within a nested
+Monte Carlo simulation. The inputs to each routing simulation are
+sampled probabilistically, while the reservoir model routes each
+simulated flood event using deterministic stage-storage-discharge
+functions.
+
+### The Law of Total Probability is the Theoretical Backbone
+
+The nested Monte Carlo process provides reliable stage-frequency
+estimates with uncertainty bounds through the law of total probability.
+Complete integration over the sample space is achieved through
+stratified inflow-volume sampling within each volume-frequency parameter
+set, ensuring the full range of flood outcomes is represented across all
+parameter uncertainty.
+
+[^1]: The VFC is estimated using one parameter set. The stratification
+    is 20 bins with 500 events each.

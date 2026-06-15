@@ -70,28 +70,26 @@
 <h2 id="executive-summary">Executive Summary<a class="anchor" aria-label="anchor" href="#executive-summary"></a>
 </h2>
 <p>RMC-RFA produces a reservoir stage-frequency curve with uncertainty
-bounds by utilizing a deterministic flood routing model while treating
-the inflow volume, flood hydrograph shape, seasonal occurrence, and
-antecedent reservoir stage as uncertain variables rather than fixed
-values. To quantify both the natural variability and epistemic
-uncertainty in reservoir stage-frequency estimates, RMC-RFA employs a
-two-looped, nested Monte Carlo methodology.</p>
+bounds by utilizing a deterministic flood routing model within a nested
+Monte Carlo simulation. The nested Monte Carlo simulation quantifies
+natural variability and epistemic uncertainty by treating inflow volume,
+flood hydrograph shape, seasonal occurrence, and antecedent reservoir
+stage as uncertain variables.</p>
 <p>The inner loop — defined here as a realization — simulates natural
 variability by routing 10,000 individual flood events through the
-reservoir, each with randomly sampled starting stage, hydrograph shape,
-and stratified-sampled inflow volume drawn from the volume-frequency
-distribution. Together these routed events produce a single
-stage-frequency curve estimate. The outer loop propagates epistemic
-uncertainty by repeating this process across many realizations, each
-conditioned on a different set of volume-frequency distribution
-parameters drawn from the posterior.</p>
+reservoir, each with a randomly sampled starting stage, hydrograph
+shape, and inflow volume. Together the 10,000 routed events produce a
+single stage-frequency curve estimate. The outer loop propagates
+epistemic uncertainty by repeating this process across many
+realizations, each conditioned on a different set of volume-frequency
+distribution parameters drawn from the posterior.</p>
 <p>This document walks through a single realization in detail.
 Understanding one realization is the key to understanding the full
-simulation: the outer loop simply repeats this process with a resampled
-parameter set each time (in <code>rfaR</code>, this is the <em>next</em>
+simulation: the outer loop repeats realizations with a resampled
+parameter sets (in <code>rfaR</code>, this is the <em>next</em>
 parameter set from the input). The walkthrough covers the stratified
 sampling procedure, random sampling of starting stage and hydrograph
-shape, and calculation of stage exceedance probabilities — steps that
+shape, and calculation of stage exceedance probabilities. These steps
 are common to all simulation types. The full uncertainty simulation
 conducts 10,000 realizations, each comprising 10,000 flood events (100
 million routing operations total), while the expected value simulation
@@ -106,18 +104,16 @@ process.</p>
 <h2 id="rfar-analysis-summary">
 <code>rfaR</code> Analysis Summary<a class="anchor" aria-label="anchor" href="#rfar-analysis-summary"></a>
 </h2>
-<p>A full uncertainty run in <code><a href="../reference/rfa_simulate.html">rfa_simulate()</a></code> is comprised of
-10,000 realizations. Each realization is compromised of 10,000 reservoir
-routing computations (simulations) using the following:</p>
+<p>A full uncertainty run in <code><a href="../reference/rfa_simulate.html">rfa_simulate()</a></code> is the result
+of 10,000 realizations. An individual realization is comprised of 10,000
+deterministic routing simulations. Each simulation contains:</p>
 <ul>
-<li><p>Stratified samples (10,000 samples comprised of 20 bins with 500
-events each) from an inflow volume-frequency curve (VFC). The VFC is
-estimated using one parameter set</p></li>
-<li><p>10,000 Seasonality samples represented by the month</p></li>
-<li><p>10,000 Starting stage samples, dependent on the sampled
-month</p></li>
+<li><p>Stratified sample from an inflow volume-frequency curve (VFC)<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;The VFC is estimated using one parameter set. The
+stratification is 20 bins with 500 events each.&lt;/p&gt;"><sup>1</sup></a></p></li>
+<li><p>Seasonality sample represented by the month</p></li>
+<li><p>Starting stage sample, dependent on the sampled month</p></li>
 <li><p>Hydrograph Shape, scaled to sampled inflow volume</p></li>
-<li><p>Modified-Puls routings to obtain peak stages and/or peak
+<li><p>Modified-Puls routing to obtain peak stages and/or peak
 discharge</p></li>
 </ul>
 <p>These module emulate the workflow and methodology from RMC-RFA. The
@@ -133,17 +129,15 @@ represent modules and functions contained in
 </h3>
 <p>Stratified sampling is used instead of simple random sampling because
 reliable estimates of exceedance probabilities far into the tail of the
-distribution — events with AEPs of 1/10,000 or rarer — are required.
+distribution (events with AEPs of 1/10,000 or rarer) are required.
 Simple random sampling would require an impractically large number of
 events to adequately populate the tail. Instead, the frequency axis is
-divided into <code>Nbins</code> equal-probability bins, and
-<code>Mevents</code> are sampled uniformly within each bin. This ensures
+divided into equal-probability bins (<code>Nbins</code>), and events are
+sampled uniformly within each bin (<code>Mevents</code>). This ensures
 the tail is well-represented without artificially inflating the total
 number of routing operations.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ords</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/stratified_sampler.html">stratified_sampler</a></span><span class="op">(</span>Nbins <span class="op">=</span> <span class="fl">20</span>,</span>
-<span>                               Mevents <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>                               dist <span class="op">=</span> <span class="st">"ev1"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">ords</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/stratified_sampler.html">stratified_sampler</a></span><span class="op">(</span>Nbins <span class="op">=</span> <span class="fl">20</span>, Mevents <span class="op">=</span> <span class="fl">500</span>, dist <span class="op">=</span> <span class="st">"ev1"</span><span class="op">)</span></span></code></pre></div>
 <p>The bin weights (<code>ords$Weights</code>) reflect the true
 probability mass that each bin represents. These weights are applied
 later to reconstruct the true exceedance probability from the stratified
@@ -167,15 +161,16 @@ range.</p>
 <code class="sourceCode R"><span><span class="va">z_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>ncol <span class="op">=</span> <span class="va">ords</span><span class="op">$</span><span class="va">Nbins</span>, nrow <span class="op">=</span> <span class="va">ords</span><span class="op">$</span><span class="va">Mevents</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Using EV1</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">ords</span><span class="op">$</span><span class="va">Nbins</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">ords</span><span class="op">$</span><span class="va">Nbins</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># Lower Bin Boundary (prior bin's upper boundary)</span></span>
 <span>  <span class="va">bin_lower</span> <span class="op">&lt;-</span> <span class="va">ords</span><span class="op">$</span><span class="va">Zlower</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
-<span>  </span>
+<span></span>
 <span>  <span class="co"># Upper Bin Boundary</span></span>
 <span>  <span class="va">bin_upper</span> <span class="op">&lt;-</span> <span class="va">ords</span><span class="op">$</span><span class="va">Zupper</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
 <span></span>
 <span>  <span class="co"># Vector of random values</span></span>
-<span>  <span class="va">z_matrix</span><span class="op">[</span>,<span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">bin_lower</span> <span class="op">+</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">500</span>, min <span class="op">=</span> <span class="fl">0</span>, max <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">*</span><span class="op">(</span><span class="va">bin_upper</span> <span class="op">-</span> <span class="va">bin_lower</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">z_matrix</span><span class="op">[</span>, <span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">bin_lower</span> <span class="op">+</span></span>
+<span>    <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">500</span>, min <span class="op">=</span> <span class="fl">0</span>, max <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="va">bin_upper</span> <span class="op">-</span> <span class="va">bin_lower</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -225,7 +220,12 @@ the correlation between stage elevation and seasonality.</p>
 <p>The sample is a pre-allocated vector/sequence of months that is
 <code>Nsims</code> long.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">InitMonths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span>, size <span class="op">=</span> <span class="va">Nsims</span>, replace <span class="op">=</span> <span class="cn">TRUE</span>, prob <span class="op">=</span> <span class="va">jmd_seasonality</span><span class="op">$</span><span class="va">relative_frequency</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">InitMonths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span></span>
+<span>  <span class="fl">1</span><span class="op">:</span><span class="fl">12</span>,</span>
+<span>  size <span class="op">=</span> <span class="va">Nsims</span>,</span>
+<span>  replace <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  prob <span class="op">=</span> <span class="va">jmd_seasonality</span><span class="op">$</span><span class="va">relative_frequency</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">UniqMonths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">InitMonths</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rfaR-Realization-Conceptual_files/figure-html/init_month-seq-plot-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
@@ -251,8 +251,11 @@ is <code>Nsims</code> long.</p>
 <span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">UniqMonths</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">sampleID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">InitMonths</span> <span class="op">==</span> <span class="va">UniqMonths</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span></span>
-<span>  <span class="va">InitStages</span><span class="op">[</span><span class="va">sampleID</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">stage_ts</span><span class="op">$</span><span class="va">stage</span><span class="op">[</span><span class="va">stage_ts</span><span class="op">$</span><span class="va">months</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">UniqMonths</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>                                 size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">InitMonths</span> <span class="op">==</span> <span class="va">UniqMonths</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">InitStages</span><span class="op">[</span><span class="va">sampleID</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span></span>
+<span>    <span class="va">stage_ts</span><span class="op">$</span><span class="va">stage</span><span class="op">[</span><span class="va">stage_ts</span><span class="op">$</span><span class="va">months</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">UniqMonths</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>    size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">InitMonths</span> <span class="op">==</span> <span class="va">UniqMonths</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>    replace <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p><img src="rfaR-Realization-Conceptual_files/figure-html/init_stage-seq-plot-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 </div>
@@ -267,18 +270,24 @@ LP3 distribution. Note that the defined critical duration is 2-days
 (<code>critical_duration</code>) and the routing window has been set to
 10-days (<code>routing_days</code>).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">hydrographs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hydrograph_setup.html">hydrograph_setup</a></span><span class="op">(</span><span class="va">jmd_hydro_apr1999</span>,</span>
-<span>                                <span class="va">jmd_hydro_jun1921</span>,</span>
-<span>                                <span class="va">jmd_hydro_jun1965</span>,</span>
-<span>                                <span class="va">jmd_hydro_jun1965_15min</span>,</span>
-<span>                                <span class="va">jmd_hydro_may1955</span>,</span>
-<span>                                <span class="va">jmd_hydro_pmf</span>,</span>
-<span>                                <span class="va">jmd_hydro_sdf</span>,</span>
-<span>                                critical_duration <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>                                routing_days <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">hydrographs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hydrograph_setup.html">hydrograph_setup</a></span><span class="op">(</span></span>
+<span>  <span class="va">jmd_hydro_apr1999</span>,</span>
+<span>  <span class="va">jmd_hydro_jun1921</span>,</span>
+<span>  <span class="va">jmd_hydro_jun1965</span>,</span>
+<span>  <span class="va">jmd_hydro_jun1965_15min</span>,</span>
+<span>  <span class="va">jmd_hydro_may1955</span>,</span>
+<span>  <span class="va">jmd_hydro_pmf</span>,</span>
+<span>  <span class="va">jmd_hydro_sdf</span>,</span>
+<span>  critical_duration <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  routing_days <span class="op">=</span> <span class="fl">10</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">hydroSamps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">hydrographs</span><span class="op">)</span>, size <span class="op">=</span> <span class="va">Nsims</span>, replace <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                     prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">hydrographs</span>, <span class="st">"probs"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">hydroSamps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span></span>
+<span>  <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">hydrographs</span><span class="op">)</span>,</span>
+<span>  size <span class="op">=</span> <span class="va">Nsims</span>,</span>
+<span>  replace <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">hydrographs</span>, <span class="st">"probs"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="conduct-reservoir-routing-simulations">Conduct Reservoir Routing Simulations<a class="anchor" aria-label="anchor" href="#conduct-reservoir-routing-simulations"></a>
@@ -310,21 +319,25 @@ estimation.</p>
 <span>    <span class="va">realiz</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">i</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">Q_matrix</span><span class="op">)</span> <span class="op">+</span> <span class="va">j</span></span>
 <span></span>
 <span>    <span class="co"># Hydrograph shape</span></span>
-<span>    <span class="va">hydrograph_shape</span> <span class="op">&lt;-</span> <span class="va">hydrographs</span><span class="op">[[</span><span class="va">hydroSamps</span><span class="op">[</span><span class="va">realiz</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span>
+<span>    <span class="va">hydrograph_shape</span> <span class="op">&lt;-</span> <span class="va">hydrographs</span><span class="op">[[</span><span class="va">hydroSamps</span><span class="op">[</span><span class="va">realiz</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span>
 <span></span>
 <span>    <span class="co"># Hydrograph observed volume</span></span>
-<span>    <span class="va">obs_hydrograph_vol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">hydrographs</span><span class="op">[[</span><span class="va">hydroSamps</span><span class="op">[</span><span class="va">realiz</span><span class="op">]</span><span class="op">]</span><span class="op">]</span>,<span class="st">"obs_vol"</span><span class="op">)</span></span>
+<span>    <span class="va">obs_hydrograph_vol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">hydrographs</span><span class="op">[[</span><span class="va">hydroSamps</span><span class="op">[</span><span class="va">realiz</span><span class="op">]</span><span class="op">]</span><span class="op">]</span>, <span class="st">"obs_vol"</span><span class="op">)</span></span>
 <span></span>
 <span>    <span class="co"># Scale hydrograph to sample volume</span></span>
-<span>    <span class="va">scaled_hydrograph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/scale_hydrograph.html">scale_hydrograph</a></span><span class="op">(</span><span class="va">hydrograph_shape</span>,</span>
-<span>                                          <span class="va">obs_hydrograph_vol</span>,</span>
-<span>                                          <span class="va">Q_matrix</span><span class="op">[</span><span class="va">i</span>,<span class="va">j</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="va">scaled_hydrograph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/scale_hydrograph.html">scale_hydrograph</a></span><span class="op">(</span></span>
+<span>      <span class="va">hydrograph_shape</span>,</span>
+<span>      <span class="va">obs_hydrograph_vol</span>,</span>
+<span>      <span class="va">Q_matrix</span><span class="op">[</span><span class="va">i</span>, <span class="va">j</span><span class="op">]</span></span>
+<span>    <span class="op">)</span></span>
 <span></span>
 <span>    <span class="co"># Route scaled hydrograph</span></span>
-<span>    <span class="va">tmpResults</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mod_puls_routing.html">mod_puls_routing</a></span><span class="op">(</span>resmodel_df <span class="op">=</span> <span class="va">jmd_resmodel</span>,</span>
-<span>                                   inflow_df <span class="op">=</span> <span class="va">scaled_hydrograph</span>,</span>
-<span>                                   initial_elev <span class="op">=</span> <span class="va">InitStages</span><span class="op">[</span><span class="va">realiz</span><span class="op">]</span>,</span>
-<span>                                   full_results <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>    <span class="va">tmpResults</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mod_puls_routing.html">mod_puls_routing</a></span><span class="op">(</span></span>
+<span>      resmodel_df <span class="op">=</span> <span class="va">jmd_resmodel</span>,</span>
+<span>      inflow_df <span class="op">=</span> <span class="va">scaled_hydrograph</span>,</span>
+<span>      initial_elev <span class="op">=</span> <span class="va">InitStages</span><span class="op">[</span><span class="va">realiz</span><span class="op">]</span>,</span>
+<span>      full_results <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>    <span class="op">)</span></span>
 <span></span>
 <span>    <span class="co"># Record results</span></span>
 <span>    <span class="va">peakStage</span><span class="op">[</span><span class="va">i</span>, <span class="va">j</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">tmpResults</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
@@ -362,14 +375,14 @@ that the vector of exceedance stages can be any length (ex.
 <code class="sourceCode R"><span><span class="va">n_exceedance_stages</span> <span class="op">&lt;-</span> <span class="va">ords</span><span class="op">$</span><span class="va">Mevents</span></span>
 <span><span class="va">stage_vect</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="va">n_exceedance_stages</span><span class="op">)</span></span>
 <span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">b</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="va">n_exceedance_stages</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">b</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="va">n_exceedance_stages</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># Min Stage</span></span>
-<span>  <span class="kw">if</span><span class="op">(</span><span class="va">b</span> <span class="op">&lt;</span> <span class="fl">2</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">b</span> <span class="op">&lt;</span> <span class="fl">2</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">stage</span> <span class="op">&lt;-</span> <span class="va">min_stage</span></span>
-<span>    </span>
-<span>  <span class="co"># Incrementally calculate the next exceedance stage  </span></span>
-<span>  <span class="op">}</span><span class="kw">else</span><span class="op">{</span></span>
-<span>    <span class="va">stage</span> <span class="op">&lt;-</span> <span class="va">stage_vect</span><span class="op">[</span><span class="va">b</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="op">(</span><span class="va">max_stage</span> <span class="op">-</span> <span class="va">min_stage</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="va">n_exceedance_stages</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="co"># Incrementally calculate the next exceedance stage</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="va">stage</span> <span class="op">&lt;-</span> <span class="va">stage_vect</span><span class="op">[</span><span class="va">b</span> <span class="op">-</span> <span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="op">(</span><span class="va">max_stage</span> <span class="op">-</span> <span class="va">min_stage</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">n_exceedance_stages</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span>  <span class="va">stage_vect</span><span class="op">[</span><span class="va">b</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">stage</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -393,13 +406,16 @@ probability of exceedance (<code>stage_exceed_prob</code>). This
 processes is repeated for each exceedance stage in
 <code>stage_vect</code>, within each bin.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">stage_exceedance_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">stage_vect</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">Q_matrix</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">stage_exceedance_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
+<span>  nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">stage_vect</span><span class="op">)</span>,</span>
+<span>  ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">Q_matrix</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="kw">for</span><span class="op">(</span><span class="va">m</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">peakStage</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">m</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">peakStage</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># Get Bin of peak stages, each represented by m event</span></span>
-<span>  <span class="va">mstages</span> <span class="op">&lt;-</span> <span class="va">peakStage</span><span class="op">[</span>,<span class="va">m</span><span class="op">]</span></span>
+<span>  <span class="va">mstages</span> <span class="op">&lt;-</span> <span class="va">peakStage</span><span class="op">[</span>, <span class="va">m</span><span class="op">]</span></span>
 <span></span>
-<span>  <span class="kw">for</span><span class="op">(</span><span class="va">n</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">stage_vect</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">n</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">stage_vect</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co"># Get Stage</span></span>
 <span>    <span class="va">exceedance_stage</span> <span class="op">&lt;-</span> <span class="va">stage_vect</span><span class="op">[</span><span class="va">n</span><span class="op">]</span></span>
 <span></span>
@@ -407,10 +423,10 @@ processes is repeated for each exceedance stage in
 <span>    <span class="va">stage_exceed_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">mstages</span> <span class="op">&gt;</span> <span class="va">exceedance_stage</span><span class="op">)</span></span>
 <span></span>
 <span>    <span class="co"># Exceedance Prob in Bin</span></span>
-<span>    <span class="va">stage_exceed_prob</span> <span class="op">&lt;-</span> <span class="va">stage_exceed_count</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">mstages</span><span class="op">)</span></span>
+<span>    <span class="va">stage_exceed_prob</span> <span class="op">&lt;-</span> <span class="va">stage_exceed_count</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">mstages</span><span class="op">)</span></span>
 <span></span>
-<span>    <span class="co"># Save to exceedance matrix </span></span>
-<span>    <span class="va">stage_exceedance_matrix</span><span class="op">[</span><span class="va">n</span>,<span class="va">m</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">stage_exceed_prob</span></span>
+<span>    <span class="co"># Save to exceedance matrix</span></span>
+<span>    <span class="va">stage_exceedance_matrix</span><span class="op">[</span><span class="va">n</span>, <span class="va">m</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">stage_exceed_prob</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p><img src="rfaR-Realization-Conceptual_files/figure-html/peak_stage_binned-plot-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
@@ -431,14 +447,14 @@ Total Probability</a>.</p>
 the realization stage-frequency curve. This curve can be interpolated
 using stages or AEPs.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">stage_aep_vect</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">NA</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">stage_vect</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">stage_aep_vect</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">stage_vect</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="kw">for</span><span class="op">(</span><span class="va">m</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">stage_exceedance_matrix</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">m</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">stage_exceedance_matrix</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># Grab row of exceedances</span></span>
-<span>  <span class="va">stage_exceedance_probs</span> <span class="op">&lt;-</span> <span class="va">stage_exceedance_matrix</span><span class="op">[</span><span class="va">m</span>,<span class="op">]</span></span>
+<span>  <span class="va">stage_exceedance_probs</span> <span class="op">&lt;-</span> <span class="va">stage_exceedance_matrix</span><span class="op">[</span><span class="va">m</span>, <span class="op">]</span></span>
 <span></span>
 <span>  <span class="co"># Sum the dot product of exceedances and weights</span></span>
-<span>  <span class="va">stage_aep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">stage_exceedance_probs</span><span class="op">*</span><span class="va">ords</span><span class="op">$</span><span class="va">Weights</span><span class="op">)</span></span>
+<span>  <span class="va">stage_aep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">stage_exceedance_probs</span> <span class="op">*</span> <span class="va">ords</span><span class="op">$</span><span class="va">Weights</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co">#save to vector</span></span>
 <span>  <span class="va">stage_aep_vect</span><span class="op">[</span><span class="va">m</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">stage_aep</span></span>
@@ -446,11 +462,50 @@ using stages or AEPs.</p>
 <span></span>
 <span><span class="va">stage_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
 <span>  AEP <span class="op">=</span> <span class="va">stage_aep_vect</span>,</span>
-<span>  Z_var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">qnorm</a></span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">stage_aep_vect</span><span class="op">)</span>,</span>
+<span>  Z_var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">qnorm</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">stage_aep_vect</span><span class="op">)</span>,</span>
 <span>  Gumb <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">AEP</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  Stage <span class="op">=</span> <span class="va">stage_vect</span><span class="op">)</span></span></code></pre></div>
+<span>  Stage <span class="op">=</span> <span class="va">stage_vect</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p><img src="rfaR-Realization-Conceptual_files/figure-html/bin_weighed_prob-plot-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 </div>
+<div class="section level2">
+<h2 id="concluding-remarks">Concluding Remarks<a class="anchor" aria-label="anchor" href="#concluding-remarks"></a>
+</h2>
+<div class="section level3">
+<h3 id="understanding-the-role-of-a-single-realization">Understanding the Role of a Single Realization<a class="anchor" aria-label="anchor" href="#understanding-the-role-of-a-single-realization"></a>
+</h3>
+<p>Understanding the inputs and calculation procedures of a single
+realization is crucial to understanding the nested Monte Carlo
+simulation process. Realization computations are used in both
+expected-only and full uncertainty stage-frequency estimates. The
+expected-only estimation consists of a single realization using 10,000
+stratified volume-frequency samples, each drawn from an individual
+volume-frequency distribution parameter set. Full uncertainty
+computations perform one realization for each volume-frequency
+distribution parameter set to satisfy the law of total probability.</p>
+</div>
+<div class="section level3">
+<h3 id="deterministic-routing-within-a-probabilistic-framework">Deterministic Routing Within a Probabilistic Framework<a class="anchor" aria-label="anchor" href="#deterministic-routing-within-a-probabilistic-framework"></a>
+</h3>
+<p>RMC-RFA produces a reservoir stage-frequency curve with uncertainty
+bounds by employing a deterministic flood routing model within a nested
+Monte Carlo simulation. The inputs to each routing simulation are
+sampled probabilistically, while the reservoir model routes each
+simulated flood event using deterministic stage-storage-discharge
+functions.</p>
+</div>
+<div class="section level3">
+<h3 id="the-law-of-total-probability-is-the-theoretical-backbone">The Law of Total Probability is the Theoretical Backbone<a class="anchor" aria-label="anchor" href="#the-law-of-total-probability-is-the-theoretical-backbone"></a>
+</h3>
+<p>The nested Monte Carlo process provides reliable stage-frequency
+estimates with uncertainty bounds through the law of total probability.
+Complete integration over the sample space is achieved through
+stratified inflow-volume sampling within each volume-frequency parameter
+set, ensuring the full range of flood outcomes is represented across all
+parameter uncertainty.</p>
+</div>
+</div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
