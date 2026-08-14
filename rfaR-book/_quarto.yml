@@ -1,0 +1,49 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "rfaR: Reservoir Frequency Analysis in R"
+  subtitle: "User and Technical Manual"
+  author:
+    - name: "Dan McGraw, P.E."
+    - name: "Andrew Verdin, PhD, P.H."
+    - name: "C. Haden Smith, P.E."
+  date: today
+  repo-url: https://github.com/USACE-RMC/rfaR
+  repo-actions: [edit, issue]
+  page-footer:
+    left: "USACE Risk Management Center"
+    right: "Built with Quarto"
+  chapters:
+    - index.qmd
+    - 01-introduction.qmd
+    - 02-methodology.qmd
+    - 03-installation.qmd
+    - 04-workflow.qmd
+    - 05-function-reference.qmd
+    - 06-simulation-modes.qmd
+    - 07-validation.qmd
+  sidebar:
+    style: docked
+    background: light
+  cover-image: cover.png
+  image: cover.png
+
+bibliography: references.bib
+
+format:
+  html:
+    theme:
+      light: flatly
+      dark: darkly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    code-tools: true
+  pdf:
+    documentclass: scrreprt
+    toc: true
+    number-sections: true
+    colorlinks: true

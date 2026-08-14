@@ -1,0 +1,18 @@
+# Simulation Modes
+
+`rfaR` supports three simulation modes, corresponding to different treatments
+of parameter uncertainty.
+
+## Median Mode
+
+
+## Expected Mode
+
+
+## Full Uncertainty Mode
+
+Runs the full nested Monte Carlo framework, propagating both parameter
+(epistemic) and event (aleatory) uncertainty.
+
+
+## Selecting a Mode

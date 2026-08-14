@@ -1,0 +1,1224 @@
+# Function Reference
+
+## Execute Reservoir Frequency Analysis
+
+### `rfa_simulate()`
+
+```
+_R_F_A _S_t_a_g_e-_F_r_e_q_u_e_n_c_y _S_i_m_u_l_a_t_i_o_n
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Performs reservoir stage frequency analysis using Monte Carlo
+     simulation to develop stage-frequency relationships. Combines
+     stratified flow-frequency sampling, flood seasonality, hydrograph
+     scaling, and Modified Puls reservoir routing to estimate annual
+     exceedance probabilities of reservoir stage.
+
+_U_s_a_g_e:
+
+     rfa_simulate(
+       sim_type = "expected",
+       bestfit_params,
+       dist = "LP3",
+       stage_ts,
+       seasonality,
+       hydrographs,
+       resmodel,
+       Nbins = 50,
+       events_per_bin = 200,
+       routing_dt = 1,
+       Ncores = NULL,
+       sim_name = NULL,
+       results_dir = NULL
+     )
+     
+_A_r_g_u_m_e_n_t_s:
+
+sim_type: Character string specifying the simulation mode. One of
+          ‘"median"’, ‘"expected"’, or ‘"full"’. Default is
+          ‘"expected"’.
+
+bestfit_params: Data frame or matrix of distribution parameters from
+          RMC-BestFit MCMC output. Columns 1-3 are distribution
+          parameters:
+
+            * LP3: mean (log), standard deviation (log), skew (log)
+
+            * GEV: location, scale, shape
+
+          Column 4 is log-likelihood (used only in ‘"median"’ mode to
+          identify the posterior mode). For ‘"expected"’ mode, must
+          have at least ‘Nbins * events_per_bin’ rows. For ‘"full"’
+          mode, each row is treated as an independent realization.
+
+    dist: Character string specifying the frequency distribution.
+          Either ‘"LP3"’ (Log-Pearson Type III, default) or ‘"GEV"’
+          (Generalized Extreme Value).
+
+stage_ts: Data frame of historical reservoir stage with columns ‘date’
+          (character in M/D/YYYY format) and ‘stage’ (numeric, feet).
+
+seasonality: Numeric vector of length 12 giving monthly flood
+          occurrence probabilities (relative frequencies). Used to
+          sample the month of each simulated event, which determines
+          the antecedent pool elevation.
+
+hydrographs: List of hydrograph data frames as returned by
+          ‘hydrograph_setup’. Each element has columns ‘datetime’,
+          ‘hour’, ‘inflow’, and ‘hydrograph_num’, with attributes
+          ‘"obs_vol"’ (observed max n-day volume) and ‘"dt"’ (timestep
+          in hours). The list must have a ‘"probs"’ attribute
+          containing normalized sampling probabilities.
+
+resmodel: Data frame with three columns: elevation (ft), storage
+          (acre-ft), and discharge (cfs). Defines the reservoir model
+          for Modified Puls routing.
+
+   Nbins: Integer. Number of stratified sampling bins in EV1 space.
+          Default is 50.
+
+events_per_bin: Integer. Number of events sampled per bin. Default is
+          200. Total simulations per realization = ‘Nbins *
+          events_per_bin’.
+
+routing_dt: Numeric. Routing timestep in hours. Passed to
+          ‘scale_hydrograph’ to resample hydrographs before routing.
+          Supported values are ‘0.25’ (15-min), ‘1’ (1-hour, default),
+          ‘6’ (6-hour), and ‘24’ (24-hour).
+
+  Ncores: Integer or ‘NULL’. Number of parallel workers for ‘"full"’
+          mode. If ‘NULL’ (default), automatically selects based on
+          available cores (capped at 16). Ignored for ‘"median"’ and
+          ‘"expected"’ modes.
+
+sim_name: Optional character string to label the simulation. Used in
+          the output CSV filename. If ‘NULL’ (default), defaults to
+          ‘"sim"’. Spaces are replaced with underscores in the
+          filename.
+
+results_dir: Optional path to the directory where results are saved. If
+          ‘NULL’ (default), creates an ‘rfaR_results’ folder in the
+          current working directory.
+
+_D_e_t_a_i_l_s:
+
+     Three simulation modes are available:
+
+     ‘"median"’ Single realization using the most likely (posterior
+          mode) parameter set from RMC-BestFit. Produces one
+          stage-frequency curve with no uncertainty bounds. Useful for
+          quick screening or debugging.
+
+     ‘"expected"’ Single realization using expected value sampling,
+          where each stratified flow sample is paired 1-to-1 with a
+          different parameter set from the posterior distribution.
+          Produces one stage-frequency curve representing the expected
+          (mean) result integrated across parameter uncertainty.
+
+     ‘"full"’ Nested Monte Carlo with full uncertainty quantification.
+          The outer loop iterates over all parameter sets (one per row
+          of ‘bestfit_params’), and each inner loop independently
+          samples natural variability via stratified sampling,
+          seasonality, starting pool, and hydrograph shape. Each
+          realization produces an independent stage-frequency curve;
+          curves are combined on a common stage grid to yield expected,
+          median, and 5th/95th percentile confidence bounds. The outer
+          loop is parallelized using the ‘future’ framework.
+
+     For all modes, natural variability is captured through stratified
+     sampling in with ‘Nbins’ bins and ‘events_per_bin’ events per bin,
+     providing reliable coverage from common events down to
+     approximately 1e-8 AEP.
+
+     The stratified sampling approach divides the AEP range (default
+     0.99 to 1e-8) into equal-width bins in EV1 (Gumbel reduced
+     variate) space and samples events uniformly within each bin. This
+     ensures adequate representation of rare flood events that would
+     require orders of magnitude more samples under crude Monte Carlo
+     sampling.
+
+     Post-processing uses the law of total probability via
+     ‘stage_frequency_curve’: for a grid of stage thresholds, the
+     weighted exceedance fraction is computed within each bin and
+     summed across bins.
+
+     In ‘"full"’ mode, each parallel worker independently samples all
+     random inputs (seasonality, starting pool, hydrograph shape, and
+     stratified z-variates) in addition to using its own parameter set.
+     This ensures full Monte Carlo independence across realizations.
+     Each worker post-processes its results into a stage-frequency
+     curve immediately, returning only the curve rather than the full
+     peak stage matrix, keeping memory usage manageable for large
+     numbers of realizations.
+
+     Curves from individual realizations are combined by interpolating
+     each onto a common stage grid (spanning the global min/max across
+     all realizations) in log10(AEP) space, then computing summary
+     statistics across realizations at each stage threshold.
+
+     Results are automatically exported as a CSV file named
+     ‘{sim_name}_{sim_type}_{MM_DD_YY_HHMM}.csv’ in the ‘results_dir’
+     directory. For example, a median simulation named "John McGraw
+     Dam" run on June 4, 2025 at 2:30 PM would produce
+     ‘John_McGraw_Dam_median_06_04_25_1430.csv’.
+
+_V_a_l_u_e:
+
+     A list whose contents depend on ‘sim_type’:
+
+     For ‘"median"’ and ‘"expected"’:
+
+     stage_frequency Data frame with columns ‘stage’ and ‘AEP’ from
+          ‘stage_frequency_curve’.
+
+     peakStage Matrix of simulated peak stages (‘events_per_bin’ rows
+          by ‘Nbins’ columns).
+
+     peakFlow Matrix of simulated peak discharges (same dimensions).
+
+     weights Stratified sampling bin weights.
+
+     For ‘"full"’:
+
+     stage_frequency Data frame with columns ‘stage’, ‘expected’,
+          ‘median’, ‘lower_05’, and ‘upper_95’ on a common stage grid.
+
+     all_curves List of per-realization stage-frequency data frames
+          (each with ‘stage’ and ‘AEP’ columns).
+
+     aep_matrix Matrix of interpolated AEP values (500 rows by
+          ‘Nrealizations’ columns) on the common stage grid.
+
+     common_stage Numeric vector of the common stage grid (length 500).
+
+     Nrealizations Number of parameter set realizations processed.
+
+     Nsims_per_realiz Number of simulations per realization.
+
+_S_e_e _A_l_s_o:
+
+     ‘flow_frequency_sampler’, ‘flow_frequency_sampler_expected’,
+     ‘stratified_sampler’, ‘scale_hydrograph’, ‘mod_puls_routing’,
+     ‘stage_frequency_curve’, ‘hydrograph_setup’
+
+_E_x_a_m_p_l_e_s:
+
+     ## Not run:
+     
+     # Not run: Expected and Median modes take ~15s; Full uncert
+     # runs ~10,000 parameter realizations and takes 3-4 hours on a
+     # typical machine.
+     
+     # --- Setup ---
+     hydros <- hydrograph_setup(jmd_hydro_apr1999, jmd_hydro_jun1965,
+                                jmd_hydro_may1955, jmd_hydro_pmf,
+                                critical_duration = 2, routing_days = 10)
+     
+     # --- Expected only (default) ---
+     results_exp <- rfa_simulate(
+       sim_type       = "expected",
+       bestfit_params = jmd_bf_parameter_sets,
+       stage_ts       = jmd_wy1980_stage,
+       seasonality    = jmd_seasonality$relative_frequency,
+       hydrographs    = hydros,
+       resmodel       = jmd_resmodel,
+       sim_name       = "jmd"
+     )
+     
+     # --- Median only ---
+     results_med <- rfa_simulate(
+       sim_type       = "median",
+       bestfit_params = jmd_bf_parameter_sets,
+       stage_ts       = jmd_wy1980_stage,
+       seasonality    = jmd_seasonality$relative_frequency,
+       hydrographs    = hydros,
+       resmodel       = jmd_resmodel,
+       sim_name       = "jmd"
+     )
+     
+     # --- Full uncertainty (parallelized) ---
+     results_full <- rfa_simulate(
+       sim_type       = "full",
+       bestfit_params = jmd_bf_parameter_sets,
+       stage_ts       = jmd_wy1980_stage,
+       seasonality    = jmd_seasonality$relative_frequency,
+       hydrographs    = hydros,
+       resmodel       = jmd_resmodel,
+       Ncores         = 4,
+       sim_name       = "jmd"
+     )
+     ## End(Not run)
+     
+```
+
+## Primary RFA Modules
+
+### `stratified_sampler()`
+
+```
+_S_t_r_a_t_i_f_i_e_d _S_a_m_p_l_e_r
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Creates stratified bins in standard normal space for use in
+     stratified sampling. Stratification improves sampling efficiency
+     by ensuring adequate coverage of rare events.
+
+_U_s_a_g_e:
+
+     stratified_sampler(
+       minAEP = 1e-08,
+       maxAEP = 0.99,
+       dist = "EV1",
+       Nbins = NULL,
+       Mevents = NULL,
+       verbose = FALSE
+     )
+     
+_A_r_g_u_m_e_n_t_s:
+
+  minAEP: Minimum annual exceedance probability. Default is ‘1E-8’.
+
+  maxAEP: Maximum annual exceedance probability. Default is ‘0.99’.
+
+    dist: Character. Probability space for stratification.
+          Case-insensitive. Default is ‘"EV1"’. Invalid values trigger
+          a warning and default to ‘"EV1"’.
+
+          ‘"EV1"’ Extreme Value Type I (Gumbel) space. Recommended for
+              flood frequency analysis. Allocates more bins to rare
+              events through the transformation ‘-log(-log(1-AEP))’,
+              improving tail estimation efficiency.
+
+          ‘"Normal"’ Standard normal (z-score) space. Uniform bins in
+              z-space. Use when the underlying phenomenon is normally
+              distributed.
+
+          ‘"Uniform"’ Uniform probability space. Equal probability
+              width per bin. Generally inefficient for rare event
+              estimation.
+
+   Nbins: Number of stratified bins. Default is ‘20’.
+
+ Mevents: Number of events per bin. Default is ‘500’.
+
+ verbose: Logical. If ‘TRUE’, prints a completion message summarizing
+          the stratification. Default is ‘FALSE’.
+
+_D_e_t_a_i_l_s:
+
+     The function divides the probability space into bins using the
+     specified transformation. EV1 transformation is recommended for
+     heavy-tailed distributions common in flood frequency analysis, as
+     it naturally allocates more sampling effort to rare events
+     critical for dam safety assessments.
+
+_V_a_l_u_e:
+
+     A list containing:
+
+     normOrd Vector of standard normal ordinates spanning all bins
+
+     Weights Vector of probability weights for each bin
+
+     Zlower Vector of lower bounds for each bin (standard normal)
+
+     Zupper Vector of upper bounds for each bin (standard normal)
+
+     Nbins Number of bins
+
+     Mevents Number of events per bin
+
+_E_x_a_m_p_l_e_s:
+
+     # Default stratification
+     strat <- stratified_sampler()
+     
+     # Custom bins and events
+     strat <- stratified_sampler(minAEP = 1E-6,
+                                 maxAEP = 0.5,
+                                 dist = "EV1",
+                                 Nbins = 10,
+                                 Mevents = 100)
+     
+     # With verbose message
+     strat <- stratified_sampler(verbose = TRUE)
+     
+```
+
+### `flow_frequency_sampler()`
+
+```
+_F_l_o_w _F_r_e_q_u_e_n_c_y _S_a_m_p_l_e_r
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Generates a stratified matrix of flow values from a single set of
+     frequency distribution parameters using stratified Monte Carlo
+     sampling. Used internally by ‘rfa_simulate()’ for median-only and
+     full uncertainty modes.
+
+_U_s_a_g_e:
+
+     flow_frequency_sampler(
+       bestfit_params,
+       freq_dist = "LP3",
+       strat_dist = "ev1",
+       Nbin = NULL,
+       Mevent = NULL
+     )
+     
+_A_r_g_u_m_e_n_t_s:
+
+bestfit_params: Numeric vector of length 3 containing distribution
+          parameters. For LP3: ‘c(mean_log, sd_log, skew_log)’. For
+          GEV: ‘c(location, scale, shape)’.
+
+freq_dist: Character. Distribution type. Either ‘"LP3"’ (default) or
+          ‘"GEV"’.
+
+strat_dist: Character. Probability space for stratification bins.
+          Passed to ‘stratified_sampler()’. One of ‘"ev1"’ (default),
+          ‘"normal"’, or ‘"uniform"’. See ‘stratified_sampler()’ for
+          details.
+
+    Nbin: Integer. Number of stratified bins. Default is ‘50’.
+
+  Mevent: Integer. Number of events per bin. Default is ‘200’.
+
+_V_a_l_u_e:
+
+     A list containing:
+
+     flow Matrix of sampled flow values [Mevent x Nbin]
+
+     nbins Number of stratified bins
+
+     mevents Number of events per bin
+
+     weights Probability weights for each bin from
+          ‘stratified_sampler()’
+
+_S_e_e _A_l_s_o:
+
+     ‘stratified_sampler()’, ‘qp3()’, ‘rfa_simulate()’
+
+_E_x_a_m_p_l_e_s:
+
+     # Single parameter set (posterior mode)
+     params <- c(4.85, 0.39, -0.15)
+     result <- flow_frequency_sampler(params, freq_dist = "LP3",
+                                      Nbin = 20, Mevent = 500)
+     # Dimensions of result
+     dim(result$flow)  # 500 x 20
+     
+     # Distribution of Sampled Flows
+     hist(result$flow)
+     
+```
+
+### `flow_frequency_sampler_expected()`
+
+```
+_F_l_o_w _F_r_e_q_u_e_n_c_y _S_a_m_p_l_e_r (_E_x_p_e_c_t_e_d _O_n_l_y)
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Generates a stratified matrix of flow values by pairing each
+     z-ordinate with a different parameter set from the posterior
+     distribution. This collapses the nested Monte Carlo structure into
+     a single pass, simultaneously sampling natural variability (via
+     stratified z-ordinates) and knowledge uncertainty (via varying
+     parameters). Used internally by ‘rfa_simulate()’ for expected-only
+     mode.
+
+_U_s_a_g_e:
+
+     flow_frequency_sampler_expected(
+       bestfit_params,
+       freq_dist = "LP3",
+       strat_dist = "ev1",
+       Nbin = NULL,
+       Mevent = NULL
+     )
+     
+_A_r_g_u_m_e_n_t_s:
+
+bestfit_params: Data frame of distribution parameters from RMC-BestFit.
+          Must have ‘Nbin * Mevent’ rows (one parameter set per
+          z-ordinate). For LP3: columns are mean (log), sd (log), skew
+          (log). For GEV: columns are location, scale, shape.
+
+freq_dist: Character. Distribution type. Either ‘"LP3"’ (default) or
+          ‘"GEV"’.
+
+strat_dist: Character. Probability space for stratification bins.
+          Passed to ‘stratified_sampler()’. One of ‘"ev1"’ (default),
+          ‘"normal"’, or ‘"uniform"’. See ‘stratified_sampler()’ for
+          details.
+
+    Nbin: Integer. Number of stratified bins. Default is ‘50’.
+
+  Mevent: Integer. Number of events per bin. Default is ‘200’.
+
+_V_a_l_u_e:
+
+     A list containing:
+
+     flow Matrix of sampled flow values [Mevent x Nbin]
+
+     nbins Number of stratified bins
+
+     mevents Number of events per bin
+
+     weights Probability weights for each bin from
+          ‘stratified_sampler()’
+
+_S_e_e _A_l_s_o:
+
+     ‘stratified_sampler()’, ‘qp3()’, ‘flow_frequency_sampler()’,
+     ‘rfa_simulate()’
+
+_E_x_a_m_p_l_e_s:
+
+     # Using a pre-loaded parameter set (all 10,000 parameter sets)
+     result <- flow_frequency_sampler_expected(jmd_bf_parameter_sets,
+                                               Nbin = 20, Mevent = 500)
+     dim(result$flow)  # 500 x 20
+     
+     # Using bootstrapped parameter samples
+     jmd_samples <- bootstrap_vfc(
+       c(jmd_vfc_parameters$mean_log,
+         jmd_vfc_parameters$sd_log,
+         jmd_vfc_parameters$skew_log),
+       dist = "LP3",
+       ERL  = jmd_vfc_parameters$erl)
+     
+     jmd_result <- flow_frequency_sampler_expected(
+       jmd_samples$params,
+       freq_dist = "LP3",
+       Nbin      = 20,
+       Mevent    = 500)
+     
+```
+
+### `hydrograph_setup()`
+
+```
+_H_y_d_r_o_g_r_a_p_h _S_e_t_u_p _f_o_r _R_F_A _S_i_m_u_l_a_t_i_o_n
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Prepares hydrograph data frames copied from RMC-RFA for use in RFA
+     simulation. Converts date/time columns and adds sequential hour
+     and hydrograph ID columns.
+
+_U_s_a_g_e:
+
+     hydrograph_setup(
+       ...,
+       critical_duration = NULL,
+       routing_days = NULL,
+       weights = NULL
+     )
+     
+_A_r_g_u_m_e_n_t_s:
+
+     ...: Data frame representing an input hydrograph with columns:
+          Ord, Date, Time, Flow (cfs). Copied directly from RMC-RFA.
+          Date & Time should be ‘class() = "character"’
+
+critical_duration: Critical duration in days.
+
+routing_days: Desired length of routing simulation in days.
+
+ weights: Optional numeric vector of sampling weights for each
+          hydrograph. Must be the same length as the number of input
+          hydrographs. Weights are normalized to probabilities
+          internally. If NULL (default), all hydrographs are weighted
+          equally.
+
+_V_a_l_u_e:
+
+     A list of formatted hydrograph data frames, each containing:
+
+     datetime Date-time (POSIXct)
+
+     hour Hours from start of event
+
+     inflow Inflow (cfs)
+
+     hydrograph_num Hydrograph ID number for sampling
+
+     obs_vol Max n-day inflow volume (stored as an attribute of each
+          dataframe)
+
+     dt Hydrograph timestep (delta time, dt) in hours (stored as an
+          attribute of each dataframe)
+
+     The returned list also has a ‘probs’ attribute containing the
+     normalized sampling probabilities derived from ‘weights’.
+
+_E_x_a_m_p_l_e_s:
+
+     # Setup with equal weights (default)
+     hydros <- hydrograph_setup(jmd_hydro_apr1999,
+                                jmd_hydro_jun1965,
+                                jmd_hydro_pmf,
+                                critical_duration = 2,
+                                routing_days = 10)
+     
+     # Setup with custom weights (PMF 3x more likely to be sampled)
+     hydros <- hydrograph_setup(jmd_hydro_apr1999,
+                                jmd_hydro_jun1965,
+                                jmd_hydro_pmf,
+                                critical_duration = 2,
+                                routing_days = 10,
+                                weights = c(1, 1, 3))
+     
+     # view normalized probabilities
+     attr(hydros, "probs")
+     
+```
+
+### `scale_hydrograph()`
+
+```
+_S_c_a_l_e _H_y_d_r_o_g_r_a_p_h
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Scales inflow hydrograph given a sampled inflow volume from the
+     volume-frequency curve. Scale factor is defined by the sampled
+     inflow volume and the maximum volume of the corresponding
+     duration. If the native hydrograph timestep differs from the
+     target routing timestep, resampling is applied prior to scaling:
+     finer-to-coarser uses block averaging; coarser-to-finer uses
+     linear interpolation.
+
+_U_s_a_g_e:
+
+     scale_hydrograph(
+       hydrograph_shape,
+       observed_volume,
+       sampled_volume,
+       routing_dt = 1
+     )
+     
+_A_r_g_u_m_e_n_t_s:
+
+hydrograph_shape: Data frame with two columns: time (hours) and inflow
+          (cfs). Must be in that order.
+
+observed_volume: Maximum n-day inflow volume from input hydrograph
+          shape.
+
+sampled_volume: Sampled inflow volume from volume-frequency curve.
+
+routing_dt: Target routing timestep in hours. Supported values are
+          ‘0.25’ (15-min), ‘1’ (1-hour, default), ‘6’ (6-hour), and
+          ‘24’ (24-hour).
+
+_V_a_l_u_e:
+
+     A data frame with two columns: ‘time_hrs’ and ‘inflow_cfs’, at the
+     target routing timestep, with time starting at hour 0.
+
+_E_x_a_m_p_l_e_s:
+
+     # Example hydrograph. Requires pre-processing
+     hydro_example <- hydrograph_setup(jmd_hydro_jun1965_15min, critical_duration = 2, routing_days = 10)
+     hydrograph_shape <- hydro_example[[1]][, 2:3]
+     
+     # Default 1-hour routing timestep
+     scaled <- scale_hydrograph(hydrograph_shape,
+                                observed_volume = 50000,
+                                sampled_volume = 55000)
+     
+     # 15-min input hydrograph, 1-hour routing timestep
+     scaled <- scale_hydrograph(hydrograph_shape,
+                                observed_volume = 50000,
+                                sampled_volume = 55000,
+                                routing_dt = 1)
+     
+```
+
+### `mod_puls_routing()`
+
+```
+_M_o_d_i_f_i_e_d _P_u_l_s _R_e_s_e_r_v_o_i_r _R_o_u_t_i_n_g
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Performs Modified Puls (level pool) routing of inflow hydrograph
+     given a defined reservoir geometry (Stage (ft), Storage (ac-ft),
+     Discharge (cfs)).
+
+_U_s_a_g_e:
+
+     mod_puls_routing(resmodel_df, inflow_df, initial_elev, full_results = FALSE)
+     
+_A_r_g_u_m_e_n_t_s:
+
+resmodel_df: Data frame with three columns: elevation/stage (ft),
+          storage (acre-feet), and discharge (cfs). Must be in that
+          order.
+
+inflow_df: Data frame with two columns: time (hours) and inflow (cfs).
+          Must be in that order.
+
+initial_elev: Starting water surface elevation in feet.
+
+full_results: Logical. If ‘FALSE’ (default), returns only peak stage
+          and discharge. If ‘TRUE’, returns the complete routing
+          result.
+
+_V_a_l_u_e:
+
+     If ‘full_results = FALSE’, a named numeric vector with
+     ‘peak_stage_ft’ and ‘peak_discharge_cfs’. If ‘full_results =
+     TRUE’, a data frame with columns: ‘time_hr’, ‘inflow_cfs’,
+     ‘elevation_ft’, ‘storage_acft’, and ‘outflow_cfs’.
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     Chow, V.T. (1959). Open-Channel Hydraulics. McGraw-Hill.
+
+_E_x_a_m_p_l_e_s:
+
+     # Example hydrograph. Requires pre-processing
+     hydro_example <- hydrograph_setup(jmd_hydro_jun1965_15min,
+                                        critical_duration = 2,
+                                        routing_days = 10)
+     hydrograph_shape <- hydro_example[[1]][, 2:3]
+     scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
+                                           observed_volume = 50000,
+                                           sampled_volume = 55000)
+     
+     # Peak values only
+     mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830)
+     
+     # Full routing table
+     jmd_full_routing <- mod_puls_routing(jmd_resmodel,
+                                          scaled_hydrograph,
+                                          initial_elev = 3830,
+                                          full_results = TRUE)
+     head(jmd_full_routing)
+     
+```
+
+### `stage_frequency_curve()`
+
+```
+_C_o_m_p_u_t_e _S_t_a_g_e-_F_r_e_q_u_e_n_c_y _C_u_r_v_e
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Converts a matrix of routed peak stages into a stage-frequency
+     curve using the law of total probability across stratified bins.
+     For each candidate stage, the conditional exceedance probability
+     within each bin is weighted by the bin probability and summed to
+     produce the unconditional annual exceedance probability (AEP).
+
+_U_s_a_g_e:
+
+     stage_frequency_curve(peakStage, weights, stage_bins = 1000)
+     
+_A_r_g_u_m_e_n_t_s:
+
+peakStage: Matrix of peak stages [Mevents x Nbins] from routing.
+
+ weights: Numeric vector of bin weights from ‘stratified_sampler()’.
+          Must have length equal to ‘ncol(peakStage)’.
+
+stage_bins: Numeric value of exceedance stages used to compute
+          stage-frequency in each bin. Default is 1000.
+
+_V_a_l_u_e:
+
+     A data frame with columns:
+
+     stage Evaluated stage values
+
+     AEP Annual exceedance probability at each stage
+
+_S_e_e _A_l_s_o:
+
+     ‘stratified_sampler()’, ‘flow_frequency_sampler()’,
+     ‘rfa_simulate()’
+
+```
+
+## Rejection Sampling
+
+### `pmf_stage_lognormal()`
+
+```
+_P_a_r_a_m_e_t_e_r_i_z_e _a _T_h_r_e_e-_P_a_r_a_m_e_t_e_r _L_o_g_n_o_r_m_a_l _P_M_F _f_o_r _S_t_a_g_e
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Computes the parameters of a three-parameter lognormal
+     distribution for use as a probabilistic maximum stage (PMF) in
+     rejection sampling. The shift parameter defines the lower or upper
+     bound of the distribution (typically, the lower value). The
+     function supports two modes: (1) supplying a best estimate and
+     assuming sigma, or (2) supplying a best estimate, low, and high to
+     solve for sigma numerically.
+
+_U_s_a_g_e:
+
+     pmf_stage_lognormal(
+       pmf_shift,
+       pmf_mean,
+       pmf_sigma = NULL,
+       pmf_low = NULL,
+       pmf_high = NULL
+     )
+     
+_A_r_g_u_m_e_n_t_s:
+
+pmf_shift: Numeric. Assumed lower-bound of the lognormal distribution.
+          This will define the shift value. Must be less than all of
+          ‘pmf_mean’, ‘pmf_low’, and ‘pmf_high’.
+
+pmf_mean: Numeric. Assumed mean of the shifted PMF stage distribution.
+
+pmf_sigma: Numeric. Assumed standard deviation on the log scale.
+          Required if ‘pmf_low’ and ‘pmf_high’ are not supplied.
+          Defaults to ‘NULL’. Suggested value = 0.5.
+
+ pmf_low: Numeric. Low estimate of PMF stage (assumed 5th percentile).
+          Optional. If supplied, ‘pmf_high’ must also be supplied.
+
+pmf_high: Numeric. High estimate of PMF stage (assumed 95th
+          percentile). Optional. If supplied, ‘pmf_low’ must also be
+          supplied.
+
+_V_a_l_u_e:
+
+     A named list with the following elements:
+
+     pmf_shift Hard lower bound of the distribution.
+
+     pmf_mean Assumed mean of shifted PMF stage distribution.
+
+     pmf_sigma Standard deviation on the log scale.
+
+     pmf_mu Derived location parameter on the log scale.
+
+     pmf_p05 5th percentile of the PMF stage distribution.
+
+     pmf_p95 95th percentile of the PMF stage distribution.
+
+_E_x_a_m_p_l_e_s:
+
+     # Mode 1: assume sigma
+     pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9, pmf_sigma = 0.5)
+     
+     # Mode 2: solve for sigma from low/high estimates
+     pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9,
+                                 pmf_low = 239, pmf_high = 245)
+     
+```
+
+### `rejection_sampling_stage()`
+
+```
+_R_e_j_e_c_t_i_o_n _S_a_m_p_l_i_n_g _o_f _S_t_a_g_e _B_o_u_n_d_e_d _b_y _a _P_r_o_b_a_b_i_l_i_s_t_i_c _M_a_x_i_m_u_m _S_t_a_g_e
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Draws ‘n_samples’ stage values from a stage-frequency curve,
+     rejecting any draws that exceed a probabilistic maximum stage
+     (PMF) sampled from a three-parameter lognormal distribution.
+     Accepted samples are ranked and assigned Weibull plotting
+     positions for use in frequency analysis.
+
+_U_s_a_g_e:
+
+     rejection_sampling_stage(
+       pmf_stage_LN,
+       stage_freq_df = NULL,
+       aep = NULL,
+       stage = NULL,
+       n_samples = 1e+07
+     )
+     
+_A_r_g_u_m_e_n_t_s:
+
+pmf_stage_LN: A named list returned by ‘pmf_stage_lognormal’ containing
+          the lognormal PMF parameters.
+
+stage_freq_df: A data frame with AEP in column 1 and stage in column 2.
+          Mutually exclusive with ‘aep’ and ‘stage’.
+
+     aep: Numeric vector of annual exceedance probabilities. Must be
+          supplied with ‘stage’. Mutually exclusive with
+          ‘stage_freq_df’.
+
+   stage: Numeric vector of stages corresponding to ‘aep’. Must be
+          supplied with ‘aep’. Mutually exclusive with ‘stage_freq_df’.
+
+n_samples: Integer. Number of samples to draw. Defaults to ‘1e7’.
+
+_V_a_l_u_e:
+
+     A data frame of thinned accepted samples with columns for z-score
+     and stage, suitable for plotting a probabilistically bounded
+     stage-frequency curve. Output is produced by ‘thin_samples()’.
+
+_S_e_e _A_l_s_o:
+
+     ‘pmf_stage_lognormal’
+
+_E_x_a_m_p_l_e_s:
+
+     ## Not run:
+     
+     pmf_ln <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9, pmf_sigma = 0.5)
+     
+     result <- rejection_sampling_stage(
+       pmf_stage_LN  = pmf_ln,
+       stage_freq_df = my_stage_freq_df,
+       n_samples     = 1e7
+     )
+     ## End(Not run)
+     
+```
+
+## Additional Utilities
+
+### `bootstrap_vfc()`
+
+```
+_B_o_o_t_s_t_r_a_p _o_p_t_i_o_n _f_o_r _V_F_C (_R_F_A-_s_t_y_l_e _w/ _E_R_L)
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Generates matrix of parameters using posterior mode/mean and ERL
+
+_U_s_a_g_e:
+
+     bootstrap_vfc(bestfit_postmode, dist = "LP3", ERL = 150, Nboots = 10000)
+     
+_A_r_g_u_m_e_n_t_s:
+
+bestfit_postmode: Vector of distribution parameters from RMC-BestFit.
+          For LP3: columns are mean (log), sd (log), skew (log). For
+          GEV: columns are location, scale, shape.
+
+    dist: Distribution type. Either ‘"LP3"’ (default) or ‘"GEV"’.
+
+     ERL: psuedo effective record length for bootstrapping
+
+  Nboots: number of bootstraps
+
+_V_a_l_u_e:
+
+     A list containing:
+
+     params Matrix of bootstrapped parameters
+
+     dist Distribution selected (LP3 or GEV)
+
+     postmode Posterior mode parameters provided to bootstrap
+
+     ERL pseudo effective record length provided to bootstrap
+
+_S_e_e _A_l_s_o:
+
+     ‘flow_frequency_sampler()’
+
+_E_x_a_m_p_l_e_s:
+
+     # Sample using JMD VFC parameters
+     jmd_samples <- bootstrap_vfc(c(jmd_vfc_parameters$mean_log,
+                                     jmd_vfc_parameters$sd_log,
+                                     jmd_vfc_parameters$skew_log),
+                                     dist = "LP3",
+                                     ERL = jmd_vfc_parameters$erl)
+     
+     # GEV Example with parent distribution parameters
+     gev_example <- c(3.0, 1.0, -0.1)
+     gev_samples <- bootstrap_vfc(gev_example,
+                                   dist = "GEV",
+                                   ERL = 200,
+                                   Nboots = 5000)
+     hist(gev_samples$params[,1])
+     
+     # LP3 Example with parent distribution parameters
+     lp3_example <- c(3.5, 0.22, 0.1)
+     lp3_samples <- bootstrap_vfc(lp3_example,
+                                   dist = "LP3",
+                                   ERL = 300,
+                                   Nboots = 1000)
+     hist(lp3_samples$params[,3])
+     
+```
+
+### `qp3()`
+
+```
+_P_e_a_r_s_o_n _T_y_p_e _I_I_I _I_n_v_e_r_s_e _C_D_F (_Q_u_a_n_t_i_l_e _F_u_n_c_t_i_o_n)
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Computes quantiles from a Pearson Type III distribution given
+     probabilities and distribution parameters (mean, standard
+     deviation, skewness).
+
+_U_s_a_g_e:
+
+     qp3(p, mu, sigma, gamma)
+     
+_A_r_g_u_m_e_n_t_s:
+
+       p: Vector of probabilities (between 0 and 1).
+
+      mu: Mean of the distribution.
+
+   sigma: Standard deviation of the distribution.
+
+   gamma: Skewness coefficient of the distribution.
+
+_D_e_t_a_i_l_s:
+
+     NOTE: This is the non-vectorized version of the function (it will
+     be used in a loop) Vectorized version is part of future
+     development.
+
+     The Pearson Type III distribution is parameterized by mean (‘mu’),
+     standard deviation (‘sigma’), and skewness (‘gamma’). These are
+     converted internally to location, scale, and shape parameters.
+
+     When skewness is near zero (‘abs(gamma) < 1E-3’), the normal
+     distribution is used as an approximation.
+
+_V_a_l_u_e:
+
+     Vector of quantiles corresponding to the input probabilities.
+
+_E_x_a_m_p_l_e_s:
+
+     # Single quantile
+     qp3(0.99, mu = 10, sigma = 2, gamma = 0.5)
+     
+     # Multiple quantiles
+     qp3(c(0.5, 0.9, 0.99), mu = 10, sigma = 2, gamma = 0.5)
+     
+     # Use with JMD volume-frequency parameters
+     qp3(0.99,
+         mu = jmd_vfc_parameters$mean_log,
+         sigma = jmd_vfc_parameters$sd_log,
+         gamma = jmd_vfc_parameters$skew_log)
+     
+```
+
+### `aep2stage()`
+
+```
+_I_n_t_e_r_p_o_l_a_t_e _S_t_a_g_e _f_r_o_m _A_E_P
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Given a stage-frequency curve, interpolates stage values at target
+     AEPs. Interpolation is performed in standard normal (z-variate)
+     space for better behavior across orders of magnitude in AEP.
+
+_U_s_a_g_e:
+
+     aep2stage(aep, stage, interp_aep)
+     
+_A_r_g_u_m_e_n_t_s:
+
+     aep: Numeric vector of annual exceedance probabilities from the
+          known curve.
+
+   stage: Numeric vector of stage values corresponding to ‘aep’.
+
+interp_aep: Numeric vector of target AEPs to interpolate at.
+
+_V_a_l_u_e:
+
+     Numeric vector of interpolated stage values (same length as
+     ‘interp_aep’).
+
+_S_e_e _A_l_s_o:
+
+     ‘stage2aep’ for the inverse operation.
+
+_E_x_a_m_p_l_e_s:
+
+     # Get stage at the 1.12% and 0.175% AEP
+     aep2stage(jmd_rfa_expected$AEP, jmd_rfa_expected$Expected, c(0.0112,1.75E-3))
+     
+```
+
+### `stage2aep()`
+
+```
+_I_n_t_e_r_p_o_l_a_t_e _A_E_P _f_r_o_m _S_t_a_g_e
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Given a stage-frequency curve, interpolates AEP values at target
+     stages. Interpolation is performed in standard normal (z-variate)
+     space for better behavior across orders of magnitude in AEP.
+
+_U_s_a_g_e:
+
+     stage2aep(aep, stage, interp_stage)
+     
+_A_r_g_u_m_e_n_t_s:
+
+     aep: Numeric vector of annual exceedance probabilities from the
+          known curve.
+
+   stage: Numeric vector of stage values corresponding to ‘aep’.
+
+interp_stage: Numeric vector of target stage values to interpolate at.
+
+_D_e_t_a_i_l_s:
+
+     Stage-frequency curves typically flatten at very rare AEPs once
+     the reservoir reaches the reservoir model discharge capacity. This
+     produces tied stage values. ‘approx()’ handles these by averaging
+     the corresponding AEPs, which may emit a "collapsing to unique 'x'
+     values" warning. This is expected behavior.
+
+_V_a_l_u_e:
+
+     Numeric vector of interpolated AEP values (same length as
+     ‘interp_stage’).
+
+_S_e_e _A_l_s_o:
+
+     ‘aep2stage’ for the inverse operation.
+
+_E_x_a_m_p_l_e_s:
+
+     # Get AEP at stage 3862.0-ft and 3872-ft
+     stage2aep(jmd_rfa_expected$AEP, jmd_rfa_expected$Expected, c(3862.0, 3872))
+     
+```
+
+### `interpolate_aep_matrix()`
+
+```
+_I_n_t_e_r_p_o_l_a_t_e _A_E_P_s _a_t _T_a_r_g_e_t _S_t_a_g_e_s _A_c_r_o_s_s _R_e_a_l_i_z_a_t_i_o_n_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     For each realization's stage-frequency curve, interpolates the AEP
+     at every target stage value. Interpolation is performed in
+     standard normal (z-variate) space.
+
+_U_s_a_g_e:
+
+     interpolate_aep_matrix(results_list, target_stages)
+     
+_A_r_g_u_m_e_n_t_s:
+
+results_list: List of realization data frames, each with columns
+          ‘stage’ and ‘AEP’.
+
+target_stages: Numeric vector of stage values to interpolate at.
+
+_V_a_l_u_e:
+
+     Matrix of AEP values with rows = target stages and columns =
+     realizations.
+
+```
+
+### `interpolate_stage_matrix()`
+
+```
+_I_n_t_e_r_p_o_l_a_t_e _S_t_a_g_e_s _a_t _T_a_r_g_e_t _A_E_P_s _A_c_r_o_s_s _R_e_a_l_i_z_a_t_i_o_n_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     For each realization's stage-frequency curve, interpolates the
+     stage at every target AEP value. Interpolation is performed in
+     standard normal (z-variate) space.
+
+_U_s_a_g_e:
+
+     interpolate_stage_matrix(results_list, target_aeps)
+     
+_A_r_g_u_m_e_n_t_s:
+
+results_list: List of realization data frames, each with columns
+          ‘stage’ and ‘AEP’.
+
+target_aeps: Numeric vector of AEP values to interpolate at.
+
+_V_a_l_u_e:
+
+     Matrix of stage values with rows = target AEPs and columns =
+     realizations.
+
+```
+
+### `power_function()`
+
+```
+_P_o_w_e_r _F_u_n_c_t_i_o_n
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Raises 10 to the 1st through the nth power
+
+_U_s_a_g_e:
+
+     power_function(x)
+     
+_A_r_g_u_m_e_n_t_s:
+
+       x: Highest power of 10 to use
+
+_V_a_l_u_e:
+
+     Vector of 10 raised sequentially from the 1st to the nth power.
+
+```
+
+### `theme_rfar_conceptual()`
+
+```
+_r_f_a_R _g_g_p_l_o_t_2 _T_h_e_m_e _f_o_r _C_o_n_c_e_p_t_u_a_l _P_l_o_t_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     A custom ‘ggplot2’ theme used in the rfaR conceptual realization
+     vignette. Based on ‘theme_bw’ with tightened text sizes, italic
+     titles, and the legend suppressed. Intended for figures that
+     emphasize curves over annotation density.
+
+_U_s_a_g_e:
+
+     theme_rfar_conceptual()
+     
+_V_a_l_u_e:
+
+     A ‘ggplot2’ theme object that can be added to a ‘ggplot’ via ‘+’.
+
+_S_e_e _A_l_s_o:
+
+     ‘theme_bw’
+
+_E_x_a_m_p_l_e_s:
+
+     library(ggplot2)
+     ggplot(jmd_rfa_expected, aes(x = AEP, y = Expected)) +
+       geom_line() +
+       scale_x_continuous(transform = c("log10", "reverse")) +
+       labs(title = "JMD Expected Stage-Frequency",
+            subtitle = "Demonstrating theme_rfar_conceptual()",
+            x = "AEP", y = "Stage (ft)") +
+       theme_rfar_conceptual()
+     
+```
+
