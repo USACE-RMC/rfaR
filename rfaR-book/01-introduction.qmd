@@ -1,0 +1,46 @@
+# Introduction
+
+## Purpose
+
+`rfaR` is an R implementation of the Risk Management Center Reservoir
+Frequency Analysis (RMC-RFA) software. RMC-RFA (and `rfaR`) use apply stratified
+monte carlo methods to deterministic flood routing to produce a hydrologic hazard
+curve[^1] at individual dam and levee sites. Hazard analyses support risk assessments
+within the USACE Dam & Levee Safety Program.
+
+[^1]: In risk analysis, the *hazard* is the risk source where potential consequences relate to harm [@aven_society_nodate]. In the context of dam and levee risk analyses, the source of risk is often defined using a reservoir stage-frequency relationship. The terms *hydrologic loading*, *stage-frequency*, and *hydrologic hazard* are used interchangeably to relate reservoir/river stages to annual exceedance probabilities (AEPs). These relationships are commonly presented as curves and are used as probabilistic loading conditions in dam and levee risk analyses.
+
+
+## rfaR Analysis Summary
+
+`rfaR` combines deterministic flood routing (Modified Puls) with a
+nested, two-loop Monte Carlo framework to quantify:
+
+- **Natural variability** — simulated in the inner loop as a *realization*. Each
+  realization represents 10,000 indiviual flood events with randomly sampled
+  starting stage, hydrograph shape, and inflow volume (from an associated frequency distribution).
+
+- **Knowledge uncertainty (epistemic uncertainty)** — simulated in the outer loop, by sampling
+  different parameter sets (from LP3 or GEV flood frequency distributions,
+  informed by MCMC output from RMC-BestFit).
+
+## Relationship to RMC-RFA
+
+`rfaR` reimplements the core RMC-RFA methodology in open-source R, offering:
+
+- Reproducibility and transparency in the routing and sampling logic
+- Integration with the broader R/RMC ecosystem (e.g., RMC-BestFit outputs)
+
+## How This Manual Is Organized
+
+- **Methodology** — statistical and hydrologic methods behind the two-loop
+  simulation framework
+- **Installation** — getting `rfaR` running locally
+- **Workflow** — an end-to-end walkthrough from raw inputs to a
+  stage-frequency curve
+- **Simulation Modes** — Median, Expected, and Full Uncertainty simulation modes explained
+- **Function Reference** — Function references (auto-generated from package documentation)
+- **Validation** — comparison against RMC-RFA / HEC-HMS benchmark results
+
+For function-level documentation, also see the
+[pkgdown reference site](https://usace-rmc.github.io/rfaR/).

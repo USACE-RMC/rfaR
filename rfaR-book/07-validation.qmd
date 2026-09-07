@@ -1,0 +1,15 @@
+# Validation
+
+## Purpose
+
+
+## Modified Puls Routing
+
+
+## Stratified Sampling
+
+
+## See Also
+
+Detailed validation vignettes are also available on the
+[pkgdown site](https://usace-rmc.github.io/rfaR/articles/index.html).
