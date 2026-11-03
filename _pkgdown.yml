@@ -7,8 +7,8 @@ home:
   title: "rfaR — Reservoir Frequency Analysis"
   description: "Stratified Monte Carlo stage-frequency analysis for dam & levee safety applications"
   links:
-  - text: USACE Risk Management Center
-    href: https://www.rmc.usace.army.mil/Software/RMC-RFA/
+    - text: USACE Risk Management Center
+      href: https://www.rmc.usace.army.mil/Software/RMC-RFA/
 navbar:
   structure:
     left: [intro, reference, articles, news]
@@ -16,57 +16,59 @@ navbar:
     articles:
       text: Articles
       menu:
-      - text: Validation
-        href: articles/index.html
-      - text: Technical Reference
-        href: articles/rfaR-Realization-Conceptual.html
+        - text: Validation
+          href: articles/index.html
+        - text: Technical Reference
+          href: articles/rfaR-Realization-Conceptual.html
 reference:
-- title: "Execute Reservoir Frequency Analysis"
-  desc: "Top-level function that uses primary modules to conduct reservoir-frequency analysis"
-  contents:
-  - rfa_simulate
-- title: "Primary Reservoir Frequency Analysis Modules"
-  desc: "Core functions for reservoir frequency analysis"
-  contents:
-  - stratified_sampler
-  - flow_frequency_sampler
-  - flow_frequency_sampler_expected
-  - hydrograph_setup
-  - scale_hydrograph
-  - mod_puls_routing
-  - stage_frequency_curve
-- title: "Additional Utilities"
-  desc: "Supporting utility functions"
-  contents:
-  - bootstrap_vfc
-  - qp3
-  - aep2stage
-  - stage2aep
-  - interpolate_aep_matrix
-  - interpolate_stage_matrix
-  - power_function
-  - theme_rfar_conceptual
-  - pmf_stage_lognormal
-  - rejection_sampling_stage
-- title: "Datasets"
-  desc: "Example datasets included with rfaR"
-  contents:
-  - starts_with("jmd_")
-  - starts_with("cc_")
-  - example_stratified
+  - title: "Execute Reservoir Frequency Analysis"
+    desc: "Top-level function that uses primary modules to conduct reservoir-frequency analysis"
+    contents:
+      - rfa_simulate
+  - title: "Primary Reservoir Frequency Analysis Modules"
+    desc: "Core functions for reservoir frequency analysis"
+    contents:
+      - stratified_sampler
+      - flow_frequency_sampler
+      - flow_frequency_sampler_expected
+      - hydrograph_setup
+      - scale_hydrograph
+      - mod_puls_routing
+      - stage_frequency_curve
+  - title: "Additional Utilities"
+    desc: "Supporting utility functions"
+    contents:
+      - bootstrap_vfc
+      - qp3
+      - aep2stage
+      - stage2aep
+      - interpolate_aep_matrix
+      - interpolate_stage_matrix
+      - power_function
+      - theme_rfar_conceptual
+      - pmf_stage_lognormal
+      - rejection_sampling_stage
+  - title: "Datasets"
+    desc: "Example datasets included with rfaR"
+    contents:
+      - starts_with("jmd_")
+      - starts_with("cc_")
+      - example_stratified
+      - ex_rs_stage_loading
+      - hms_scaled_may1955
 articles:
-- title: Validation
-  navbar: Validation
-  contents:
-  - validation-hydrograph_sampling
-  - validation-hydrograph_scaling
-  - validation-mod_puls_routing
-  - validation-seasonality_sampling
-  - validation-starting_stage
-  - validation-stratified_sampler
-  - validation-vfc_parameter_sets
-- title: Technical Reference
-  navbar: Technical Reference
-  contents:
-  - rfaR-Realization-Conceptual
-  - project-setup
+  - title: Validation
+    navbar: Validation
+    contents:
+      - validation-hydrograph_sampling
+      - validation-hydrograph_scaling
+      - validation-mod_puls_routing
+      - validation-seasonality_sampling
+      - validation-starting_stage
+      - validation-stratified_sampler
+      - validation-vfc_parameter_sets
+  - title: Technical Reference
+    navbar: Technical Reference
+    contents:
+      - rfaR-Realization-Conceptual
+      - project-setup

@@ -98,7 +98,7 @@ pmf_stage_lognormal <- function(
       implied_p95 <- pmf_shift + qlnorm(0.95, mu, sigma)
       (implied_p05 - pmf_low)^2 + (implied_p95 - pmf_high)^2
     }
-    pmf_sigma <- optimise(sigma_obj, interval = c(1e-6, 10))$minimum
+    pmf_sigma <- stats::optimise(sigma_obj, interval = c(1e-6, 10))$minimum
   } else {
     # --- Mode 1: sigma supplied ---
     if (is.null(pmf_sigma)) {
@@ -152,22 +152,20 @@ pmf_stage_lognormal <- function(
 #'   supplied with \code{aep}. Mutually exclusive with \code{stage_freq_df}.
 #' @param n_samples Integer. Number of samples to draw. Defaults to \code{1e7}.
 #'
-#' @return A data frame of thinned accepted samples with columns for z-score
+#' @return A data frame of thinned accepted samples with columns for aep, z-score (`z_aep`),
 #'   and stage, suitable for plotting a probabilistically bounded stage-frequency
 #'   curve. Output is produced by \code{thin_samples()}.
 #'
 #' @seealso \code{\link{pmf_stage_lognormal}}
 #'
 #' @examples
-#' \dontrun{
-#' pmf_ln <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9, pmf_sigma = 0.5)
 #'
+#' pmf_ln <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9, pmf_sigma = 0.5)
 #' result <- rejection_sampling_stage(
 #'   pmf_stage_LN  = pmf_ln,
-#'   stage_freq_df = my_stage_freq_df,
-#'   n_samples     = 1e7
+#'   stage_freq_df = ex_rs_stage_loading,
+#'   n_samples     = 1e5
 #' )
-#' }
 #'
 #' @export
 rejection_sampling_stage <- function(
@@ -251,12 +249,20 @@ rejection_sampling_stage <- function(
   stage_sorted <- sort(stage_draws)
 
   # Assign Weibull pp
-  weibull_aep <- 1 - seq_len(n_samples) / (n_samples + 1)
+  weibull_aep <- 1 - (seq_len(n_samples) / (n_samples + 1))
 
   # Convert to z_aep
   z_sorted <- qnorm(1 - weibull_aep)
 
   # Thin for plotting purposes
-  probabilistic_bounded <- thin_samples(n_samples, z_sorted, stage_sorted)
+  probabilistic_bounded_z <- thin_samples(n_samples, z_sorted, stage_sorted)
+
+  # Return the aep, z_aep, and stage
+  out_aep <- 1 - pnorm(probabilistic_bounded_z$z_aep)
+  probabilistic_bounded <- data.frame(
+    aep = out_aep,
+    z_aep = probabilistic_bounded_z$z_aep,
+    stage = probabilistic_bounded_z$stage
+  )
   return(probabilistic_bounded)
 }

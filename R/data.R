@@ -442,3 +442,48 @@
 #' example_stratified[sample(nrow(example_stratified), 5), ]
 "example_stratified"
 
+# REJECTION SAMPLING EXAMPLE DATA
+#' Rejection Sampling - Example Data
+#'
+#' Hydrologic Loading (stage-frequency) data that can be used in the PMF-stage
+#' rejection sampling process.
+#'
+#' @format A data frame with 89 rows and 2 columns:
+#' \describe{
+#'   \item{aep}{Annual Exceedance Probabilities}
+#'   \item{stage}{Expected stages corresponding to AEPs}
+#' }
+#'
+#' @seealso [rfaR::rejection_sampling_stage()]
+#' @examples
+#' head(ex_rs_stage_loading)
+"ex_rs_stage_loading"
+
+#' HMS-Scaled May 1955 Data
+#'
+#' Example data used in package tests for scaled hydrograph routing.
+#'
+#' @format A data frame.
+#'
+#' @keywords datasets
+"hms_scaled_may1955"
+
+
+#' JMD RFA Median Results
+#'
+#' Example median results data for reservoir frequency analysis.
+#'
+#' @format A data frame.
+#'
+#' @keywords datasets
+"jmd_rfa_median"
+
+
+#' JMD RFA Expected Tabular Results
+#'
+#' Example expected tabular results data for reservoir frequency analysis.
+#'
+#' @format A data frame.
+#'
+#' @keywords datasets
+"jmd_rfa_expected_tabular"
