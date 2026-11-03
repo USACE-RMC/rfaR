@@ -80,8 +80,12 @@ Example datasets included with rfaR
   : JMD Reservoir Model
 - [`jmd_rfa_expected`](https://usace-rmc.github.io/rfaR/reference/jmd_rfa_expected.md)
   : JMD RFA Results - Expected Only
+- [`jmd_rfa_expected_tabular`](https://usace-rmc.github.io/rfaR/reference/jmd_rfa_expected_tabular.md)
+  : JMD RFA Expected Tabular Results
 - [`jmd_rfa_full`](https://usace-rmc.github.io/rfaR/reference/jmd_rfa_full.md)
   : JMD RFA Results - Full Uncertainty
+- [`jmd_rfa_median`](https://usace-rmc.github.io/rfaR/reference/jmd_rfa_median.md)
+  : JMD RFA Median Results
 - [`jmd_seasonality`](https://usace-rmc.github.io/rfaR/reference/jmd_seasonality.md)
   : JMD Flood Seasonality
 - [`jmd_stage_duration`](https://usace-rmc.github.io/rfaR/reference/jmd_stage_duration.md)
@@ -102,3 +106,7 @@ Example datasets included with rfaR
   : Cherry Cricket Dam Reservoir Model
 - [`example_stratified`](https://usace-rmc.github.io/rfaR/reference/example_stratified.md)
   : Stratified Sampling - Example Data
+- [`ex_rs_stage_loading`](https://usace-rmc.github.io/rfaR/reference/ex_rs_stage_loading.md)
+  : Rejection Sampling - Example Data
+- [`hms_scaled_may1955`](https://usace-rmc.github.io/rfaR/reference/hms_scaled_may1955.md)
+  : HMS-Scaled May 1955 Data

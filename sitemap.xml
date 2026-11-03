@@ -21,9 +21,11 @@
 <url><loc>https://usace-rmc.github.io/rfaR/reference/cc_inflowhydro.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/cc_init_elev.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/cc_resmodel.html</loc></url>
+<url><loc>https://usace-rmc.github.io/rfaR/reference/ex_rs_stage_loading.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/example_stratified.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/flow_frequency_sampler.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/flow_frequency_sampler_expected.html</loc></url>
+<url><loc>https://usace-rmc.github.io/rfaR/reference/hms_scaled_may1955.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/hydrograph_setup.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/index.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/interpolate_aep_matrix.html</loc></url>
@@ -40,7 +42,9 @@
 <url><loc>https://usace-rmc.github.io/rfaR/reference/jmd_por_inflow.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/jmd_resmodel.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/jmd_rfa_expected.html</loc></url>
+<url><loc>https://usace-rmc.github.io/rfaR/reference/jmd_rfa_expected_tabular.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/jmd_rfa_full.html</loc></url>
+<url><loc>https://usace-rmc.github.io/rfaR/reference/jmd_rfa_median.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/jmd_seasonality.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/jmd_stage_duration.html</loc></url>
 <url><loc>https://usace-rmc.github.io/rfaR/reference/jmd_vfc.html</loc></url>

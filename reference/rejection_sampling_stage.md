@@ -46,9 +46,9 @@ rejection_sampling_stage(
 
 ## Value
 
-A data frame of thinned accepted samples with columns for z-score and
-stage, suitable for plotting a probabilistically bounded stage-frequency
-curve. Output is produced by
+A data frame of thinned accepted samples with columns for aep, z-score
+(`z_aep`), and stage, suitable for plotting a probabilistically bounded
+stage-frequency curve. Output is produced by
 [`thin_samples()`](https://usace-rmc.github.io/rfaR/reference/thin_samples.md).
 
 ## See also
@@ -58,13 +58,15 @@ curve. Output is produced by
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-pmf_ln <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9, pmf_sigma = 0.5)
 
+pmf_ln <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9, pmf_sigma = 0.5)
 result <- rejection_sampling_stage(
   pmf_stage_LN  = pmf_ln,
-  stage_freq_df = my_stage_freq_df,
-  n_samples     = 1e7
+  stage_freq_df = ex_rs_stage_loading,
+  n_samples     = 1e5
 )
-} # }
+#> Warning: Rejection sampling did not converge after 1000 iterations.
+#> ℹ 100000 samples remain unresolved.
+#> ℹ Check that `pmf_stage_LN` is consistent with the provided stage-frequency
+#>   curve.
 ```
