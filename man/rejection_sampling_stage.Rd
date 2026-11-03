@@ -28,7 +28,7 @@ supplied with \code{aep}. Mutually exclusive with \code{stage_freq_df}.}
 \item{n_samples}{Integer. Number of samples to draw. Defaults to \code{1e7}.}
 }
 \value{
-A data frame of thinned accepted samples with columns for z-score
+A data frame of thinned accepted samples with columns for aep, z-score (\code{z_aep}),
 and stage, suitable for plotting a probabilistically bounded stage-frequency
 curve. Output is produced by \code{thin_samples()}.
 }
@@ -39,15 +39,13 @@ three-parameter lognormal distribution. Accepted samples are ranked and
 assigned Weibull plotting positions for use in frequency analysis.
 }
 \examples{
-\dontrun{
-pmf_ln <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9, pmf_sigma = 0.5)
 
+pmf_ln <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9, pmf_sigma = 0.5)
 result <- rejection_sampling_stage(
   pmf_stage_LN  = pmf_ln,
-  stage_freq_df = my_stage_freq_df,
-  n_samples     = 1e7
+  stage_freq_df = ex_rs_stage_loading,
+  n_samples     = 1e5
 )
-}
 
 }
 \seealso{
