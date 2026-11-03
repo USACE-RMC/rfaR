@@ -458,3 +458,32 @@
 #' @examples
 #' head(ex_rs_stage_loading)
 "ex_rs_stage_loading"
+
+#' HMS-Scaled May 1955 Data
+#'
+#' Example data used in package tests for scaled hydrograph routing.
+#'
+#' @format A data frame.
+#'
+#' @keywords datasets
+"hms_scaled_may1955"
+
+
+#' JMD RFA Median Results
+#'
+#' Example median results data for reservoir frequency analysis.
+#'
+#' @format A data frame.
+#'
+#' @keywords datasets
+"jmd_rfa_median"
+
+
+#' JMD RFA Expected Tabular Results
+#'
+#' Example expected tabular results data for reservoir frequency analysis.
+#'
+#' @format A data frame.
+#'
+#' @keywords datasets
+"jmd_rfa_expected_tabular"

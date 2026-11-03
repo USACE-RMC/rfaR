@@ -55,6 +55,7 @@ reference:
       - starts_with("cc_")
       - example_stratified
       - ex_rs_stage_loading
+      - hms_scaled_may1955
 articles:
   - title: Validation
     navbar: Validation
