@@ -186,79 +186,102 @@
 #'   sim_name       = "jmd"
 #' )
 #' }
-rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
-                         stage_ts, seasonality, hydrographs, resmodel,
-                         Nbins = 50, events_per_bin = 200,
-                         routing_dt = 1,
-                         Ncores = NULL,
-                         sim_name = NULL,
-                         results_dir = NULL) {
-
+rfa_simulate <- function(
+  sim_type = "expected",
+  bestfit_params,
+  dist = "LP3",
+  stage_ts,
+  seasonality,
+  hydrographs,
+  resmodel,
+  Nbins = 50,
+  events_per_bin = 200,
+  routing_dt = 1,
+  Ncores = NULL,
+  sim_name = NULL,
+  results_dir = NULL
+) {
   # Sim Name Subfolder
   # If Sim Name not provided, name the sim the sim_type + datetime
-  if(is.null(sim_name)){
+  if (is.null(sim_name)) {
     sim_name <- "sim"
     sim_dt <- paste0(format(Sys.time(), "%m_%d_%y_%H%M"))
-    result_csv_name <- paste0(sim_name,"_",sim_type,"_",sim_dt,".csv")
-    sim_sub_dir <- paste0(sim_name,"_",sim_type)
-  } else{
+    result_csv_name <- paste0(sim_name, "_", sim_type, "_", sim_dt, ".csv")
+    sim_sub_dir <- paste0(sim_name, "_", sim_type)
+  } else {
     sim_name_clean <- gsub(" ", "_", sim_name)
     sim_name <- sim_name_clean
     sim_dt <- paste0(format(Sys.time(), "%m_%d_%y_%H%M"))
-    result_csv_name <- paste0(sim_name,"_",sim_type,"_",sim_dt,".csv")
-    sim_sub_dir <- paste0(sim_name,"_",sim_type)
+    result_csv_name <- paste0(sim_name, "_", sim_type, "_", sim_dt, ".csv")
+    sim_sub_dir <- paste0(sim_name, "_", sim_type)
   }
 
   # If results dir isnt defined
-  if(is.null(results_dir)){
-    results_dir <- file.path(getwd(),"rfaR_results",sim_sub_dir)
+  if (is.null(results_dir)) {
+    results_dir <- file.path(getwd(), "rfaR_results", sim_sub_dir)
   }
   dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
 
   # Final results CSV file
-  result_csv_file <- file.path(results_dir,result_csv_name)
+  result_csv_file <- file.path(results_dir, result_csv_name)
 
   # Target AEPs (for Results - Consider hard coding this as built in data)
-  target_aeps <- c(seq(0.99,0.91,by = -0.01),
-                   unlist(lapply(0:-7, function(p) {seq(9 * 10^p, 1 * 10^p, by = -1 * 10^p) / 10})))
+  target_aeps <- c(
+    seq(0.99, 0.91, by = -0.01),
+    unlist(lapply(0:-7, function(p) {
+      seq(9 * 10^p, 1 * 10^p, by = -1 * 10^p) / 10
+    }))
+  )
 
   # Remove rows with missing stages in stage timeseries
-  stage_ts <- stage_ts[!is.na(stage_ts$stage),]
+  stage_ts <- stage_ts[!is.na(stage_ts$stage), ]
 
-# ============================================================================
-# MEDIAN ONLY ====
-# ============================================================================
+  # ============================================================================
+  # MEDIAN ONLY ====
+  # ============================================================================
   if (sim_type == "median") {
     cli::cli_alert_success("Median Only")
 
     # MOST LIKELY PARAMETER SET ================================================
     # Can be switched to mean, confirm log-likelihood column
     # Does log-likelihood column exist?
-    LL_exists <- "log_likelihood" %in% names(bestfit_params) | ncol(bestfit_params) > 3
+    LL_exists <- "log_likelihood" %in%
+      names(bestfit_params) |
+      ncol(bestfit_params) > 3
 
     # if not use only params supplied OR mean of each parameter
     if (nrow(bestfit_params) == 1) {
-      bf_params <- c(bestfit_params[1, 1],
-                     bestfit_params[1, 2],
-                     bestfit_params[1, 3])
+      bf_params <- c(
+        bestfit_params[1, 1],
+        bestfit_params[1, 2],
+        bestfit_params[1, 3]
+      )
     } else if (LL_exists == TRUE) {
       ml_idx <- which.max(bestfit_params[, 4])
-      bf_params <- c(bestfit_params[ml_idx, 1],
-                     bestfit_params[ml_idx, 2],
-                     bestfit_params[ml_idx, 3])
+      bf_params <- c(
+        bestfit_params[ml_idx, 1],
+        bestfit_params[ml_idx, 2],
+        bestfit_params[ml_idx, 3]
+      )
     } else {
-      bf_params <- c(mean(bestfit_params[, 1]),
-                     mean(bestfit_params[, 2]),
-                     mean(bestfit_params[, 3]))
+      bf_params <- c(
+        mean(bestfit_params[, 1]),
+        mean(bestfit_params[, 2]),
+        mean(bestfit_params[, 3])
+      )
     }
 
     # FLOW-FREQUENCY SAMPLER ===================================================
     cli::cli_h1("Generating Volume-Frequency Samples")
-    cli::cli_alert_info(paste0(dist," distribution"))
+    cli::cli_alert_info(paste0(dist, " distribution"))
 
-    Q_samp <- flow_frequency_sampler(bf_params, freq_dist = dist,
-                           strat_dist = "ev1",
-                           Nbin = Nbins, Mevent = events_per_bin)
+    Q_samp <- flow_frequency_sampler(
+      bf_params,
+      freq_dist = dist,
+      strat_dist = "ev1",
+      Nbin = Nbins,
+      Mevent = events_per_bin
+    )
     # Save flow matrix
     Q_matrix <- Q_samp$flow
 
@@ -282,9 +305,11 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
 
     for (i in 1:length(UniqMonths)) {
       sampleID <- which(InitMonths == UniqMonths[i])
-      InitStages[sampleID] <- sample(stage_ts$stage[stage_ts$months %in% UniqMonths[i]],
-                                     size = sum(InitMonths == UniqMonths[i]),
-                                     replace = TRUE)
+      InitStages[sampleID] <- sample(
+        stage_ts$stage[stage_ts$months %in% UniqMonths[i]],
+        size = sum(InitMonths == UniqMonths[i]),
+        replace = TRUE
+      )
     }
 
     cli::cli_alert_success("Seasonality & Starting Pool Sampled")
@@ -293,9 +318,12 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     cli::cli_h1("Pre-Allocating Hydrograph Shape Sampling")
 
     # Sample Order with probs (normlized weights)
-    hydroSamps <- sample(1:length(hydrographs), size = Nsims,
-                         replace = TRUE,
-                         prob = attr(hydrographs, "probs"))
+    hydroSamps <- sample(
+      1:length(hydrographs),
+      size = Nsims,
+      replace = TRUE,
+      prob = attr(hydrographs, "probs")
+    )
 
     cli::cli_alert_success("Hydrograph Shape Sampled")
 
@@ -306,7 +334,7 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     # Tabular Results of Realization
     # Cant put numeric and character in the same matrix
     realiz_numeric <- matrix(NA_real_, nrow = Nsims, ncol = 5)
-    realiz_hydro   <- character(Nsims)
+    realiz_hydro <- character(Nsims)
 
     realiz <- 0
 
@@ -317,24 +345,36 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
         realiz <- (i - 1) * ncol(Q_matrix) + j
 
         # Hydrograph shape
-        hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][,2:3]
+        hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][, 2:3]
         # Hydrograph observed volume
-        obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]],"obs_vol")
+        obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]], "obs_vol")
         # Scale hydrograph to sample volume
-        scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
-                                              obs_hydrograph_vol,
-                                              Q_matrix[i, j],
-                                              routing_dt = routing_dt)
+        scaled_hydrograph <- scale_hydrograph(
+          hydrograph_shape,
+          obs_hydrograph_vol,
+          Q_matrix[i, j],
+          routing_dt = routing_dt
+        )
         # Route scaled hydrograph
-        tmpResults <- mod_puls_routing(resmodel_df = resmodel, inflow_df = scaled_hydrograph,
-                                       initial_elev = InitStages[realiz], full_results = FALSE)
+        tmpResults <- mod_puls_routing(
+          resmodel_df = resmodel,
+          inflow_df = scaled_hydrograph,
+          initial_elev = InitStages[realiz],
+          full_results = FALSE
+        )
 
         # Record results
         peakStage[i, j] <- tmpResults[1]
         peakFlow[i, j] <- tmpResults[2]
 
         # Realiz table
-        realiz_numeric[realiz, ] <- c(InitMonths[realiz], InitStages[realiz], Q_matrix[i,j], tmpResults[1], tmpResults[2])
+        realiz_numeric[realiz, ] <- c(
+          InitMonths[realiz],
+          InitStages[realiz],
+          Q_matrix[i, j],
+          tmpResults[1],
+          tmpResults[2]
+        )
         realiz_hydro[realiz] <- attr(hydrographs[[hydroSamps[realiz]]], "name")
 
         cli::cli_progress_update()
@@ -344,52 +384,69 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     cli::cli_alert_success("Median Only Simulations Complete")
 
     # Combine realiz tabluar data
-    realiz_results <- data.frame(month      = realiz_numeric[, 1],
-                                 init_stage = realiz_numeric[, 2],
-                                 inflow_vol = realiz_numeric[, 3],
-                                 peak_stage = realiz_numeric[, 4],
-                                 peak_dis   = realiz_numeric[, 5],
-                                 hydrograph = realiz_hydro)
+    realiz_results <- data.frame(
+      month = realiz_numeric[, 1],
+      init_stage = realiz_numeric[, 2],
+      inflow_vol = realiz_numeric[, 3],
+      peak_stage = realiz_numeric[, 4],
+      peak_dis = realiz_numeric[, 5],
+      hydrograph = realiz_hydro
+    )
 
     # REALIZATION STAGE-FREQUENCY CURVE ========================================
     cli::cli_h1("Calculating exceedance probabilities")
-    median_stage_aep <- stage_frequency_curve(peakStage,Q_samp$weights)
-    median_stage_freq <- data.frame(AEP = target_aeps,
-                                   Median = aep2stage(median_stage_aep$AEP,
-                                                      median_stage_aep$stage,
-                                                      target_aeps))
+    median_stage_aep <- stage_frequency_curve(peakStage, Q_samp$weights)
+    median_stage_freq <- data.frame(
+      AEP = target_aeps,
+      Median = aep2stage(
+        median_stage_aep$AEP,
+        median_stage_aep$stage,
+        target_aeps
+      )
+    )
     cli::cli_alert_success("Calcuated stage-frequency curve")
 
     # Write to file ============================================================
-    write.csv(median_stage_freq,result_csv_file,row.names = FALSE)
-    cli::cli_alert_success("Stage-Frequency curve successfully exported to {.path {result_csv_file}}.")
+    write.csv(median_stage_freq, result_csv_file, row.names = FALSE)
+    cli::cli_alert_success(
+      "Stage-Frequency curve successfully exported to {.path {result_csv_file}}."
+    )
 
-    realiz_tablular_csvfile <- file.path(results_dir,paste0("realizations_tabular_",sim_name,"_",sim_type,".csv"))
-    write.csv(realiz_results,realiz_tablular_csvfile,row.names = FALSE)
-    cli::cli_alert_success("Tabular Realization results successfully exported to {.path {realiz_tablular_csvfile}}.")
+    realiz_tablular_csvfile <- file.path(
+      results_dir,
+      paste0("realizations_tabular_", sim_name, "_", sim_type, ".csv")
+    )
+    write.csv(realiz_results, realiz_tablular_csvfile, row.names = FALSE)
+    cli::cli_alert_success(
+      "Tabular Realization results successfully exported to {.path {realiz_tablular_csvfile}}."
+    )
 
     # Return
     return(list(
       stage_frequency = median_stage_freq,
-      peakStage       = peakStage,
-      peakFlow        = peakFlow,
-      weights         = Q_samp$weights,
+      peakStage = peakStage,
+      peakFlow = peakFlow,
+      weights = Q_samp$weights,
       realization_results = realiz_results
     ))
 
-# ============================================================================
-# EXPECTED ONLY ====
-# ============================================================================
+    # ============================================================================
+    # EXPECTED ONLY ====
+    # ============================================================================
   } else if (sim_type == "expected") {
     cli::cli_alert_success("Expected Only")
 
     # FLOW-FREQUENCY SAMPLER ===================================================
     cli::cli_h1("Generating Volume-Frequency Samples")
-    cli::cli_alert_info(paste0(dist," distribution"))
+    cli::cli_alert_info(paste0(dist, " distribution"))
 
-    Q_samp <- flow_frequency_sampler_expected(bestfit_params, freq_dist = dist,
-                                     strat_dist = "ev1",
-                                     Nbin = Nbins, Mevent = events_per_bin)
+    Q_samp <- flow_frequency_sampler_expected(
+      bestfit_params,
+      freq_dist = dist,
+      strat_dist = "ev1",
+      Nbin = Nbins,
+      Mevent = events_per_bin
+    )
     # Save flow matrix
     Q_matrix <- Q_samp$flow
 
@@ -413,9 +470,11 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
 
     for (i in 1:length(UniqMonths)) {
       sampleID <- which(InitMonths == UniqMonths[i])
-      InitStages[sampleID] <- sample(stage_ts$stage[stage_ts$months %in% UniqMonths[i]],
-                                     size = sum(InitMonths == UniqMonths[i]),
-                                     replace = TRUE)
+      InitStages[sampleID] <- sample(
+        stage_ts$stage[stage_ts$months %in% UniqMonths[i]],
+        size = sum(InitMonths == UniqMonths[i]),
+        replace = TRUE
+      )
     }
 
     cli::cli_alert_success("Seasonality & Starting Pool Sampled")
@@ -424,9 +483,12 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     cli::cli_h1("Pre-Allocating Hydrograph Shape Sampling")
 
     # Sample Order with probs (normlized weights)
-    hydroSamps <- sample(1:length(hydrographs), size = Nsims,
-                         replace = TRUE,
-                         prob = attr(hydrographs, "probs"))
+    hydroSamps <- sample(
+      1:length(hydrographs),
+      size = Nsims,
+      replace = TRUE,
+      prob = attr(hydrographs, "probs")
+    )
 
     cli::cli_alert_success("Hydrograph Shape Sampled")
 
@@ -437,7 +499,7 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     # Tabular Results of Realization
     # Cant put numeric and character in the same matrix
     realiz_numeric <- matrix(NA_real_, nrow = Nsims, ncol = 5)
-    realiz_hydro   <- character(Nsims)
+    realiz_hydro <- character(Nsims)
 
     realiz <- 0
     cli::cli_progress_bar("Expected Only Simulations", total = Nsims)
@@ -447,24 +509,36 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
         realiz <- (i - 1) * ncol(Q_matrix) + j
 
         # Hydrograph shape
-        hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][,2:3]
+        hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][, 2:3]
         # Hydrograph observed volume
-        obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]],"obs_vol")
+        obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]], "obs_vol")
         # Scale hydrograph to sample volume
-        scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
-                                              obs_hydrograph_vol,
-                                              Q_matrix[i, j],
-                                              routing_dt = routing_dt)
+        scaled_hydrograph <- scale_hydrograph(
+          hydrograph_shape,
+          obs_hydrograph_vol,
+          Q_matrix[i, j],
+          routing_dt = routing_dt
+        )
         # Route scaled hydrograph
-        tmpResults <- mod_puls_routing(resmodel_df = resmodel, inflow_df = scaled_hydrograph,
-                                       initial_elev = InitStages[realiz], full_results = FALSE)
+        tmpResults <- mod_puls_routing(
+          resmodel_df = resmodel,
+          inflow_df = scaled_hydrograph,
+          initial_elev = InitStages[realiz],
+          full_results = FALSE
+        )
 
         # Record results
         peakStage[i, j] <- tmpResults[1]
         peakFlow[i, j] <- tmpResults[2]
 
         # Realiz table
-        realiz_numeric[realiz, ] <- c(InitMonths[realiz], InitStages[realiz], Q_matrix[i,j], tmpResults[1], tmpResults[2])
+        realiz_numeric[realiz, ] <- c(
+          InitMonths[realiz],
+          InitStages[realiz],
+          Q_matrix[i, j],
+          tmpResults[1],
+          tmpResults[2]
+        )
         realiz_hydro[realiz] <- attr(hydrographs[[hydroSamps[realiz]]], "name")
 
         cli::cli_progress_update()
@@ -474,42 +548,55 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     cli::cli_alert_success("Expected Only Simulations Complete")
 
     # Combine realiz tabular data
-    realiz_results <- data.frame(month      = realiz_numeric[, 1],
-                                 init_stage = realiz_numeric[, 2],
-                                 inflow_vol = realiz_numeric[, 3],
-                                 peak_stage = realiz_numeric[, 4],
-                                 peak_dis   = realiz_numeric[, 5],
-                                 hydrograph = realiz_hydro)
+    realiz_results <- data.frame(
+      month = realiz_numeric[, 1],
+      init_stage = realiz_numeric[, 2],
+      inflow_vol = realiz_numeric[, 3],
+      peak_stage = realiz_numeric[, 4],
+      peak_dis = realiz_numeric[, 5],
+      hydrograph = realiz_hydro
+    )
 
     # REALIZATION STAGE-FREQUENCY CURVE ========================================
     cli::cli_h1("Calculating exceedance probabilities")
-    expected_stage_aep <- stage_frequency_curve(peakStage,Q_samp$weights)
-    expected_stage_freq <- data.frame(AEP = target_aeps,
-                                      Expected = aep2stage(expected_stage_aep$AEP,
-                                                         expected_stage_aep$stage,
-                                                         target_aeps))
+    expected_stage_aep <- stage_frequency_curve(peakStage, Q_samp$weights)
+    expected_stage_freq <- data.frame(
+      AEP = target_aeps,
+      Expected = aep2stage(
+        expected_stage_aep$AEP,
+        expected_stage_aep$stage,
+        target_aeps
+      )
+    )
     cli::cli_alert_success("Calcuated stage-frequency curve")
 
     # Write to file ============================================================
-    write.csv(expected_stage_freq,result_csv_file,row.names = FALSE)
-    cli::cli_alert_success("Stage-Frequency curve successfully exported to {.path {result_csv_file}}.")
+    write.csv(expected_stage_freq, result_csv_file, row.names = FALSE)
+    cli::cli_alert_success(
+      "Stage-Frequency curve successfully exported to {.path {result_csv_file}}."
+    )
 
-    realiz_tablular_csvfile <- file.path(results_dir,paste0("realizations_tabular_",sim_name,"_",sim_type,".csv"))
-    write.csv(realiz_results,realiz_tablular_csvfile,row.names = FALSE)
-    cli::cli_alert_success("Tabular Realization results successfully exported to {.path {realiz_tablular_csvfile}}.")
+    realiz_tablular_csvfile <- file.path(
+      results_dir,
+      paste0("realizations_tabular_", sim_name, "_", sim_type, ".csv")
+    )
+    write.csv(realiz_results, realiz_tablular_csvfile, row.names = FALSE)
+    cli::cli_alert_success(
+      "Tabular Realization results successfully exported to {.path {realiz_tablular_csvfile}}."
+    )
 
     # Return
     return(list(
       stage_frequency = expected_stage_freq,
-      peakStage       = peakStage,
-      peakFlow        = peakFlow,
-      weights         = Q_samp$weights,
+      peakStage = peakStage,
+      peakFlow = peakFlow,
+      weights = Q_samp$weights,
       realization_results = realiz_results
     ))
 
-# ============================================================================
-# FULL UNCERT ===
-# ============================================================================
+    # ============================================================================
+    # FULL UNCERT ===
+    # ============================================================================
   } else if (sim_type == "full") {
     cli::cli_alert_success("Full Uncertainty")
 
@@ -521,16 +608,16 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     # The last thing I want is rfaR nuking someone's motherboard
     if (is.null(Ncores)) {
       total_cores <- future::availableCores(omit = 1)
-      if(total_cores >= 19){
+      if (total_cores >= 19) {
         use_cores <- 16
-      }else{
+      } else {
         use_cores <- 12
       }
       Ncores <- min(use_cores, total_cores)
     }
 
     # Results directory - Set name to simulation name
-    realization_dir <- file.path(results_dir,"realizations")
+    realization_dir <- file.path(results_dir, "realizations")
     dir.create(realization_dir, showWarnings = FALSE, recursive = TRUE)
 
     cli::cli_alert_info("Realizations: {Nrealizations}")
@@ -547,14 +634,18 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
       options(future.globals.maxSize = 4 * 1024^3)
     }
 
-    cli::cli_alert_info("Distributing {Nrealizations} realizations across {Ncores} workers")
+    cli::cli_alert_info(
+      "Distributing {Nrealizations} realizations across {Ncores} workers"
+    )
 
     # Progress bar setup
     has_progressr <- requireNamespace("progressr", quietly = TRUE)
     if (has_progressr) {
       progressr::handlers("cli")
     } else {
-      cli::cli_alert_warning("Install {.pkg progressr} for progress bars in parallel mode")
+      cli::cli_alert_warning(
+        "Install {.pkg progressr} for progress bars in parallel mode"
+      )
     }
 
     future::plan(future::multisession, workers = Ncores)
@@ -565,84 +656,122 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
         p <- progressr::progressor(steps = Nrealizations)
       }
 
-      future.apply::future_lapply(1:Nrealizations, function(k) {
-        tryCatch({
+      future.apply::future_lapply(
+        1:Nrealizations,
+        function(k) {
+          tryCatch(
+            {
+              # SEASONALITY/STARTING POOL SAMPLER ================================
+              InitMonths <- sample(
+                1:12,
+                size = Nsims_per_realiz,
+                replace = TRUE,
+                prob = seasonality
+              )
 
-          # SEASONALITY/STARTING POOL SAMPLER ================================
-          InitMonths <- sample(1:12, size = Nsims_per_realiz, replace = TRUE,
-                               prob = seasonality)
+              InitStages <- numeric(Nsims_per_realiz)
 
-          InitStages <- numeric(Nsims_per_realiz)
+              stage_ts$months <- lubridate::month(lubridate::mdy(stage_ts$date))
+              UniqMonths <- sort(unique(InitMonths))
 
-          stage_ts$months <- lubridate::month(lubridate::mdy(stage_ts$date))
-          UniqMonths <- sort(unique(InitMonths))
+              for (i in seq_along(UniqMonths)) {
+                sampleID <- which(InitMonths == UniqMonths[i])
+                InitStages[sampleID] <- sample(
+                  stage_ts$stage[stage_ts$months %in% UniqMonths[i]],
+                  size = sum(InitMonths == UniqMonths[i]),
+                  replace = TRUE
+                )
+              }
 
-          for (i in seq_along(UniqMonths)) {
-            sampleID <- which(InitMonths == UniqMonths[i])
-            InitStages[sampleID] <- sample(
-              stage_ts$stage[stage_ts$months %in% UniqMonths[i]],
-              size = sum(InitMonths == UniqMonths[i]),
-              replace = TRUE
-            )
-          }
+              # HYDROGRAPH SCALER/SAMPLER ========================================
+              hydroSamps <- sample(
+                1:length(hydrographs),
+                size = Nsims_per_realiz,
+                replace = TRUE,
+                prob = attr(hydrographs, "probs")
+              )
 
-          # HYDROGRAPH SCALER/SAMPLER ========================================
-          hydroSamps <- sample(1:length(hydrographs), size = Nsims_per_realiz,
-                               replace = TRUE,
-                               prob = attr(hydrographs, "probs"))
+              # FLOW-FREQUENCY SAMPLER ===========================================
+              bf_params_k <- c(
+                bestfit_params[k, 1],
+                bestfit_params[k, 2],
+                bestfit_params[k, 3]
+              )
 
-          # FLOW-FREQUENCY SAMPLER ===========================================
-          bf_params_k <- c(bestfit_params[k, 1],
-                           bestfit_params[k, 2],
-                           bestfit_params[k, 3])
+              Q_samp <- flow_frequency_sampler(
+                bf_params_k,
+                freq_dist = dist,
+                strat_dist = "ev1",
+                Nbin = Nbins,
+                Mevent = events_per_bin
+              )
+              Q_matrix <- Q_samp$flow
 
-          Q_samp <- flow_frequency_sampler(bf_params_k, freq_dist = dist,
-                                           strat_dist = "ev1",
-                                           Nbin = Nbins, Mevent = events_per_bin)
-          Q_matrix <- Q_samp$flow
+              # ROUTING EVENTS ===================================================
+              peakStage_k <- matrix(NA, nrow = events_per_bin, ncol = Nbins)
 
-          # ROUTING EVENTS ===================================================
-          peakStage_k <- matrix(NA, nrow = events_per_bin, ncol = Nbins)
+              realiz <- 0
 
-          realiz <- 0
+              for (i in 1:nrow(Q_matrix)) {
+                for (j in 1:ncol(Q_matrix)) {
+                  realiz <- (i - 1) * ncol(Q_matrix) + j
 
-          for (i in 1:nrow(Q_matrix)) {
-            for (j in 1:ncol(Q_matrix)) {
-              realiz <- (i - 1) * ncol(Q_matrix) + j
+                  hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][, 2:3]
+                  obs_hydrograph_vol <- attr(
+                    hydrographs[[hydroSamps[realiz]]],
+                    "obs_vol"
+                  )
 
-              hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][, 2:3]
-              obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]], "obs_vol")
+                  scaled_hydrograph <- scale_hydrograph(
+                    hydrograph_shape,
+                    obs_hydrograph_vol,
+                    Q_matrix[i, j],
+                    routing_dt = routing_dt
+                  )
 
-              scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
-                                                    obs_hydrograph_vol,
-                                                    Q_matrix[i, j],
-                                                    routing_dt = routing_dt)
+                  tmpResults <- mod_puls_routing(
+                    resmodel_df = resmodel,
+                    inflow_df = scaled_hydrograph,
+                    initial_elev = InitStages[realiz],
+                    full_results = FALSE
+                  )
 
-              tmpResults <- mod_puls_routing(resmodel_df = resmodel,
-                                             inflow_df = scaled_hydrograph,
-                                             initial_elev = InitStages[realiz],
-                                             full_results = FALSE)
+                  peakStage_k[i, j] <- tmpResults[1]
+                }
+              }
 
-              peakStage_k[i, j] <- tmpResults[1]
+              # POST-PROCESS =====================================================
+              realization_k <- stage_frequency_curve(
+                peakStage_k,
+                Q_samp$weights
+              )
+
+              # Save to disk
+              saveRDS(
+                realization_k,
+                file = file.path(
+                  realization_dir,
+                  paste0("realization_", k, ".rds")
+                )
+              )
+
+              if (has_progressr) {
+                p()
+              }
+
+              realization_k
+            },
+            error = function(e) {
+              if (has_progressr) {
+                p()
+              }
+              list(error = TRUE, message = e$message, realization = k)
             }
-          }
-
-          # POST-PROCESS =====================================================
-          realization_k <- stage_frequency_curve(peakStage_k, Q_samp$weights)
-
-          # Save to disk
-          saveRDS(realization_k, file = file.path(realization_dir,paste0("realization_", k, ".rds")))
-
-          if (has_progressr) p()
-
-          realization_k
-
-        }, error = function(e) {
-          if (has_progressr) p()
-          list(error = TRUE, message = e$message, realization = k)
-        })
-      }, future.seed = TRUE,
-      future.packages = c("rfaR", "zoo", "lmom"))
+          )
+        },
+        future.seed = TRUE,
+        future.packages = c("rfaR", "zoo", "lmom")
+      )
     }
 
     # Run with or without progressr
@@ -659,7 +788,9 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     n_failed <- sum(failures)
 
     if (n_failed > 0) {
-      cli::cli_alert_warning("{n_failed} of {Nrealizations} realizations failed")
+      cli::cli_alert_warning(
+        "{n_failed} of {Nrealizations} realizations failed"
+      )
       failed_msgs <- sapply(results_list[failures], function(x) x$message)
       cli::cli_alert_info("First failure: {failed_msgs[1]}")
     }
@@ -674,14 +805,22 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     # COLLECT ALL RESULTS FROM DISK ============================================
     cli::cli_h3("Loading realizations from disk")
 
-    all_files <- list.files(realization_dir, pattern = "realization_.*\\.rds", full.names = TRUE)
+    all_files <- list.files(
+      realization_dir,
+      pattern = "realization_.*\\.rds",
+      full.names = TRUE
+    )
     results_list <- lapply(all_files, readRDS)
 
-    cli::cli_alert_info("Loaded {length(results_list)} of {Nrealizations} realizations")
+    cli::cli_alert_info(
+      "Loaded {length(results_list)} of {Nrealizations} realizations"
+    )
 
     # CHECK FOR INCOMPLETE RUN =================================================
     if (length(results_list) < Nrealizations) {
-      cli::cli_alert_warning("Only {length(results_list)} of {Nrealizations} realizations completed")
+      cli::cli_alert_warning(
+        "Only {length(results_list)} of {Nrealizations} realizations completed"
+      )
       Nrealizations <- length(results_list)
     }
 
@@ -693,9 +832,9 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     stage_matrix <- interpolate_stage_matrix(results_list, target_aeps)
 
     # 5, 50, and 95th stage quantiles
-    median_50   <- apply(stage_matrix, 1, quantile, probs = 0.50, na.rm = TRUE)
-    lower_05     <- apply(stage_matrix, 1, quantile, probs = 0.05, na.rm = TRUE)
-    upper_95     <- apply(stage_matrix, 1, quantile, probs = 0.95, na.rm = TRUE)
+    median_50 <- apply(stage_matrix, 1, quantile, probs = 0.50, na.rm = TRUE)
+    lower_05 <- apply(stage_matrix, 1, quantile, probs = 0.05, na.rm = TRUE)
+    upper_95 <- apply(stage_matrix, 1, quantile, probs = 0.95, na.rm = TRUE)
     cli::cli_alert_success("Upper and Lower CI calculated")
 
     # EXPECTED =================================================================
@@ -705,7 +844,11 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     global_max <- max(sapply(results_list, function(x) max(x$stage)))
 
     # Stage Vector
-    expect_stage_vect <- seq(global_min, global_max, length.out = events_per_bin)
+    expect_stage_vect <- seq(
+      global_min,
+      global_max,
+      length.out = events_per_bin
+    )
 
     # AEPs of Stages from Stage Vector
     aep_interp <- interpolate_aep_matrix(results_list, expect_stage_vect)
@@ -717,22 +860,27 @@ rfa_simulate <- function(sim_type = "expected", bestfit_params, dist = "LP3",
     expected <- aep2stage(expected_aeps, expect_stage_vect, target_aeps)
     cli::cli_alert_success("Expected curve calculated")
 
-    full_stage_freq <- data.frame(AEP = target_aeps,
-                                  Upper = upper_95,
-                                  Lower = lower_05,
-                                  Expected = expected,
-                                  Median = median_50)
+    full_stage_freq <- data.frame(
+      AEP = target_aeps,
+      Upper = upper_95,
+      Lower = lower_05,
+      Expected = expected,
+      Median = median_50
+    )
 
     cli::cli_alert_success("Full Uncertainty Analysis Complete")
 
     # Write to file ============================================================
-    write.csv(full_stage_freq,result_csv_file,row.names = FALSE)
-    cli::cli_alert_success("Stage-Frequency curve successfully exported to {.path {result_csv_file}}.")
+    write.csv(full_stage_freq, result_csv_file, row.names = FALSE)
+    cli::cli_alert_success(
+      "Stage-Frequency curve successfully exported to {.path {result_csv_file}}."
+    )
 
     return(list(
-      stage_frequency  = full_stage_freq,
-      Nrealizations    = Nrealizations,
+      stage_frequency = full_stage_freq,
+      Nrealizations = Nrealizations,
       Nsims_per_realiz = Nsims_per_realiz,
-      realization_directory = realization_dir))
+      realization_directory = realization_dir
+    ))
   }
 }
