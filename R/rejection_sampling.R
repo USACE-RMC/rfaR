@@ -62,11 +62,13 @@ thin_samples <- function(n, z_sorted, stage_sorted) {
 #' pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9,
 #'                             pmf_low = 239, pmf_high = 245)
 #' @export
-pmf_stage_lognormal <- function(pmf_shift, pmf_mean,
-                                pmf_sigma = NULL,
-                                pmf_low   = NULL,
-                                pmf_high  = NULL) {
-
+pmf_stage_lognormal <- function(
+  pmf_shift,
+  pmf_mean,
+  pmf_sigma = NULL,
+  pmf_low = NULL,
+  pmf_high = NULL
+) {
   # Use inputs to determine which functional mode.
   # No pmf low or pmf high? -> assume sigma = x
   if (!is.null(pmf_low) && !is.null(pmf_high)) {
@@ -91,15 +93,13 @@ pmf_stage_lognormal <- function(pmf_shift, pmf_mean,
 
     # --- Mode 2: solve for sigma ---
     sigma_obj <- function(sigma) {
-      mu          <- log(pmf_mean - pmf_shift) - sigma^2 / 2
+      mu <- log(pmf_mean - pmf_shift) - sigma^2 / 2
       implied_p05 <- pmf_shift + qlnorm(0.05, mu, sigma)
       implied_p95 <- pmf_shift + qlnorm(0.95, mu, sigma)
       (implied_p05 - pmf_low)^2 + (implied_p95 - pmf_high)^2
     }
     pmf_sigma <- optimise(sigma_obj, interval = c(1e-6, 10))$minimum
-
   } else {
-
     # --- Mode 1: sigma supplied ---
     if (is.null(pmf_sigma)) {
       cli::cli_abort(
@@ -121,17 +121,17 @@ pmf_stage_lognormal <- function(pmf_shift, pmf_mean,
   }
 
   # --- Derive mu and quantiles ---
-  pmf_mu  <- log(pmf_mean - pmf_shift) - (pmf_sigma^2 / 2)
+  pmf_mu <- log(pmf_mean - pmf_shift) - (pmf_sigma^2 / 2)
   pmf_p05 <- pmf_shift + qlnorm(0.05, pmf_mu, pmf_sigma)
   pmf_p95 <- pmf_shift + qlnorm(0.95, pmf_mu, pmf_sigma)
 
   list(
     pmf_shift = pmf_shift,
-    pmf_mean  = pmf_mean,
+    pmf_mean = pmf_mean,
     pmf_sigma = pmf_sigma,
-    pmf_mu    = pmf_mu,
-    pmf_p05   = pmf_p05,
-    pmf_p95   = pmf_p95
+    pmf_mu = pmf_mu,
+    pmf_p05 = pmf_p05,
+    pmf_p95 = pmf_p95
   )
 }
 
@@ -170,19 +170,25 @@ pmf_stage_lognormal <- function(pmf_shift, pmf_mean,
 #' }
 #'
 #' @export
-rejection_sampling_stage <- function(pmf_stage_LN, stage_freq_df = NULL, aep = NULL, stage = NULL, n_samples = 1e7){
+rejection_sampling_stage <- function(
+  pmf_stage_LN,
+  stage_freq_df = NULL,
+  aep = NULL,
+  stage = NULL,
+  n_samples = 1e7
+) {
   # Resolve inputs
   if (!is.null(stage_freq_df)) {
     if (!is.null(aep) || !is.null(stage)) {
-      cli::cli_abort("Provide either {.arg stage_freq_df} or {.arg aep}/{.arg stage}, not both.")
+      cli::cli_abort(
+        "Provide either {.arg stage_freq_df} or {.arg aep}/{.arg stage}, not both."
+      )
     }
-    aep_vals   <- stage_freq_df[[1]]
+    aep_vals <- stage_freq_df[[1]]
     stage_vals <- stage_freq_df[[2]]
-
   } else if (!is.null(aep) && !is.null(stage)) {
-    aep_vals   <- aep
+    aep_vals <- aep
     stage_vals <- stage
-
   } else {
     cli::cli_abort(c(
       "Must provide either {.arg stage_freq_df} or both {.arg aep} and {.arg stage}.",
@@ -192,11 +198,11 @@ rejection_sampling_stage <- function(pmf_stage_LN, stage_freq_df = NULL, aep = N
 
   # PMF Log-Normal Parameters ==================================================
   pmf_shift <- pmf_stage_LN[["pmf_shift"]]
-  pmf_mu    <- pmf_stage_LN[["pmf_mu"]]
+  pmf_mu <- pmf_stage_LN[["pmf_mu"]]
   pmf_sigma <- pmf_stage_LN[["pmf_sigma"]]
 
   # Transform to z-space for interpolation function ============================
-  z_aep <- qnorm(1-aep_vals)
+  z_aep <- qnorm(1 - aep_vals)
   zaep_stage <- approxfun(z_aep, stage_vals, rule = 2)
 
   # First sample rejection =====================================================
