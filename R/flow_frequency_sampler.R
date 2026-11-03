@@ -37,15 +37,18 @@
 #' # Distribution of Sampled Flows
 #' hist(result$flow)
 
-flow_frequency_sampler <- function(bestfit_params, freq_dist = "LP3",
-                                   strat_dist = "ev1",
-                                   Nbin = NULL, Mevent = NULL) {
-
+flow_frequency_sampler <- function(
+  bestfit_params,
+  freq_dist = "LP3",
+  strat_dist = "ev1",
+  Nbin = NULL,
+  Mevent = NULL
+) {
   # IF NO BINS OR EVENTS ARE DEFINED
-  if(is.null(Nbin)){
+  if (is.null(Nbin)) {
     Nbin = 50
   }
-  if(is.null(Mevent)){
+  if (is.null(Mevent)) {
     Mevent = 200
   }
 
@@ -53,20 +56,19 @@ flow_frequency_sampler <- function(bestfit_params, freq_dist = "LP3",
   # PROCESS ONE PARAMETER SET
   # ============================================================================
   # CREATE STRATIFIED SAMPLE OF Z ORDINATES TO EST. FLOW
-  ords <- stratified_sampler(Nbins = Nbin,
-                             Mevents = Mevent,
-                             dist = strat_dist)
+  ords <- stratified_sampler(Nbins = Nbin, Mevents = Mevent, dist = strat_dist)
 
   # Matrix with 20 bins of 500 events (represented by the z-variate)
   z_matrix <- matrix(ncol = ords$Nbins, nrow = ords$Mevents)
 
-  for (i in 1:ords$Nbins){
+  for (i in 1:ords$Nbins) {
     # upper and lower
     bin_lower <- ords$Zlower[i]
     bin_upper <- ords$Zupper[i]
 
     # Vector of random values
-    z_matrix[,i] <- (bin_lower + (runif(ords$Mevents, min = 0, max = 1)) * (bin_upper - bin_lower))
+    z_matrix[, i] <- (bin_lower +
+      (runif(ords$Mevents, min = 0, max = 1)) * (bin_upper - bin_lower))
   }
 
   # ============================================================================
@@ -81,10 +83,8 @@ flow_frequency_sampler <- function(bestfit_params, freq_dist = "LP3",
 
     # Entirely vectorized
     Q_matrix <- 10^qp3(pnorm(z_matrix), meanlog, sdlog, skewlog)
-
   } else {
-
-  #GEV DISTRIBUTION - additional distributions will come later
+    #GEV DISTRIBUTION - additional distributions will come later
     # Params from vector
     xi <- unlist(unname(bestfit_params[1]))
     alfa <- unlist(unname(bestfit_params[2]))
@@ -92,8 +92,8 @@ flow_frequency_sampler <- function(bestfit_params, freq_dist = "LP3",
 
     # Uses lmom package
     #Q_matrix <- lmom::quagev(pnorm(z_matrix),c(xi, alfa, k))
+    # Pmax will set negatives equal to 0
     Q_matrix <- pmax(lmom::quagev(pnorm(z_matrix), c(xi, alfa, k)), 1E-6)
-
   }
 
   # RETURN
@@ -101,10 +101,10 @@ flow_frequency_sampler <- function(bestfit_params, freq_dist = "LP3",
   Mevents <- ords$Mevents
   Weights <- ords$Weights
 
-
-  return(list(flow = Q_matrix,
-              nbins = Nbins,
-              mevents = Mevents,
-              weights = Weights))
+  return(list(
+    flow = Q_matrix,
+    nbins = Nbins,
+    mevents = Mevents,
+    weights = Weights
+  ))
 }
-
