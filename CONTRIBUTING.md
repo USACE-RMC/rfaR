@@ -21,7 +21,7 @@ ensures your contribution aligns with the project’s direction.
 ### Report a Bug
 
 If you find a bug, please [open an
-issue](https://usace-rmc.github.io/issues/new) and include:
+issue](https://usace-rmc.github.io/../issues/new) and include:
 
 - Steps to reproduce the problem
 - Input data and configuration (if applicable)
@@ -34,7 +34,7 @@ issue](https://usace-rmc.github.io/issues/new) and include:
 ### Request a Feature
 
 Feature requests are welcome. Please [open an
-issue](https://usace-rmc.github.io/issues/new) describing:
+issue](https://usace-rmc.github.io/../issues/new) describing:
 
 - The use case or problem you are trying to solve
 - How you envision the feature working
