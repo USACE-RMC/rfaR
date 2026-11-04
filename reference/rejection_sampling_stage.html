@@ -104,16 +104,12 @@ curve. Output is produced by <code><a href="thin_samples.html">thin_samples()</a
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">pmf_ln</span> <span class="op">&lt;-</span> <span class="fu"><a href="pmf_stage_lognormal.html">pmf_stage_lognormal</a></span><span class="op">(</span>pmf_shift <span class="op">=</span> <span class="fl">239</span>, pmf_mean <span class="op">=</span> <span class="fl">241.9</span>, pmf_sigma <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pmf_ln</span> <span class="op">&lt;-</span> <span class="fu"><a href="pmf_stage_lognormal.html">pmf_stage_lognormal</a></span><span class="op">(</span>pmf_shift <span class="op">=</span> <span class="fl">1651</span>, pmf_mean <span class="op">=</span> <span class="fl">1663</span>, pmf_sigma <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">rejection_sampling_stage</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  pmf_stage_LN  <span class="op">=</span> <span class="va">pmf_ln</span>,</span></span>
 <span class="r-in"><span>  stage_freq_df <span class="op">=</span> <span class="va">ex_rs_stage_loading</span>,</span></span>
 <span class="r-in"><span>  n_samples     <span class="op">=</span> <span class="fl">1e5</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Rejection sampling did not converge after 1000 iterations.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 100000 samples remain unresolved.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Check that `pmf_stage_LN` is consistent with the provided stage-frequency</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>   curve.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

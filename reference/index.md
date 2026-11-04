@@ -47,6 +47,8 @@ Supporting utility functions
   : Power Function
 - [`theme_rfar_conceptual()`](https://usace-rmc.github.io/rfaR/reference/theme_rfar_conceptual.md)
   : rfaR ggplot2 Theme for Conceptual Plots
+- [`scale_x_aep()`](https://usace-rmc.github.io/rfaR/reference/scale_x_aep.md)
+  : AEP-Labelled Normal-Variate X Scale
 - [`pmf_stage_lognormal()`](https://usace-rmc.github.io/rfaR/reference/pmf_stage_lognormal.md)
   : Parameterize a Three-Parameter Lognormal PMF for Stage
 - [`rejection_sampling_stage()`](https://usace-rmc.github.io/rfaR/reference/rejection_sampling_stage.md)

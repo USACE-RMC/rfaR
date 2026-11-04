@@ -59,14 +59,10 @@ stage-frequency curve. Output is produced by
 
 ``` r
 
-pmf_ln <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9, pmf_sigma = 0.5)
+pmf_ln <- pmf_stage_lognormal(pmf_shift = 1651, pmf_mean = 1663, pmf_sigma = 0.5)
 result <- rejection_sampling_stage(
   pmf_stage_LN  = pmf_ln,
   stage_freq_df = ex_rs_stage_loading,
   n_samples     = 1e5
 )
-#> Warning: Rejection sampling did not converge after 1000 iterations.
-#> ℹ 100000 samples remain unresolved.
-#> ℹ Check that `pmf_stage_LN` is consistent with the provided stage-frequency
-#>   curve.
 ```
