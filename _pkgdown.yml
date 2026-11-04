@@ -46,6 +46,7 @@ reference:
       - interpolate_stage_matrix
       - power_function
       - theme_rfar_conceptual
+      - scale_x_aep
       - pmf_stage_lognormal
       - rejection_sampling_stage
   - title: "Datasets"
