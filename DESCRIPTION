@@ -1,6 +1,6 @@
 Package: rfaR
 Title: RMC Reservoir Frequency Analysis in R
-Version: 0.5.1
+Version: 0.9.0
 Authors@R: c(
     person("Daniel", "McGraw", , "daniel.e.mcgraw@usace.army.mil",
            role = c("aut", "cre"),
@@ -26,29 +26,29 @@ Authors@R: c(
            role = "rev", comment = "P.E., USACE RMC"),
     person("Bryan", "Robinson", , "bryan.j.robinson@usace.army.mil",
            role = "rev", comment = "P.E., USACE RMC"))
-Description: An R implementation of the U.S. Army Corps of Engineers (USACE) 
-    Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software. 
-    This package produces reservoir stage-frequency curves with uncertainty bounds 
-    by combining deterministic flood routing (Modified Puls method) with a nested 
-    Monte Carlo framework. The outer loop quantifies knowledge uncertainty in inflow 
-    volume frequency distributions, while the inner loop simulates natural variability 
-    across thousands of flood events. Uncertain variables include inflow volume, 
-    flood hydrograph shape, seasonal occurrence, and antecedent reservoir stage. 
-    The resulting stage-frequency curves provide critical hydrologic hazard 
-    assessment data for dam safety risk analyses, enabling evaluation of loading 
-    parameters (stage, discharge, duration) and their associated annual exceedance 
+Description: An R implementation of the U.S. Army Corps of Engineers (USACE)
+    Risk Management Center-Reservoir Frequency Analysis (RMC-RFA) methodology/software.
+    This package produces reservoir stage-frequency curves with uncertainty bounds
+    by combining deterministic flood routing (Modified Puls method) with a nested
+    Monte Carlo framework. The outer loop quantifies knowledge uncertainty in inflow
+    volume frequency distributions, while the inner loop simulates natural variability
+    across thousands of flood events. Uncertain variables include inflow volume,
+    flood hydrograph shape, seasonal occurrence, and antecedent reservoir stage.
+    The resulting stage-frequency curves provide critical hydrologic hazard
+    assessment data for dam safety risk analyses, enabling evaluation of loading
+    parameters (stage, discharge, duration) and their associated annual exceedance
     probabilities.
-Nickname: Friday
+Nickname: Friday After Next
 License: file LICENSE
 URL: https://github.com/USACE-RMC/rfaR, https://usace-rmc.github.io/rfaR/
 BugReports: https://github.com/USACE-RMC/rfaR/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-Depends: 
+Depends:
     R (>= 4.1)
 LazyData: true
-Suggests: 
+Suggests:
     gt,
     knitr,
     rmarkdown,
@@ -60,7 +60,7 @@ Suggests:
     patchwork,
     ggsci
 VignetteBuilder: knitr
-Imports: 
+Imports:
     cli,
     future,
     future.apply,

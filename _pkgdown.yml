@@ -49,6 +49,7 @@ reference:
       - scale_x_aep
       - pmf_stage_lognormal
       - rejection_sampling_stage
+      - unreg_reg_transform
   - title: "Datasets"
     desc: "Example datasets included with rfaR"
     contents:
