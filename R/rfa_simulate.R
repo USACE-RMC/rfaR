@@ -57,6 +57,10 @@
 #'   sampling probabilities.
 #' @param resmodel Data frame with three columns: elevation (ft), storage (acre-ft),
 #'   and discharge (cfs). Defines the reservoir model for Modified Puls routing.
+#' @param unreg_reg_transform Optional function that transforms sampled
+#'   unregulated inflow volume to corresponding regulated inflow volumes before
+#'   hydrograph scaling. Typically created with [unreg_reg_transform()].
+#'   If `NULL` (default), sampled volumes are used without transformation.
 #' @param Nbins Integer. Number of stratified sampling bins in EV1 space.
 #'   Default is 50.
 #' @param events_per_bin Integer. Number of events sampled per bin. Default is 200.
@@ -194,6 +198,7 @@ rfa_simulate <- function(
   seasonality,
   hydrographs,
   resmodel,
+  unreg_reg_transform = NULL,
   Nbins = 50,
   events_per_bin = 200,
   routing_dt = 1,
@@ -235,6 +240,14 @@ rfa_simulate <- function(
 
   # Remove rows with missing stages in stage timeseries
   stage_ts <- stage_ts[!is.na(stage_ts$stage), ]
+
+  # If Unregulated-Regulated Transform Function is supplied, then transform volume samples
+  regulated_transform <- !is.null(unreg_reg_transform)
+  if (regulated_transform) {
+    cli::cli_alert_info(
+      "Applying unregulated-to-regulated transformation to sampled inflow volumes."
+    )
+  }
 
   # ============================================================================
   # MEDIAN ONLY ====
@@ -348,11 +361,17 @@ rfa_simulate <- function(
         hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][, 2:3]
         # Hydrograph observed volume
         obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]], "obs_vol")
+        # Select the target sample volume for hydrograph scaling
+        sample_volume <- if (regulated_transform) {
+          unreg_reg_transform(Q_matrix[i, j])
+        } else {
+          Q_matrix[i, j]
+        }
         # Scale hydrograph to sample volume
         scaled_hydrograph <- scale_hydrograph(
           hydrograph_shape,
           obs_hydrograph_vol,
-          Q_matrix[i, j],
+          sample_volume,
           routing_dt = routing_dt
         )
         # Route scaled hydrograph
@@ -371,7 +390,7 @@ rfa_simulate <- function(
         realiz_numeric[realiz, ] <- c(
           InitMonths[realiz],
           InitStages[realiz],
-          Q_matrix[i, j],
+          sample_volume,
           tmpResults[1],
           tmpResults[2]
         )
@@ -512,11 +531,17 @@ rfa_simulate <- function(
         hydrograph_shape <- hydrographs[[hydroSamps[realiz]]][, 2:3]
         # Hydrograph observed volume
         obs_hydrograph_vol <- attr(hydrographs[[hydroSamps[realiz]]], "obs_vol")
+        # Select the target sample volume for hydrograph scaling
+        sample_volume <- if (regulated_transform) {
+          unreg_reg_transform(Q_matrix[i, j])
+        } else {
+          Q_matrix[i, j]
+        }
         # Scale hydrograph to sample volume
         scaled_hydrograph <- scale_hydrograph(
           hydrograph_shape,
           obs_hydrograph_vol,
-          Q_matrix[i, j],
+          sample_volume,
           routing_dt = routing_dt
         )
         # Route scaled hydrograph
@@ -535,7 +560,7 @@ rfa_simulate <- function(
         realiz_numeric[realiz, ] <- c(
           InitMonths[realiz],
           InitStages[realiz],
-          Q_matrix[i, j],
+          sample_volume,
           tmpResults[1],
           tmpResults[2]
         )
@@ -721,11 +746,17 @@ rfa_simulate <- function(
                     hydrographs[[hydroSamps[realiz]]],
                     "obs_vol"
                   )
+                  # Set Target for unreg or reg
+                  sample_volume <- if (regulated_transform) {
+                    unreg_reg_transform(Q_matrix[i, j])
+                  } else {
+                    Q_matrix[i, j]
+                  }
 
                   scaled_hydrograph <- scale_hydrograph(
                     hydrograph_shape,
                     obs_hydrograph_vol,
-                    Q_matrix[i, j],
+                    sample_volume,
                     routing_dt = routing_dt
                   )
 
