@@ -17,6 +17,7 @@ rfa_simulate(
   seasonality,
   hydrographs,
   resmodel,
+  unreg_reg_transform = NULL,
   Nbins = 50,
   events_per_bin = 200,
   routing_dt = 1,
@@ -78,6 +79,14 @@ rfa_simulate(
   Data frame with three columns: elevation (ft), storage (acre-ft), and
   discharge (cfs). Defines the reservoir model for Modified Puls
   routing.
+
+- unreg_reg_transform:
+
+  Optional function that transforms sampled unregulated inflow volume to
+  corresponding regulated inflow volumes before hydrograph scaling.
+  Typically created with
+  [`unreg_reg_transform()`](https://usace-rmc.github.io/rfaR/reference/unreg_reg_transform.md).
+  If `NULL` (default), sampled volumes are used without transformation.
 
 - Nbins:
 

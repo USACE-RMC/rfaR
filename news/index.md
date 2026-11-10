@@ -1,5 +1,24 @@
 # Changelog
 
+## rfaR 0.9.0
+
+Documentation will statisfy quality assurance for v1.0. No major
+functional changes expected between 0.9.0 and 1.0.
+
+I want to personally thank any users for their on-going patience for
+documetation. We’re close. -Dan
+
+### New features
+
+- Added
+  [`unreg_reg_transform()`](https://usace-rmc.github.io/rfaR/reference/unreg_reg_transform.md)
+  to create an unregulated-to-regulated inflow transformation function
+  using linear interpolation.
+
+- [`rfa_simulate()`](https://usace-rmc.github.io/rfaR/reference/rfa_simulate.md)
+  now accepts an optional `unreg_reg_transform` function to transform
+  sampled volumes before hydrograph scaling.
+
 ## rfaR 0.5.1
 
 ### Summary

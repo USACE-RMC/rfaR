@@ -22,6 +22,13 @@ accordance with USACE/RMC guidance.
 See [`NEWS.md`](https://usace-rmc.github.io/rfaR/NEWS.md) for a history
 of user-facing changes across versions.
 
+## Acknowledgments
+
+The authors thank Allen Avance, Samantha Hartke, Reuben Sasaki, and
+Bryan Robinson of the U.S. Army Corps of Engineers Risk Management
+Center (USACE - RMC) for their technical review, feedback, and
+contributions to package development.
+
 ## Installation
 
 ### For users
@@ -360,6 +367,8 @@ Supporting utility functions
   : Parameterize a Three-Parameter Lognormal PMF for Stage
 - [`rejection_sampling_stage()`](https://usace-rmc.github.io/rfaR/reference/rejection_sampling_stage.md)
   : Rejection Sampling of Stage Bounded by a Probabilistic Maximum Stage
+- [`unreg_reg_transform()`](https://usace-rmc.github.io/rfaR/reference/unreg_reg_transform.md)
+  : Create an Unregulated-to-Regulated Inflow Transformation Function
 
 ## Datasets
 

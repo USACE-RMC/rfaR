@@ -49,6 +49,6 @@ Lakewood, CO. <https://github.com/USACE-RMC/rfaR>.
       organization = {U.S. Army Corps of Engineers, Risk Management Center},
       address = {Lakewood, CO},
       year = {2026},
-      version = {0.5.1},
+      version = {0.9.0},
       url = {https://github.com/USACE-RMC/rfaR},
     }

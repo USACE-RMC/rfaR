@@ -22,6 +22,13 @@ accordance with USACE/RMC guidance.
 See [`NEWS.md`](https://usace-rmc.github.io/rfaR/NEWS.md) for a history
 of user-facing changes across versions.
 
+## Acknowledgments
+
+The authors thank Allen Avance, Samantha Hartke, Reuben Sasaki, and
+Bryan Robinson of the U.S. Army Corps of Engineers Risk Management
+Center (USACE - RMC) for their technical review, feedback, and
+contributions to package development.
+
 ## Installation
 
 ### For users

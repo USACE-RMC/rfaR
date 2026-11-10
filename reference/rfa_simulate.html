@@ -13,7 +13,7 @@ routing to estimate annual exceedance probabilities of reservoir stage."></head>
 
     <a class="navbar-brand me-2" href="../index.html">rfaR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,6 +61,7 @@ routing to estimate annual exceedance probabilities of reservoir stage.</p>
 <span>  <span class="va">seasonality</span>,</span>
 <span>  <span class="va">hydrographs</span>,</span>
 <span>  <span class="va">resmodel</span>,</span>
+<span>  unreg_reg_transform <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  Nbins <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  events_per_bin <span class="op">=</span> <span class="fl">200</span>,</span>
 <span>  routing_dt <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -119,6 +120,13 @@ sampling probabilities.</p></dd>
 <dt id="arg-resmodel">resmodel<a class="anchor" aria-label="anchor" href="#arg-resmodel"></a></dt>
 <dd><p>Data frame with three columns: elevation (ft), storage (acre-ft),
 and discharge (cfs). Defines the reservoir model for Modified Puls routing.</p></dd>
+
+
+<dt id="arg-unreg-reg-transform">unreg_reg_transform<a class="anchor" aria-label="anchor" href="#arg-unreg-reg-transform"></a></dt>
+<dd><p>Optional function that transforms sampled
+unregulated inflow volume to corresponding regulated inflow volumes before
+hydrograph scaling. Typically created with <code><a href="unreg_reg_transform.html">unreg_reg_transform()</a></code>.
+If <code>NULL</code> (default), sampled volumes are used without transformation.</p></dd>
 
 
 <dt id="arg-nbins">Nbins<a class="anchor" aria-label="anchor" href="#arg-nbins"></a></dt>

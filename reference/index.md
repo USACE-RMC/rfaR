@@ -53,6 +53,8 @@ Supporting utility functions
   : Parameterize a Three-Parameter Lognormal PMF for Stage
 - [`rejection_sampling_stage()`](https://usace-rmc.github.io/rfaR/reference/rejection_sampling_stage.md)
   : Rejection Sampling of Stage Bounded by a Probabilistic Maximum Stage
+- [`unreg_reg_transform()`](https://usace-rmc.github.io/rfaR/reference/unreg_reg_transform.md)
+  : Create an Unregulated-to-Regulated Inflow Transformation Function
 
 ## Datasets
 
