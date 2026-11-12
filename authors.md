@@ -13,13 +13,6 @@
   [](https://orcid.org/0000-0002-4651-9890)  
   P.E., USACE RMC
 
-- **Allen Avance**. Contributor.  
-  P.E., USACE RMC
-
-- **Samantha Hartke**. Contributor.
-  [](https://orcid.org/0000-0002-0239-4723)  
-  PhD, USACE RMC
-
 - **Julian Gonzalez**. Contributor.
   [](https://orcid.org/0009-0009-9058-7653)  
   USACE RMC
@@ -27,12 +20,6 @@
 - **Sadie Niblett**. Reviewer.
   [](https://orcid.org/0009-0008-8588-4816)  
   USACE RMC
-
-- **Reuben Sasaki**. Reviewer.  
-  P.E., USACE RMC
-
-- **Bryan Robinson**. Reviewer.  
-  P.E., USACE RMC
 
 ## Citation
 
