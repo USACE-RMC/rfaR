@@ -1,0 +1,87 @@
+# Set Up an rfaR Analysis
+
+This chapter will step through best practices to set up, create, and execute an `rfaR` analysis.
+
+## Create a Project Directory
+
+Create a dedicated directory for each `rfaR` analysis. Store project inputs, scripts, and outputs in a location where you have write access, such as your user Documents directory. Do not create analysis files in protected system directories, such as `C:\Program Files`.
+
+The following example creates an `rfaR-analysis` directory in the current user's home directory and creates subdirectories for input data, scripts, and outputs. The commands will create a folder structure to support a single rfaR analysis (R & unix users use the term *directory* as opposed to *folder*). Csers can create the same folder structure using Windows Explorer.
+
+```r
+# Set a base directory
+# base_dir <- file.path("C:/path/to/your/project/")
+
+# Define the project directory (replace path.expand("~") with base_dir)
+project_dir <- file.path(path.expand("~"), "rfaR-analysis")
+
+# Define project subdirectories
+project_dirs <- c(
+  project_dir,
+  file.path(project_dir, "data"),
+  file.path(project_dir, "data", "raw"),
+  file.path(project_dir, "data", "processed"),
+  file.path(project_dir, "output"),
+  file.path(project_dir, "scripts")
+)
+
+# Create directories if they do not already exist
+invisible(lapply(
+  project_dirs,
+  dir.create,
+  recursive = TRUE,
+  showWarnings = FALSE
+))
+```
+
+The resulting directory structure is now:
+
+```
+rfaR-analysis/
+├── data/
+│   ├── raw/
+│   └── processed/
+├── output/
+└── scripts/
+```
+
+- Store original source data in `data/raw/`.
+- Store cleaned, reformatted, or derived datasets in `data/processed/`.
+- Store analysis scripts in `scripts/`.
+- Store simulation results, figures, tables, and exported files in `output/`.
+
+### R Project
+
+Users working in RStudio may optionally create an RStudio Project in the `rfaR-analysis` directory. An RStudio Project helps maintain consistent working directory but is not required to run `rfaR`.
+
+## Load Input Data
+
+`rfaR` analyses currently use input data stored in comma-separated values (CSV) files. Export or save the required input datasets as CSV files and store them in the project `data/raw/` directory. This manual uses the base R function `read.csv()` for all examples. Users may instead use `readr::read_csv()` if they prefer the `readr` import workflow; however, the resulting data must meet the formatting requirements described in the following sections.
+
+The example below imports a CSV file from the project input-data directory:
+
+```r
+# Define the path to an input CSV file
+input_file <- file.path(
+  project_dir,
+  "data",
+  "raw",
+  "example_input.csv"
+)
+
+# Import the CSV file
+input_data <- read.csv(input_file)
+
+# Review the imported data
+head(input_data)
+str(input_data)
+```
+
+Use `head()` to review the first rows of the imported dataset. Use `str()` to confirm the number of observations, variable names, and R data types.
+
+Users who are new to importing, cleaning, or restructuring data in R may find the following resources helpful:
+
+- [`read.csv()`](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/read.table.html)(*`read.table()`*)
+- [Data Import](https://r4ds.hadley.nz/data-import.html)
+- [Data Transform](https://r4ds.hadley.nz/data-transform.html)
+- [`read_csv()`](https://readr.tidyverse.org/reference/read_delim.html)

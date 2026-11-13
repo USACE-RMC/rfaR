@@ -1,0 +1,78 @@
+# Installation
+
+`rfaR` is not currently available on the Comprehensive R Archive Network (CRAN). The package source code is available from the [`USACE-RMC/rfaR` GitHub repository](https://github.com/USACE-RMC/rfaR).
+
+::: {.callout-warning}
+`rfaR` is under active development. Its application programming interface (API) may change without notice.
+:::
+
+## System Requirements
+
+- R version 4.1 or later
+- access to the `USACE-RMC/rfaR` GitHub repository
+- Recommended: RStudio [RStudio](https://posit.co/products/open-source/rstudio) or [Positron](https://positron.posit.co/)
+
+Installing `rfaR` with `remotes` or `devtools` installs required R package dependencies as needed.
+
+## Install rfaR
+
+### Install with remotes
+
+Install the `remotes` package, if needed, and then install `rfaR` from GitHub:
+
+```r
+install.packages("remotes")
+
+remotes::install_github(
+  "USACE-RMC/rfaR",
+  build_vignettes = FALSE
+)
+```
+### Developers and Contributors
+
+Users who plan to modify the package source should clone the repository and work from a local copy of the project. After cloning the repository with Git or GitHub Desktop, open an R session or RStudio Project from the repository root directory.
+
+Install devtools if it is not already available:
+
+```r
+install.packages("devtools")
+
+devtools::install_github("USACE-RMC/rfaR")
+```
+
+During active development, load the package source into the current R session without installing it:
+
+```r
+devtools::load_all()
+```
+
+To install the local working copy of `rfaR` into your R library, run:
+
+```r
+devtools::install()
+```
+::: {.callout-note}
+Cloning the repository does not make `library(rfaR)` available. To use the package, install it with `devtools::install()` or `remotes::install_github()`, or load the source for development with `devtools::load_all()`.
+:::
+
+## Dependencies
+
+Required package dependencies are declared in the `rfaR` `DESCRIPTION` file and are installed automatically during installation.
+
+USACE users may encounter package download, installation, or compatibility issues because of network controls, repository-access restrictions, or locally managed R environments.
+
+To report an installation or version-compatibility issue, open an issue in the [`rfaR` GitHub repository](https://github.com/USACE-RMC/rfaR/issues). Include the R version, operating system, installation method, and complete error message when possible. Do not include Controlled Unclassified Information (CUI), credentials, access tokens, or other nonpublic system information in a GitHub issue.
+
+## Verify Installation
+
+Load `rfaR` and confirm that the installed version and included example data are available:
+
+```r
+library(rfaR)
+
+packageVersion("rfaR")
+
+head(jmd_wy1980_stage)
+```
+
+If these commands run without error, rfaR is installed and ready to use.
