@@ -1,0 +1,27 @@
+# Installation
+
+## Requirements
+
+- R (version ≥ *TODO*)
+- Recommended: [Positron](https://positron.posit.co/) or RStudio
+
+## Installing rfaR
+
+```r
+# From GitHub
+remotes::install_github("USACE-RMC/rfaR")
+```
+
+*TODO: note CRAN install instructions once published.*
+
+## Dependencies
+
+*TODO: list key dependencies (ggplot2, future/future.apply, lmom, cli, etc.)
+and any that require special handling on USACE machines.*
+
+## Verifying Installation
+
+```r
+library(rfaR)
+# TODO: smoke-test
+```

@@ -26,7 +26,9 @@ library(scales)
 
 # Prefer the local package source while developing this notebook. This avoids
 # accidentally using an older installed rfaR where function arguments differ.
-if (requireNamespace("devtools", quietly = TRUE) && file.exists("DESCRIPTION")) {
+if (
+  requireNamespace("devtools", quietly = TRUE) && file.exists("DESCRIPTION")
+) {
   devtools::load_all(".")
 } else {
   library(rfaR)
@@ -36,11 +38,13 @@ theme_set(theme_bw())
 ```
 
 ```{r helpers}
-sample_flow_frequency <- function(bestfit_params,
-                                  dist = "LP3",
-                                  expected_only = TRUE,
-                                  Nbin = NULL,
-                                  Mevent = NULL) {
+sample_flow_frequency <- function(
+  bestfit_params,
+  dist = "LP3",
+  expected_only = TRUE,
+  Nbin = NULL,
+  Mevent = NULL
+) {
   sampler_args <- names(formals(flow_frequency_sampler))
   call_args <- list()
 
@@ -50,10 +54,18 @@ sample_flow_frequency <- function(bestfit_params,
     call_args[[1]] <- bestfit_params
   }
 
-  if ("dist" %in% sampler_args) call_args$dist <- dist
-  if ("ExpectedOnly" %in% sampler_args) call_args$ExpectedOnly <- expected_only
-  if ("Nbin" %in% sampler_args && !is.null(Nbin)) call_args$Nbin <- Nbin
-  if ("Mevent" %in% sampler_args && !is.null(Mevent)) call_args$Mevent <- Mevent
+  if ("dist" %in% sampler_args) {
+    call_args$dist <- dist
+  }
+  if ("ExpectedOnly" %in% sampler_args) {
+    call_args$ExpectedOnly <- expected_only
+  }
+  if ("Nbin" %in% sampler_args && !is.null(Nbin)) {
+    call_args$Nbin <- Nbin
+  }
+  if ("Mevent" %in% sampler_args && !is.null(Mevent)) {
+    call_args$Mevent <- Mevent
+  }
 
   do.call(flow_frequency_sampler, call_args)
 }
@@ -67,11 +79,11 @@ software tasks:
 
 ```{r exercise-crosswalk}
 tibble::tribble(
-  ~exercise, ~rfa_process, ~rfaR_equivalent,
-  "E2.3", "Enter input data: discharge gage, inflow hydrographs, stage gage, volume-frequency curve", "Inspect bundled data and prepare hydrographs / VFC parameters",
-  "E2.8", "Compute analyses: flood seasonality, reservoir starting stage duration, empirical frequency curve", "Sample flood months, sample starting stages, compare empirical stages",
-  "E2.16", "Build reservoir models and run expected-only simulations", "Route hydrographs with Modified Puls and compare stage-frequency curves",
-  "E2.24", "Run sensitivity analyses and full uncertainty simulation", "Compare model, duration, ERL, seasonality, starting-stage, and uncertainty choices"
+  ~exercise , ~rfa_process                                                                                        , ~rfaR_equivalent                                                                     ,
+  "E2.3"    , "Enter input data: discharge gage, inflow hydrographs, stage gage, volume-frequency curve"          , "Inspect bundled data and prepare hydrographs / VFC parameters"                      ,
+  "E2.8"    , "Compute analyses: flood seasonality, reservoir starting stage duration, empirical frequency curve" , "Sample flood months, sample starting stages, compare empirical stages"              ,
+  "E2.16"   , "Build reservoir models and run expected-only simulations"                                          , "Route hydrographs with Modified Puls and compare stage-frequency curves"            ,
+  "E2.24"   , "Run sensitivity analyses and full uncertainty simulation"                                          , "Compare model, duration, ERL, seasonality, starting-stage, and uncertainty choices"
 )
 ```
 
@@ -252,7 +264,10 @@ if (can_read_example_dam) {
   tibble(
     hydrograph_id = seq_along(example_hydrographs),
     rows = map_int(example_hydrographs, nrow),
-    observed_critical_volume = map_dbl(example_hydrographs, ~ attr(.x, "obs_vol"))
+    observed_critical_volume = map_dbl(
+      example_hydrographs,
+      ~ attr(.x, "obs_vol")
+    )
   )
 }
 ```
@@ -283,7 +298,10 @@ if (can_read_example_dam) {
   ) |>
     mutate(Z_var = qnorm(1 - Probability))
 
-  ggplot(example_stage_frequency, aes(x = Z_var, y = Expected, color = simulation)) +
+  ggplot(
+    example_stage_frequency,
+    aes(x = Z_var, y = Expected, color = simulation)
+  ) +
     geom_line(linewidth = 0.9) +
     scale_x_continuous(
       breaks = qnorm(1 - c(9.9e-1, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6)),
@@ -312,12 +330,12 @@ In `rfaR`, these same concepts are represented by package datasets.
 
 ```{r inspect-input-data}
 input_inventory <- tibble::tribble(
-  ~rfa_object, ~jmd_dataset, ~role,
-  "Discharge Gage", "jmd_por_inflow", "Period-of-record inflow data",
-  "Inflow Hydrographs", "jmd_hydro_*", "Candidate flood hydrograph shapes",
-  "Stage Gage", "jmd_wy1980_stage", "Historical reservoir starting stages",
-  "Volume Frequency Curve", "jmd_bf_parameter_sets / jmd_vfc", "BestFit LP3 parameters and tabular VFC",
-  "Reservoir Model", "jmd_resmodel", "Stage-storage-discharge relationship"
+  ~rfa_object              , ~jmd_dataset                      , ~role                                    ,
+  "Discharge Gage"         , "jmd_por_inflow"                  , "Period-of-record inflow data"           ,
+  "Inflow Hydrographs"     , "jmd_hydro_*"                     , "Candidate flood hydrograph shapes"      ,
+  "Stage Gage"             , "jmd_wy1980_stage"                , "Historical reservoir starting stages"   ,
+  "Volume Frequency Curve" , "jmd_bf_parameter_sets / jmd_vfc" , "BestFit LP3 parameters and tabular VFC" ,
+  "Reservoir Model"        , "jmd_resmodel"                    , "Stage-storage-discharge relationship"
 )
 
 input_inventory
@@ -529,7 +547,9 @@ to sample an antecedent pool stage.
 
 ```{r starting-stage-sampling}
 sampled_stages <- map_dbl(sampled_months, function(sample_month) {
-  month_stages <- jmd_stage_record$stage_ft[jmd_stage_record$month == sample_month]
+  month_stages <- jmd_stage_record$stage_ft[
+    jmd_stage_record$month == sample_month
+  ]
 
   if (length(month_stages) == 0) {
     return(NA_real_)
@@ -649,7 +669,11 @@ scaled_routing |>
 
 ```{r plot-scaled-routing}
 scaled_routing |>
-  pivot_longer(c(inflow_cfs, outflow_cfs), names_to = "series", values_to = "flow_cfs") |>
+  pivot_longer(
+    c(inflow_cfs, outflow_cfs),
+    names_to = "series",
+    values_to = "flow_cfs"
+  ) |>
   ggplot(aes(x = time_hr, y = flow_cfs, color = series)) +
   geom_line(linewidth = 0.8) +
   scale_y_continuous(labels = comma) +
@@ -668,8 +692,17 @@ packaged expected-only result to focus on plotting and interpretation.
 
 ```{r expected-stage-frequency-plot}
 aep_breaks <- c(
-  9.9e-1, 9e-1, 5e-1, 1e-1, 1e-2, 1e-3,
-  1e-4, 1e-5, 1e-6, 1e-7, 1e-8
+  9.9e-1,
+  9e-1,
+  5e-1,
+  1e-1,
+  1e-2,
+  1e-3,
+  1e-4,
+  1e-5,
+  1e-6,
+  1e-7,
+  1e-8
 )
 
 minor_aep_breaks <- unlist(lapply(2:9, function(i) i * 10^-(1:8)))
@@ -695,7 +728,11 @@ ggplot() +
     size = 1.6,
     alpha = 0.7
   ) +
-  geom_hline(data = critical_elevs, aes(yintercept = elev_ft), linewidth = 0.4) +
+  geom_hline(
+    data = critical_elevs,
+    aes(yintercept = elev_ft),
+    linewidth = 0.4
+  ) +
   geom_text(
     data = critical_elevs,
     aes(x = qnorm(1 - 0.99), y = elev_ft, label = label),
@@ -739,13 +776,13 @@ changes when important modeling decisions change.
 
 ```{r sensitivity-crosswalk}
 tibble::tribble(
-  ~sensitivity, ~rfa_question, ~rfaR_way_to_test,
-  "Reservoir model", "Full capacity versus no outlet works", "Route the same scaled hydrographs through alternate stage-storage-discharge tables",
-  "Critical inflow duration", "4-day versus 5-day setup", "Change hydrograph set, critical duration, routing duration, and VFC duration",
-  "Effective record length", "ERL 80 versus 150 versus 500", "Change BestFit parameter sets / VFC uncertainty inputs before sampling",
-  "Flood seasonality", "Flow-threshold seasonality versus stage-informed seasonality", "Change monthly sampling probabilities",
-  "Starting stage duration", "Alternate antecedent pool sampling assumptions", "Change stage record or monthly duration curves used for sampling",
-  "Full uncertainty", "Expected, median, and 90 percent interval", "Run `rfaR(..., expected_only = FALSE)` when runtime is acceptable"
+  ~sensitivity               , ~rfa_question                                                  , ~rfaR_way_to_test                                                                    ,
+  "Reservoir model"          , "Full capacity versus no outlet works"                         , "Route the same scaled hydrographs through alternate stage-storage-discharge tables" ,
+  "Critical inflow duration" , "4-day versus 5-day setup"                                     , "Change hydrograph set, critical duration, routing duration, and VFC duration"       ,
+  "Effective record length"  , "ERL 80 versus 150 versus 500"                                 , "Change BestFit parameter sets / VFC uncertainty inputs before sampling"             ,
+  "Flood seasonality"        , "Flow-threshold seasonality versus stage-informed seasonality" , "Change monthly sampling probabilities"                                              ,
+  "Starting stage duration"  , "Alternate antecedent pool sampling assumptions"               , "Change stage record or monthly duration curves used for sampling"                   ,
+  "Full uncertainty"         , "Expected, median, and 90 percent interval"                    , "Run `rfaR(..., expected_only = FALSE)` when runtime is acceptable"
 )
 ```
 
@@ -789,9 +826,9 @@ map_dfr(names(starting_stage_sensitivity), function(label) {
 
 The package-level full simulation is intentionally left unevaluated here because
 it can take a long time. Run it when you are ready to test runtime and outputs.
-This is through the Quick Start tab in the README on GitHub but be wary on the 
+This is through the Quick Start tab in the README on GitHub but be wary on the
 Full uncertainty because the computation time takes a while depending on the Nbins
-and events_per_bin hyperparameter choices. 
+and events_per_bin hyperparameter choices.
 
 
 You can plot `jmd_expected$stage_frequency`, `jmd_median$stage_frequency`, or

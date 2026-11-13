@@ -1,0 +1,22 @@
+# Workflow
+
+## Overview
+
+
+## Step 1: Prepare Inputs
+
+
+## Step 2: Hydrograph Setup
+
+
+## Step 3: Sampling
+
+
+
+## Step 4: Routing
+
+
+## Step 5: Running the Full Simulation
+
+
+## Step 6: Interpreting Results

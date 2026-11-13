@@ -10,6 +10,10 @@ An R implementation of the U.S. Army Corps of Engineers (USACE) Risk Management 
 
 See [`NEWS.md`](NEWS.md) for a history of user-facing changes across versions.
 
+## Acknowledgments
+
+The authors thank the U.S. Army Corps of Engineers Risk Management Center(USACE RMC) Hydrology Branch for its technical review, testing, feedback, and contributions to package development. The authors specifically thank Allen Avance, Samantha Hartke ([ORCID: 0000-0002-0239-4723](https://orcid.org/0000-0002-0239-4723)), Reuben Sasaki, and Bryan Robinson.
+
 ## Installation
 
 ### For users

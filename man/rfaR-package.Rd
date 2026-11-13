@@ -28,12 +28,8 @@ Authors:
 
 Other contributors:
 \itemize{
-  \item Allen Avance \email{allen.avance@usace.army.mil} (P.E., USACE RMC) [contributor]
-  \item Samantha Hartke \email{samantha.h.hartke@usace.army.mil} (\href{https://orcid.org/0000-0002-0239-4723}{ORCID}) (PhD, USACE RMC) [contributor]
   \item Julian Gonzalez \email{julian.t.gonzalez@usace.army.mil} (\href{https://orcid.org/0009-0009-9058-7653}{ORCID}) (USACE RMC) [contributor]
   \item Sadie Niblett \email{sadie.s.niblett@usace.army.mil} (\href{https://orcid.org/0009-0008-8588-4816}{ORCID}) (USACE RMC) [reviewer]
-  \item Reuben Sasaki \email{reuben.a.sasaki@usace.army.mil} (P.E., USACE RMC) [reviewer]
-  \item Bryan Robinson \email{bryan.j.robinson@usace.army.mil} (P.E., USACE RMC) [reviewer]
 }
 
 }

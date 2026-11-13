@@ -1,0 +1,17 @@
+# Methodology
+
+## Overview
+
+`rfaR` implements a two-loop, nested Monte Carlo framework to propagate both
+natural variability and knowledge uncertainty through a deterministic flood
+routing model.
+
+## Outer Loop: Parameter Uncertainty
+
+
+
+## Inner Loop: Realizations
+
+
+
+## Flood Routing

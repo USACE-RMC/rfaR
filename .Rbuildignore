@@ -11,3 +11,7 @@
 ^\.github$
 ^vignettes/articles$
 ^Results$
+^rfaR-book$
+^rfaR-book/
+^05-function-reference\.qmd$
+^rfaR_Testing_DLS114\.Rmd$
