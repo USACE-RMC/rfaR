@@ -1,5 +1,4 @@
 # Preface {.unnumbered}
-![](cover.jpg){fig-align="center" width=50%}
 
 `rfaR` implements the RMC Reservoir Frequency Analysis (RMC-RFA) methodology
 in R, producing reservoir stage-frequency curves with uncertainty bounds by
@@ -19,5 +18,4 @@ together.
 citation("rfaR")
 ```
 
-*Cover image: "Grandma's Boy" (1922) movie poster, public domain, via
-[Wikimedia Commons](https://commons.wikimedia.org).*
+*Cover image: Stoner Creek Dam and USGS streamgage 03251900 near Paris, Kentucky. Source: @noaa_nws_prsk2_2026.*

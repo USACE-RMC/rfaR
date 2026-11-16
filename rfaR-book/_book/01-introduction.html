@@ -87,7 +87,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./02-methodology.html" rel="next">
+<link href="./02-installation.html" rel="next">
 <link href="./index.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -348,38 +348,38 @@ div.csl-indent {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02-methodology.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Methodology</span></span></a>
+  <a href="./02-installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installation</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03-installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Installation</span></span></a>
+  <a href="./03-setup-an-rfa-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Set Up an rfaR Analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04-workflow.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Workflow</span></span></a>
+  <a href="./04-methodology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Methodology</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05-function-reference.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Function Reference</span></span></a>
+  <a href="./05-workflow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Workflow</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06-simulation-modes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Simulation Modes</span></span></a>
+  <a href="./06-validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Validation</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07-validation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Validation</span></span></a>
+  <a href="./07-function-reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Function Reference</span></span></a>
   </div>
 </li>
     </ul>
@@ -394,7 +394,7 @@ div.csl-indent {
   <ul>
   <li><a href="#purpose" id="toc-purpose" class="nav-link active" data-scroll-target="#purpose"><span class="header-section-number">1.1</span> Purpose</a></li>
   <li><a href="#rfar-analysis-summary" id="toc-rfar-analysis-summary" class="nav-link" data-scroll-target="#rfar-analysis-summary"><span class="header-section-number">1.2</span> rfaR Analysis Summary</a></li>
-  <li><a href="#relationship-to-rmc-rfa" id="toc-relationship-to-rmc-rfa" class="nav-link" data-scroll-target="#relationship-to-rmc-rfa"><span class="header-section-number">1.3</span> Relationship to RMC-RFA</a></li>
+  <li><a href="#scope-and-limitations" id="toc-scope-and-limitations" class="nav-link" data-scroll-target="#scope-and-limitations"><span class="header-section-number">1.3</span> Scope and Limitations</a></li>
   <li><a href="#how-this-manual-is-organized" id="toc-how-this-manual-is-organized" class="nav-link" data-scroll-target="#how-this-manual-is-organized"><span class="header-section-number">1.4</span> How This Manual Is Organized</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/USACE-RMC/rfaR/edit/main/01-introduction.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/USACE-RMC/rfaR/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -422,35 +422,32 @@ div.csl-indent {
 </header>
 
 
+<p><code>rfaR</code> is an R implementation of the Risk Management Center Reservoir Frequency Analysis (RMC-RFA) software. This package produces reservoir hydrologic hazard curves with uncertainty bounds by combining deterministic flood routing with a nested Monte Carlo framework. Hydrologic hazard analyses at dam and levee sites support risk assessments in accordance with the USACE Dam &amp; Levee Safety Program (DLS).</p>
 <section id="purpose" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="purpose"><span class="header-section-number">1.1</span> Purpose</h2>
-<p><code>rfaR</code> is an R implementation of the Risk Management Center Reservoir Frequency Analysis (RMC-RFA) software. RMC-RFA (and <code>rfaR</code>) use apply stratified monte carlo methods to deterministic flood routing to produce a hydrologic hazard curve<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> at individual dam and levee sites. Hazard analyses support risk assessments within the USACE Dam &amp; Levee Safety Program.</p>
+<p>The intended use of <code>rfaR</code> is to generate hydrologic hazard curves/loading curves<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>, supporting analysis for dam and levee risk analyses. The development of rfaR was primarily to conduct the nested monte carlo frame work using GEV inflow volume-frequency parameters developed from partial duration series in arid locations (RMC-RFA only supports LPIII parameters). Additional development allows for analysis at levees (no reservoir routing), transforming sampled unregulated inflow values to regulated inflow values, and a stage-based probabilistic bounding of hydrologic hazard curves.</p>
 </section>
 <section id="rfar-analysis-summary" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="rfar-analysis-summary"><span class="header-section-number">1.2</span> rfaR Analysis Summary</h2>
 <p><code>rfaR</code> combines deterministic flood routing (Modified Puls) with a nested, two-loop Monte Carlo framework to quantify:</p>
 <ul>
-<li><p><strong>Natural variability</strong> — simulated in the inner loop as a <em>realization</em>. Each realization represents 10,000 indiviual flood events with randomly sampled starting stage, hydrograph shape, and inflow volume (from an associated frequency distribution).</p></li>
-<li><p><strong>Knowledge uncertainty (epistemic uncertainty)</strong> — simulated in the outer loop, by sampling different parameter sets (from LP3 or GEV flood frequency distributions, informed by MCMC output from RMC-BestFit).</p></li>
+<li><p><strong>Natural variability</strong> — simulated in the inner loop as a <em>realization</em>. Each realization represents 10,000 indiviual flood events with randomly sampled starting stages, hydrograph shapes, and inflow volumes (from an associated inflow-frequency distribution).</p></li>
+<li><p><strong>Knowledge uncertainty (epistemic uncertainty)</strong> — simulated in the outer loop, by sampling different inflow-frequency parameter sets (from LP3 or GEV flood frequency distributions, informed by RMC-BestFit’s MCMC output).</p></li>
 </ul>
 </section>
-<section id="relationship-to-rmc-rfa" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="relationship-to-rmc-rfa"><span class="header-section-number">1.3</span> Relationship to RMC-RFA</h2>
-<p><code>rfaR</code> reimplements the core RMC-RFA methodology in open-source R, offering:</p>
-<ul>
-<li>Reproducibility and transparency in the routing and sampling logic</li>
-<li>Integration with the broader R/RMC ecosystem (e.g., RMC-BestFit outputs)</li>
-</ul>
+<section id="scope-and-limitations" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="scope-and-limitations"><span class="header-section-number">1.3</span> Scope and Limitations</h2>
+<p><code>rfaR</code> reimplements the core RMC-RFA methodology in open-source R. <code>rfaR</code> is intended to serve as an interim capability between the current release of RMC-RFA and the planned second version of RMC-RFA. As of November 2026, users cannot import an existing RMC-RFA model or input file directly into <code>rfaR</code>; users must prepare the required inputs separately.</p>
 </section>
 <section id="how-this-manual-is-organized" class="level2" data-number="1.4">
 <h2 data-number="1.4" class="anchored" data-anchor-id="how-this-manual-is-organized"><span class="header-section-number">1.4</span> How This Manual Is Organized</h2>
 <ul>
-<li><strong>Methodology</strong> — statistical and hydrologic methods behind the two-loop simulation framework</li>
-<li><strong>Installation</strong> — getting <code>rfaR</code> running locally</li>
-<li><strong>Workflow</strong> — an end-to-end walkthrough from raw inputs to a stage-frequency curve</li>
-<li><strong>Simulation Modes</strong> — Median, Expected, and Full Uncertainty simulation modes explained</li>
-<li><strong>Function Reference</strong> — Function references (auto-generated from package documentation)</li>
-<li><strong>Validation</strong> — comparison against RMC-RFA / HEC-HMS benchmark results</li>
+<li><strong>Installation</strong> — System requirements and instructions for installing and loading <code>rfaR</code>.</li>
+<li><strong>Set Up an rfaR Analysis</strong> — Prepare a new <code>rfaR</code> analysis, including project organization and input-data preparation.</li>
+<li><strong>Methodology</strong> — Statistical and hydrologic methods underlying the two-loop simulation framework.</li>
+<li><strong>Workflow</strong> — Detailed guidance for using <code>rfa_simulate()</code>, defining input options and simulation settings, and processing outputs.</li>
+<li><strong>Validation</strong> — Compare <code>rfaR</code> results with RMC-RFA and HEC-HMS benchmark results.</li>
+<li><strong>Function Reference</strong> — Reference documentation for <code>rfaR</code> functions and their arguments.</li>
 </ul>
 <p>For function-level documentation, also see the <a href="https://usace-rmc.github.io/rfaR/">pkgdown reference site</a>.</p>
 
@@ -942,57 +939,52 @@ Aven, Terje, Yakov Ben-Haim, Henning Boje Andersen, et al. n.d. <em>Society for 
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./02-methodology.html" class="pagination-link" aria-label="Methodology">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Methodology</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./02-installation.html" class="pagination-link" aria-label="Installation">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installation</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Introduction</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Purpose</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="in">`rfaR`</span> is an R implementation of the Risk Management Center Reservoir Frequency Analysis (RMC-RFA) software. This package produces reservoir hydrologic hazard curves with uncertainty bounds by combining deterministic flood routing with a nested Monte Carlo framework. Hydrologic hazard analyses at dam and levee sites support risk assessments in accordance with the USACE Dam &amp; Levee Safety Program (DLS).</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="in">`rfaR`</span> is an R implementation of the Risk Management Center Reservoir</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>Frequency Analysis (RMC-RFA) software. RMC-RFA (and <span class="in">`rfaR`</span>) use apply stratified</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>monte carlo methods to deterministic flood routing to produce a hydrologic hazard</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>curve<span class="ot">[^1]</span> at individual dam and levee sites. Hazard analyses support risk assessments</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>within the USACE Dam &amp; Levee Safety Program.</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Purpose</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>The intended use of <span class="in">`rfaR`</span> is to generate hydrologic hazard curves/loading curves<span class="ot">[^1]</span>, supporting analysis for dam and levee risk analyses. The development of rfaR was primarily to conduct the nested monte carlo frame work using GEV inflow volume-frequency parameters developed from partial duration series in arid locations (RMC-RFA only supports LPIII parameters). Additional development allows for analysis at levees (no reservoir routing), transforming sampled unregulated inflow values to regulated inflow values, and a stage-based probabilistic bounding of hydrologic hazard curves.</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ot">[^1]: </span>In risk analysis, the *hazard* is the risk source where potential consequences relate to harm [@aven_society_nodate]. In the context of dam and levee risk analyses, the source of risk is often defined using a reservoir stage-frequency relationship. The terms *hydrologic loading*, *stage-frequency*, and *hydrologic hazard* are used interchangeably to relate reservoir/river stages to annual exceedance probabilities (AEPs). These relationships are commonly presented as curves and are used as probabilistic loading conditions in dam and levee risk analyses.</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ot">[^1]: </span>In risk analysis, the *hazard* is the risk source where potential consequences relate to harm [@aven_society_nodate]. In the context of dam and levee risk analyses, the source of risk is often defined using a reservoir stage-frequency relationship. The terms *hydrologic loading*, *stage-frequency*, and *hydrologic hazard* are used interchangeably to relate reservoir/river stages to annual exceedance probabilities (AEPs). These relationships are commonly presented as curves and are used as probabilistic loading conditions in dam and levee risk analyses.</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## rfaR Analysis Summary</span></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## rfaR Analysis Summary</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="in">`rfaR`</span> combines deterministic flood routing (Modified Puls) with a nested, two-loop Monte Carlo framework to quantify:</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="in">`rfaR`</span> combines deterministic flood routing (Modified Puls) with a</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>nested, two-loop Monte Carlo framework to quantify:</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Natural variability** — simulated in the inner loop as a *realization*. Each</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  realization represents 10,000 indiviual flood events with randomly sampled</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  starting stage, hydrograph shape, and inflow volume (from an associated frequency distribution).</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Knowledge uncertainty (epistemic uncertainty)** — simulated in the outer loop, by sampling</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  different parameter sets (from LP3 or GEV flood frequency distributions,</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  informed by MCMC output from RMC-BestFit).</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Natural variability** — simulated in the inner loop as a *realization*. Each realization represents 10,000 indiviual flood events with randomly sampled starting stages, hydrograph shapes, and inflow volumes (from an associated inflow-frequency distribution).</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Knowledge uncertainty (epistemic uncertainty)** — simulated in the outer loop, by sampling different inflow-frequency parameter sets (from LP3 or GEV flood frequency distributions, informed by RMC-BestFit's MCMC output).</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## Scope and Limitations</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="in">`rfaR`</span> reimplements the core RMC-RFA methodology in open-source R. <span class="in">`rfaR`</span> is intended to serve as an interim capability between the current release of RMC-RFA and the planned second version of RMC-RFA. As of November 2026, users cannot import an existing RMC-RFA model or input file directly into <span class="in">`rfaR`</span>; users must prepare the required inputs separately.</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">## How This Manual Is Organized</span></span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">## Relationship to RMC-RFA</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="in">`rfaR`</span> reimplements the core RMC-RFA methodology in open-source R, offering:</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Reproducibility and transparency in the routing and sampling logic</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Integration with the broader R/RMC ecosystem (e.g., RMC-BestFit outputs)</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">## How This Manual Is Organized</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Methodology** — statistical and hydrologic methods behind the two-loop</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  simulation framework</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Installation** — getting <span class="in">`rfaR`</span> running locally</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Workflow** — an end-to-end walkthrough from raw inputs to a</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  stage-frequency curve</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Simulation Modes** — Median, Expected, and Full Uncertainty simulation modes explained</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Function Reference** — Function references (auto-generated from package documentation)</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Validation** — comparison against RMC-RFA / HEC-HMS benchmark results</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>For function-level documentation, also see the</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">pkgdown reference site</span><span class="co">](https://usace-rmc.github.io/rfaR/)</span>.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Installation** — System requirements and instructions for installing and</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  loading <span class="in">`rfaR`</span>.</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Set Up an rfaR Analysis** — Prepare a new <span class="in">`rfaR`</span> analysis, including</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  project organization and input-data preparation.</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Methodology** — Statistical and hydrologic methods underlying the</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  two-loop simulation framework.</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Workflow** — Detailed guidance for using <span class="in">`rfa_simulate()`</span>, defining input</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  options and simulation settings, and processing outputs.</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Validation** — Compare <span class="in">`rfaR`</span> results with RMC-RFA and HEC-HMS benchmark</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  results.</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Function Reference** — Reference documentation for <span class="in">`rfaR`</span> functions and</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  their arguments.</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>For function-level documentation, also see the</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">pkgdown reference site</span><span class="co">](https://usace-rmc.github.io/rfaR/)</span>.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>5&nbsp; Function Reference – rfaR: Reservoir Frequency Analysis in R</title>
+<title>7&nbsp; Function Reference – rfaR: Reservoir Frequency Analysis in R</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -68,8 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./06-simulation-modes.html" rel="next">
-<link href="./04-workflow.html" rel="prev">
+<link href="./06-validation.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -286,7 +285,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-function-reference.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Function Reference</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./07-function-reference.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Function Reference</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -329,38 +328,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02-methodology.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Methodology</span></span></a>
+  <a href="./02-installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installation</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03-installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Installation</span></span></a>
+  <a href="./03-setup-an-rfa-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Set Up an rfaR Analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04-workflow.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Workflow</span></span></a>
+  <a href="./04-methodology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Methodology</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05-function-reference.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Function Reference</span></span></a>
+  <a href="./05-workflow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Workflow</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06-simulation-modes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Simulation Modes</span></span></a>
+  <a href="./06-validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Validation</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07-validation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Validation</span></span></a>
+  <a href="./07-function-reference.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Function Reference</span></span></a>
   </div>
 </li>
     </ul>
@@ -373,38 +372,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#execute-reservoir-frequency-analysis" id="toc-execute-reservoir-frequency-analysis" class="nav-link active" data-scroll-target="#execute-reservoir-frequency-analysis"><span class="header-section-number">5.1</span> Execute Reservoir Frequency Analysis</a>
+  <li><a href="#execute-reservoir-frequency-analysis" id="toc-execute-reservoir-frequency-analysis" class="nav-link active" data-scroll-target="#execute-reservoir-frequency-analysis"><span class="header-section-number">7.1</span> Execute Reservoir Frequency Analysis</a>
   <ul class="collapse">
-  <li><a href="#rfa_simulate" id="toc-rfa_simulate" class="nav-link" data-scroll-target="#rfa_simulate"><span class="header-section-number">5.1.1</span> <code>rfa_simulate()</code></a></li>
+  <li><a href="#rfa_simulate" id="toc-rfa_simulate" class="nav-link" data-scroll-target="#rfa_simulate"><span class="header-section-number">7.1.1</span> <code>rfa_simulate()</code></a></li>
   </ul></li>
-  <li><a href="#primary-rfa-modules" id="toc-primary-rfa-modules" class="nav-link" data-scroll-target="#primary-rfa-modules"><span class="header-section-number">5.2</span> Primary RFA Modules</a>
+  <li><a href="#primary-rfa-modules" id="toc-primary-rfa-modules" class="nav-link" data-scroll-target="#primary-rfa-modules"><span class="header-section-number">7.2</span> Primary RFA Modules</a>
   <ul class="collapse">
-  <li><a href="#stratified_sampler" id="toc-stratified_sampler" class="nav-link" data-scroll-target="#stratified_sampler"><span class="header-section-number">5.2.1</span> <code>stratified_sampler()</code></a></li>
-  <li><a href="#flow_frequency_sampler" id="toc-flow_frequency_sampler" class="nav-link" data-scroll-target="#flow_frequency_sampler"><span class="header-section-number">5.2.2</span> <code>flow_frequency_sampler()</code></a></li>
-  <li><a href="#flow_frequency_sampler_expected" id="toc-flow_frequency_sampler_expected" class="nav-link" data-scroll-target="#flow_frequency_sampler_expected"><span class="header-section-number">5.2.3</span> <code>flow_frequency_sampler_expected()</code></a></li>
-  <li><a href="#hydrograph_setup" id="toc-hydrograph_setup" class="nav-link" data-scroll-target="#hydrograph_setup"><span class="header-section-number">5.2.4</span> <code>hydrograph_setup()</code></a></li>
-  <li><a href="#scale_hydrograph" id="toc-scale_hydrograph" class="nav-link" data-scroll-target="#scale_hydrograph"><span class="header-section-number">5.2.5</span> <code>scale_hydrograph()</code></a></li>
-  <li><a href="#mod_puls_routing" id="toc-mod_puls_routing" class="nav-link" data-scroll-target="#mod_puls_routing"><span class="header-section-number">5.2.6</span> <code>mod_puls_routing()</code></a></li>
-  <li><a href="#stage_frequency_curve" id="toc-stage_frequency_curve" class="nav-link" data-scroll-target="#stage_frequency_curve"><span class="header-section-number">5.2.7</span> <code>stage_frequency_curve()</code></a></li>
+  <li><a href="#stratified_sampler" id="toc-stratified_sampler" class="nav-link" data-scroll-target="#stratified_sampler"><span class="header-section-number">7.2.1</span> <code>stratified_sampler()</code></a></li>
+  <li><a href="#flow_frequency_sampler" id="toc-flow_frequency_sampler" class="nav-link" data-scroll-target="#flow_frequency_sampler"><span class="header-section-number">7.2.2</span> <code>flow_frequency_sampler()</code></a></li>
+  <li><a href="#flow_frequency_sampler_expected" id="toc-flow_frequency_sampler_expected" class="nav-link" data-scroll-target="#flow_frequency_sampler_expected"><span class="header-section-number">7.2.3</span> <code>flow_frequency_sampler_expected()</code></a></li>
+  <li><a href="#hydrograph_setup" id="toc-hydrograph_setup" class="nav-link" data-scroll-target="#hydrograph_setup"><span class="header-section-number">7.2.4</span> <code>hydrograph_setup()</code></a></li>
+  <li><a href="#scale_hydrograph" id="toc-scale_hydrograph" class="nav-link" data-scroll-target="#scale_hydrograph"><span class="header-section-number">7.2.5</span> <code>scale_hydrograph()</code></a></li>
+  <li><a href="#mod_puls_routing" id="toc-mod_puls_routing" class="nav-link" data-scroll-target="#mod_puls_routing"><span class="header-section-number">7.2.6</span> <code>mod_puls_routing()</code></a></li>
+  <li><a href="#stage_frequency_curve" id="toc-stage_frequency_curve" class="nav-link" data-scroll-target="#stage_frequency_curve"><span class="header-section-number">7.2.7</span> <code>stage_frequency_curve()</code></a></li>
   </ul></li>
-  <li><a href="#rejection-sampling" id="toc-rejection-sampling" class="nav-link" data-scroll-target="#rejection-sampling"><span class="header-section-number">5.3</span> Rejection Sampling</a>
+  <li><a href="#rejection-sampling" id="toc-rejection-sampling" class="nav-link" data-scroll-target="#rejection-sampling"><span class="header-section-number">7.3</span> Rejection Sampling</a>
   <ul class="collapse">
-  <li><a href="#pmf_stage_lognormal" id="toc-pmf_stage_lognormal" class="nav-link" data-scroll-target="#pmf_stage_lognormal"><span class="header-section-number">5.3.1</span> <code>pmf_stage_lognormal()</code></a></li>
-  <li><a href="#rejection_sampling_stage" id="toc-rejection_sampling_stage" class="nav-link" data-scroll-target="#rejection_sampling_stage"><span class="header-section-number">5.3.2</span> <code>rejection_sampling_stage()</code></a></li>
+  <li><a href="#pmf_stage_lognormal" id="toc-pmf_stage_lognormal" class="nav-link" data-scroll-target="#pmf_stage_lognormal"><span class="header-section-number">7.3.1</span> <code>pmf_stage_lognormal()</code></a></li>
+  <li><a href="#rejection_sampling_stage" id="toc-rejection_sampling_stage" class="nav-link" data-scroll-target="#rejection_sampling_stage"><span class="header-section-number">7.3.2</span> <code>rejection_sampling_stage()</code></a></li>
   </ul></li>
-  <li><a href="#additional-utilities" id="toc-additional-utilities" class="nav-link" data-scroll-target="#additional-utilities"><span class="header-section-number">5.4</span> Additional Utilities</a>
+  <li><a href="#additional-utilities" id="toc-additional-utilities" class="nav-link" data-scroll-target="#additional-utilities"><span class="header-section-number">7.4</span> Additional Utilities</a>
   <ul class="collapse">
-  <li><a href="#bootstrap_vfc" id="toc-bootstrap_vfc" class="nav-link" data-scroll-target="#bootstrap_vfc"><span class="header-section-number">5.4.1</span> <code>bootstrap_vfc()</code></a></li>
-  <li><a href="#qp3" id="toc-qp3" class="nav-link" data-scroll-target="#qp3"><span class="header-section-number">5.4.2</span> <code>qp3()</code></a></li>
-  <li><a href="#aep2stage" id="toc-aep2stage" class="nav-link" data-scroll-target="#aep2stage"><span class="header-section-number">5.4.3</span> <code>aep2stage()</code></a></li>
-  <li><a href="#stage2aep" id="toc-stage2aep" class="nav-link" data-scroll-target="#stage2aep"><span class="header-section-number">5.4.4</span> <code>stage2aep()</code></a></li>
-  <li><a href="#interpolate_aep_matrix" id="toc-interpolate_aep_matrix" class="nav-link" data-scroll-target="#interpolate_aep_matrix"><span class="header-section-number">5.4.5</span> <code>interpolate_aep_matrix()</code></a></li>
-  <li><a href="#interpolate_stage_matrix" id="toc-interpolate_stage_matrix" class="nav-link" data-scroll-target="#interpolate_stage_matrix"><span class="header-section-number">5.4.6</span> <code>interpolate_stage_matrix()</code></a></li>
-  <li><a href="#power_function" id="toc-power_function" class="nav-link" data-scroll-target="#power_function"><span class="header-section-number">5.4.7</span> <code>power_function()</code></a></li>
-  <li><a href="#theme_rfar_conceptual" id="toc-theme_rfar_conceptual" class="nav-link" data-scroll-target="#theme_rfar_conceptual"><span class="header-section-number">5.4.8</span> <code>theme_rfar_conceptual()</code></a></li>
+  <li><a href="#bootstrap_vfc" id="toc-bootstrap_vfc" class="nav-link" data-scroll-target="#bootstrap_vfc"><span class="header-section-number">7.4.1</span> <code>bootstrap_vfc()</code></a></li>
+  <li><a href="#qp3" id="toc-qp3" class="nav-link" data-scroll-target="#qp3"><span class="header-section-number">7.4.2</span> <code>qp3()</code></a></li>
+  <li><a href="#aep2stage" id="toc-aep2stage" class="nav-link" data-scroll-target="#aep2stage"><span class="header-section-number">7.4.3</span> <code>aep2stage()</code></a></li>
+  <li><a href="#stage2aep" id="toc-stage2aep" class="nav-link" data-scroll-target="#stage2aep"><span class="header-section-number">7.4.4</span> <code>stage2aep()</code></a></li>
+  <li><a href="#interpolate_aep_matrix" id="toc-interpolate_aep_matrix" class="nav-link" data-scroll-target="#interpolate_aep_matrix"><span class="header-section-number">7.4.5</span> <code>interpolate_aep_matrix()</code></a></li>
+  <li><a href="#interpolate_stage_matrix" id="toc-interpolate_stage_matrix" class="nav-link" data-scroll-target="#interpolate_stage_matrix"><span class="header-section-number">7.4.6</span> <code>interpolate_stage_matrix()</code></a></li>
+  <li><a href="#power_function" id="toc-power_function" class="nav-link" data-scroll-target="#power_function"><span class="header-section-number">7.4.7</span> <code>power_function()</code></a></li>
+  <li><a href="#theme_rfar_conceptual" id="toc-theme_rfar_conceptual" class="nav-link" data-scroll-target="#theme_rfar_conceptual"><span class="header-section-number">7.4.8</span> <code>theme_rfar_conceptual()</code></a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/USACE-RMC/rfaR/edit/main/05-function-reference.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/USACE-RMC/rfaR/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/USACE-RMC/rfaR/edit/main/07-function-reference.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/USACE-RMC/rfaR/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -412,7 +411,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Function Reference</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Function Reference</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -429,10 +428,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="execute-reservoir-frequency-analysis" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="execute-reservoir-frequency-analysis"><span class="header-section-number">5.1</span> Execute Reservoir Frequency Analysis</h2>
-<section id="rfa_simulate" class="level3" data-number="5.1.1">
-<h3 data-number="5.1.1" class="anchored" data-anchor-id="rfa_simulate"><span class="header-section-number">5.1.1</span> <code>rfa_simulate()</code></h3>
+<section id="execute-reservoir-frequency-analysis" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="execute-reservoir-frequency-analysis"><span class="header-section-number">7.1</span> Execute Reservoir Frequency Analysis</h2>
+<section id="rfa_simulate" class="level3" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="rfa_simulate"><span class="header-section-number">7.1.1</span> <code>rfa_simulate()</code></h3>
 <pre><code>RFA Stage-Frequency Simulation
 
 Description:
@@ -680,10 +679,10 @@ Examples:
      </code></pre>
 </section>
 </section>
-<section id="primary-rfa-modules" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="primary-rfa-modules"><span class="header-section-number">5.2</span> Primary RFA Modules</h2>
-<section id="stratified_sampler" class="level3" data-number="5.2.1">
-<h3 data-number="5.2.1" class="anchored" data-anchor-id="stratified_sampler"><span class="header-section-number">5.2.1</span> <code>stratified_sampler()</code></h3>
+<section id="primary-rfa-modules" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="primary-rfa-modules"><span class="header-section-number">7.2</span> Primary RFA Modules</h2>
+<section id="stratified_sampler" class="level3" data-number="7.2.1">
+<h3 data-number="7.2.1" class="anchored" data-anchor-id="stratified_sampler"><span class="header-section-number">7.2.1</span> <code>stratified_sampler()</code></h3>
 <pre><code>Stratified Sampler
 
 Description:
@@ -773,8 +772,8 @@ Examples:
      strat &lt;- stratified_sampler(verbose = TRUE)
      </code></pre>
 </section>
-<section id="flow_frequency_sampler" class="level3" data-number="5.2.2">
-<h3 data-number="5.2.2" class="anchored" data-anchor-id="flow_frequency_sampler"><span class="header-section-number">5.2.2</span> <code>flow_frequency_sampler()</code></h3>
+<section id="flow_frequency_sampler" class="level3" data-number="7.2.2">
+<h3 data-number="7.2.2" class="anchored" data-anchor-id="flow_frequency_sampler"><span class="header-section-number">7.2.2</span> <code>flow_frequency_sampler()</code></h3>
 <pre><code>Flow Frequency Sampler
 
 Description:
@@ -842,8 +841,8 @@ Examples:
      hist(result$flow)
      </code></pre>
 </section>
-<section id="flow_frequency_sampler_expected" class="level3" data-number="5.2.3">
-<h3 data-number="5.2.3" class="anchored" data-anchor-id="flow_frequency_sampler_expected"><span class="header-section-number">5.2.3</span> <code>flow_frequency_sampler_expected()</code></h3>
+<section id="flow_frequency_sampler_expected" class="level3" data-number="7.2.3">
+<h3 data-number="7.2.3" class="anchored" data-anchor-id="flow_frequency_sampler_expected"><span class="header-section-number">7.2.3</span> <code>flow_frequency_sampler_expected()</code></h3>
 <pre><code>Flow Frequency Sampler (Expected Only)
 
 Description:
@@ -925,8 +924,8 @@ Examples:
        Mevent    = 500)
      </code></pre>
 </section>
-<section id="hydrograph_setup" class="level3" data-number="5.2.4">
-<h3 data-number="5.2.4" class="anchored" data-anchor-id="hydrograph_setup"><span class="header-section-number">5.2.4</span> <code>hydrograph_setup()</code></h3>
+<section id="hydrograph_setup" class="level3" data-number="7.2.4">
+<h3 data-number="7.2.4" class="anchored" data-anchor-id="hydrograph_setup"><span class="header-section-number">7.2.4</span> <code>hydrograph_setup()</code></h3>
 <pre><code>Hydrograph Setup for RFA Simulation
 
 Description:
@@ -1002,8 +1001,8 @@ Examples:
      attr(hydros, "probs")
      </code></pre>
 </section>
-<section id="scale_hydrograph" class="level3" data-number="5.2.5">
-<h3 data-number="5.2.5" class="anchored" data-anchor-id="scale_hydrograph"><span class="header-section-number">5.2.5</span> <code>scale_hydrograph()</code></h3>
+<section id="scale_hydrograph" class="level3" data-number="7.2.5">
+<h3 data-number="7.2.5" class="anchored" data-anchor-id="scale_hydrograph"><span class="header-section-number">7.2.5</span> <code>scale_hydrograph()</code></h3>
 <pre><code>Scale Hydrograph
 
 Description:
@@ -1062,8 +1061,8 @@ Examples:
                                 routing_dt = 1)
      </code></pre>
 </section>
-<section id="mod_puls_routing" class="level3" data-number="5.2.6">
-<h3 data-number="5.2.6" class="anchored" data-anchor-id="mod_puls_routing"><span class="header-section-number">5.2.6</span> <code>mod_puls_routing()</code></h3>
+<section id="mod_puls_routing" class="level3" data-number="7.2.6">
+<h3 data-number="7.2.6" class="anchored" data-anchor-id="mod_puls_routing"><span class="header-section-number">7.2.6</span> <code>mod_puls_routing()</code></h3>
 <pre><code>Modified Puls Reservoir Routing
 
 Description:
@@ -1124,8 +1123,8 @@ Examples:
      head(jmd_full_routing)
      </code></pre>
 </section>
-<section id="stage_frequency_curve" class="level3" data-number="5.2.7">
-<h3 data-number="5.2.7" class="anchored" data-anchor-id="stage_frequency_curve"><span class="header-section-number">5.2.7</span> <code>stage_frequency_curve()</code></h3>
+<section id="stage_frequency_curve" class="level3" data-number="7.2.7">
+<h3 data-number="7.2.7" class="anchored" data-anchor-id="stage_frequency_curve"><span class="header-section-number">7.2.7</span> <code>stage_frequency_curve()</code></h3>
 <pre><code>Compute Stage-Frequency Curve
 
 Description:
@@ -1165,10 +1164,10 @@ See Also:
 </code></pre>
 </section>
 </section>
-<section id="rejection-sampling" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="rejection-sampling"><span class="header-section-number">5.3</span> Rejection Sampling</h2>
-<section id="pmf_stage_lognormal" class="level3" data-number="5.3.1">
-<h3 data-number="5.3.1" class="anchored" data-anchor-id="pmf_stage_lognormal"><span class="header-section-number">5.3.1</span> <code>pmf_stage_lognormal()</code></h3>
+<section id="rejection-sampling" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="rejection-sampling"><span class="header-section-number">7.3</span> Rejection Sampling</h2>
+<section id="pmf_stage_lognormal" class="level3" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="pmf_stage_lognormal"><span class="header-section-number">7.3.1</span> <code>pmf_stage_lognormal()</code></h3>
 <pre><code>Parameterize a Three-Parameter Lognormal PMF for Stage
 
 Description:
@@ -1236,8 +1235,8 @@ Examples:
                                  pmf_low = 239, pmf_high = 245)
      </code></pre>
 </section>
-<section id="rejection_sampling_stage" class="level3" data-number="5.3.2">
-<h3 data-number="5.3.2" class="anchored" data-anchor-id="rejection_sampling_stage"><span class="header-section-number">5.3.2</span> <code>rejection_sampling_stage()</code></h3>
+<section id="rejection_sampling_stage" class="level3" data-number="7.3.2">
+<h3 data-number="7.3.2" class="anchored" data-anchor-id="rejection_sampling_stage"><span class="header-section-number">7.3.2</span> <code>rejection_sampling_stage()</code></h3>
 <pre><code>Rejection Sampling of Stage Bounded by a Probabilistic Maximum Stage
 
 Description:
@@ -1300,10 +1299,10 @@ Examples:
      </code></pre>
 </section>
 </section>
-<section id="additional-utilities" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="additional-utilities"><span class="header-section-number">5.4</span> Additional Utilities</h2>
-<section id="bootstrap_vfc" class="level3" data-number="5.4.1">
-<h3 data-number="5.4.1" class="anchored" data-anchor-id="bootstrap_vfc"><span class="header-section-number">5.4.1</span> <code>bootstrap_vfc()</code></h3>
+<section id="additional-utilities" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="additional-utilities"><span class="header-section-number">7.4</span> Additional Utilities</h2>
+<section id="bootstrap_vfc" class="level3" data-number="7.4.1">
+<h3 data-number="7.4.1" class="anchored" data-anchor-id="bootstrap_vfc"><span class="header-section-number">7.4.1</span> <code>bootstrap_vfc()</code></h3>
 <pre><code>Bootstrap option for VFC (RFA-style w/ ERL)
 
 Description:
@@ -1368,8 +1367,8 @@ Examples:
      hist(lp3_samples$params[,3])
      </code></pre>
 </section>
-<section id="qp3" class="level3" data-number="5.4.2">
-<h3 data-number="5.4.2" class="anchored" data-anchor-id="qp3"><span class="header-section-number">5.4.2</span> <code>qp3()</code></h3>
+<section id="qp3" class="level3" data-number="7.4.2">
+<h3 data-number="7.4.2" class="anchored" data-anchor-id="qp3"><span class="header-section-number">7.4.2</span> <code>qp3()</code></h3>
 <pre><code>Pearson Type III Inverse CDF (Quantile Function)
 
 Description:
@@ -1424,8 +1423,8 @@ Examples:
          gamma = jmd_vfc_parameters$skew_log)
      </code></pre>
 </section>
-<section id="aep2stage" class="level3" data-number="5.4.3">
-<h3 data-number="5.4.3" class="anchored" data-anchor-id="aep2stage"><span class="header-section-number">5.4.3</span> <code>aep2stage()</code></h3>
+<section id="aep2stage" class="level3" data-number="7.4.3">
+<h3 data-number="7.4.3" class="anchored" data-anchor-id="aep2stage"><span class="header-section-number">7.4.3</span> <code>aep2stage()</code></h3>
 <pre><code>Interpolate Stage from AEP
 
 Description:
@@ -1462,8 +1461,8 @@ Examples:
      aep2stage(jmd_rfa_expected$AEP, jmd_rfa_expected$Expected, c(0.0112,1.75E-3))
      </code></pre>
 </section>
-<section id="stage2aep" class="level3" data-number="5.4.4">
-<h3 data-number="5.4.4" class="anchored" data-anchor-id="stage2aep"><span class="header-section-number">5.4.4</span> <code>stage2aep()</code></h3>
+<section id="stage2aep" class="level3" data-number="7.4.4">
+<h3 data-number="7.4.4" class="anchored" data-anchor-id="stage2aep"><span class="header-section-number">7.4.4</span> <code>stage2aep()</code></h3>
 <pre><code>Interpolate AEP from Stage
 
 Description:
@@ -1508,8 +1507,8 @@ Examples:
      stage2aep(jmd_rfa_expected$AEP, jmd_rfa_expected$Expected, c(3862.0, 3872))
      </code></pre>
 </section>
-<section id="interpolate_aep_matrix" class="level3" data-number="5.4.5">
-<h3 data-number="5.4.5" class="anchored" data-anchor-id="interpolate_aep_matrix"><span class="header-section-number">5.4.5</span> <code>interpolate_aep_matrix()</code></h3>
+<section id="interpolate_aep_matrix" class="level3" data-number="7.4.5">
+<h3 data-number="7.4.5" class="anchored" data-anchor-id="interpolate_aep_matrix"><span class="header-section-number">7.4.5</span> <code>interpolate_aep_matrix()</code></h3>
 <pre><code>Interpolate AEPs at Target Stages Across Realizations
 
 Description:
@@ -1535,8 +1534,8 @@ Value:
      realizations.
 </code></pre>
 </section>
-<section id="interpolate_stage_matrix" class="level3" data-number="5.4.6">
-<h3 data-number="5.4.6" class="anchored" data-anchor-id="interpolate_stage_matrix"><span class="header-section-number">5.4.6</span> <code>interpolate_stage_matrix()</code></h3>
+<section id="interpolate_stage_matrix" class="level3" data-number="7.4.6">
+<h3 data-number="7.4.6" class="anchored" data-anchor-id="interpolate_stage_matrix"><span class="header-section-number">7.4.6</span> <code>interpolate_stage_matrix()</code></h3>
 <pre><code>Interpolate Stages at Target AEPs Across Realizations
 
 Description:
@@ -1562,8 +1561,8 @@ Value:
      realizations.
 </code></pre>
 </section>
-<section id="power_function" class="level3" data-number="5.4.7">
-<h3 data-number="5.4.7" class="anchored" data-anchor-id="power_function"><span class="header-section-number">5.4.7</span> <code>power_function()</code></h3>
+<section id="power_function" class="level3" data-number="7.4.7">
+<h3 data-number="7.4.7" class="anchored" data-anchor-id="power_function"><span class="header-section-number">7.4.7</span> <code>power_function()</code></h3>
 <pre><code>Power Function
 
 Description:
@@ -1583,8 +1582,8 @@ Value:
      Vector of 10 raised sequentially from the 1st to the nth power.
 </code></pre>
 </section>
-<section id="theme_rfar_conceptual" class="level3" data-number="5.4.8">
-<h3 data-number="5.4.8" class="anchored" data-anchor-id="theme_rfar_conceptual"><span class="header-section-number">5.4.8</span> <code>theme_rfar_conceptual()</code></h3>
+<section id="theme_rfar_conceptual" class="level3" data-number="7.4.8">
+<h3 data-number="7.4.8" class="anchored" data-anchor-id="theme_rfar_conceptual"><span class="header-section-number">7.4.8</span> <code>theme_rfar_conceptual()</code></h3>
 <pre><code>rfaR ggplot2 Theme for Conceptual Plots
 
 Description:
@@ -2091,14 +2090,11 @@ Examples:
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./04-workflow.html" class="pagination-link" aria-label="Workflow">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Workflow</span></span>
+      <a href="./06-validation.html" class="pagination-link" aria-label="Validation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Validation</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./06-simulation-modes.html" class="pagination-link" aria-label="Simulation Modes">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Simulation Modes</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Function Reference</span></span>
@@ -3333,7 +3329,7 @@ Examples:
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/USACE-RMC/rfaR/edit/main/05-function-reference.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/USACE-RMC/rfaR/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/USACE-RMC/rfaR/edit/main/07-function-reference.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/USACE-RMC/rfaR/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>Built with Quarto</p>
 </div>
