@@ -1,0 +1,2222 @@
+% Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrreprt}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{5}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{241,243,245}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+
+
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
+\@ifpackageloaded{fontawesome5}{}{\usepackage{fontawesome5}}
+\definecolor{quarto-callout-color}{HTML}{909090}
+\definecolor{quarto-callout-note-color}{HTML}{0758E5}
+\definecolor{quarto-callout-important-color}{HTML}{CC1914}
+\definecolor{quarto-callout-warning-color}{HTML}{EB9113}
+\definecolor{quarto-callout-tip-color}{HTML}{00A047}
+\definecolor{quarto-callout-caution-color}{HTML}{FC5300}
+\definecolor{quarto-callout-color-frame}{HTML}{acacac}
+\definecolor{quarto-callout-note-color-frame}{HTML}{4582ec}
+\definecolor{quarto-callout-important-color-frame}{HTML}{d9534f}
+\definecolor{quarto-callout-warning-color-frame}{HTML}{f0ad4e}
+\definecolor{quarto-callout-tip-color-frame}{HTML}{02b875}
+\definecolor{quarto-callout-caution-color-frame}{HTML}{fd7e14}
+\makeatother
+\makeatletter
+\@ifpackageloaded{bookmark}{}{\usepackage{bookmark}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={rfaR: Reservoir Frequency Analysis in R},
+  pdfauthor={Dan McGraw, P.E.; Andrew Verdin, PhD, P.H.; C. Haden Smith, P.E.},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\title{rfaR: Reservoir Frequency Analysis in R}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{User and Technical Manual}
+\author{Dan McGraw, P.E. \and Andrew Verdin, PhD, P.H. \and C. Haden
+Smith, P.E.}
+\date{2026-11-13}
+\begin{document}
+\maketitle
+
+\renewcommand*\contentsname{Table of contents}
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+
+\bookmarksetup{startatroot}
+
+\chapter*{Preface}\label{preface}
+\addcontentsline{toc}{chapter}{Preface}
+
+\markboth{Preface}{Preface}
+
+\texttt{rfaR} implements the RMC Reservoir Frequency Analysis (RMC-RFA)
+methodology in R, producing reservoir stage-frequency curves with
+uncertainty bounds by combining deterministic Modified Puls flood
+routing with a nested Monte Carlo framework.
+
+This manual complements the
+\href{https://usace-rmc.github.io/rfaR/}{function reference site}
+generated by pkgdown. Where the pkgdown site documents individual
+functions, this manual explains the methodology, workflow, and how the
+pieces fit together.
+
+\section*{How to cite}\label{how-to-cite}
+\addcontentsline{toc}{section}{How to cite}
+
+\markright{How to cite}
+
+\emph{Cover image: Stoner Creek Dam and USGS streamgage 03251900 near
+Paris, Kentucky. Source: National Oceanic and Atmospheric Administration
+(2026).}
+
+\bookmarksetup{startatroot}
+
+\chapter{Introduction}\label{introduction}
+
+\texttt{rfaR} is an R implementation of the Risk Management Center
+Reservoir Frequency Analysis (RMC-RFA) software. This package produces
+reservoir hydrologic hazard curves with uncertainty bounds by combining
+deterministic flood routing with a nested Monte Carlo framework.
+Hydrologic hazard analyses at dam and levee sites support risk
+assessments in accordance with the USACE Dam \& Levee Safety Program
+(DLS).
+
+\section{Purpose}\label{purpose}
+
+The intended use of \texttt{rfaR} is to generate hydrologic hazard
+curves/loading curves\footnote{In risk analysis, the \emph{hazard} is
+  the risk source where potential consequences relate to harm (Aven et
+  al., n.d.). In the context of dam and levee risk analyses, the source
+  of risk is often defined using a reservoir stage-frequency
+  relationship. The terms \emph{hydrologic loading},
+  \emph{stage-frequency}, and \emph{hydrologic hazard} are used
+  interchangeably to relate reservoir/river stages to annual exceedance
+  probabilities (AEPs). These relationships are commonly presented as
+  curves and are used as probabilistic loading conditions in dam and
+  levee risk analyses.}, supporting analysis for dam and levee risk
+analyses. The development of rfaR was primarily to conduct the nested
+monte carlo frame work using GEV inflow volume-frequency parameters
+developed from partial duration series in arid locations (RMC-RFA only
+supports LPIII parameters). Additional development allows for analysis
+at levees (no reservoir routing), transforming sampled unregulated
+inflow values to regulated inflow values, and a stage-based
+probabilistic bounding of hydrologic hazard curves.
+
+\section{rfaR Analysis Summary}\label{rfar-analysis-summary}
+
+\texttt{rfaR} combines deterministic flood routing (Modified Puls) with
+a nested, two-loop Monte Carlo framework to quantify:
+
+\begin{itemize}
+\item
+  \textbf{Natural variability} --- simulated in the inner loop as a
+  \emph{realization}. Each realization represents 10,000 indiviual flood
+  events with randomly sampled starting stages, hydrograph shapes, and
+  inflow volumes (from an associated inflow-frequency distribution).
+\item
+  \textbf{Knowledge uncertainty (epistemic uncertainty)} --- simulated
+  in the outer loop, by sampling different inflow-frequency parameter
+  sets (from LP3 or GEV flood frequency distributions, informed by
+  RMC-BestFit's MCMC output).
+\end{itemize}
+
+\section{Scope and Limitations}\label{scope-and-limitations}
+
+\texttt{rfaR} reimplements the core RMC-RFA methodology in open-source
+R. \texttt{rfaR} is intended to serve as an interim capability between
+the current release of RMC-RFA and the planned second version of
+RMC-RFA. As of November 2026, users cannot import an existing RMC-RFA
+model or input file directly into \texttt{rfaR}; users must prepare the
+required inputs separately.
+
+\section{How This Manual Is
+Organized}\label{how-this-manual-is-organized}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Installation} --- System requirements and instructions for
+  installing and loading \texttt{rfaR}.
+\item
+  \textbf{Set Up an rfaR Analysis} --- Prepare a new \texttt{rfaR}
+  analysis, including project organization and input-data preparation.
+\item
+  \textbf{Methodology} --- Statistical and hydrologic methods underlying
+  the two-loop simulation framework.
+\item
+  \textbf{Workflow} --- Detailed guidance for using
+  \texttt{rfa\_simulate()}, defining input options and simulation
+  settings, and processing outputs.
+\item
+  \textbf{Validation} --- Compare \texttt{rfaR} results with RMC-RFA and
+  HEC-HMS benchmark results.
+\item
+  \textbf{Function Reference} --- Reference documentation for
+  \texttt{rfaR} functions and their arguments.
+\end{itemize}
+
+For function-level documentation, also see the
+\href{https://usace-rmc.github.io/rfaR/}{pkgdown reference site}.
+
+\bookmarksetup{startatroot}
+
+\chapter{Installation}\label{installation}
+
+\texttt{rfaR} is not currently available on the Comprehensive R Archive
+Network (CRAN). The package source code is available from the
+\href{https://github.com/USACE-RMC/rfaR}{\texttt{USACE-RMC/rfaR} GitHub
+repository}.
+
+\begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-warning-color!10!white, colframe=quarto-callout-warning-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Warning}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
+
+\texttt{rfaR} is under active development. Its application programming
+interface (API) may change without notice.
+
+\end{tcolorbox}
+
+\section{System Requirements}\label{system-requirements}
+
+\begin{itemize}
+\tightlist
+\item
+  R version 4.1 or later
+\item
+  access to the \texttt{USACE-RMC/rfaR} GitHub repository
+\item
+  Recommended: RStudio
+  \href{https://posit.co/products/open-source/rstudio}{RStudio} or
+  \href{https://positron.posit.co/}{Positron}
+\end{itemize}
+
+Installing \texttt{rfaR} with \texttt{remotes} or \texttt{devtools}
+installs required R package dependencies as needed.
+
+\section{Install rfaR}\label{install-rfar}
+
+\subsection{Install with remotes}\label{install-with-remotes}
+
+Install the \texttt{remotes} package, if needed, and then install
+\texttt{rfaR} from GitHub:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{install.packages}\NormalTok{(}\StringTok{"remotes"}\NormalTok{)}
+
+\NormalTok{remotes}\SpecialCharTok{::}\FunctionTok{install\_github}\NormalTok{(}
+  \StringTok{"USACE{-}RMC/rfaR"}\NormalTok{,}
+  \AttributeTok{build\_vignettes =} \ConstantTok{FALSE}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Developers and
+Contributors}\label{developers-and-contributors}
+
+Users who plan to modify the package source should clone the repository
+and work from a local copy of the project. After cloning the repository
+with Git or GitHub Desktop, open an R session or RStudio Project from
+the repository root directory.
+
+Install devtools if it is not already available:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{install.packages}\NormalTok{(}\StringTok{"devtools"}\NormalTok{)}
+
+\NormalTok{devtools}\SpecialCharTok{::}\FunctionTok{install\_github}\NormalTok{(}\StringTok{"USACE{-}RMC/rfaR"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+During active development, load the package source into the current R
+session without installing it:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{devtools}\SpecialCharTok{::}\FunctionTok{load\_all}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+To install the local working copy of \texttt{rfaR} into your R library,
+run:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{devtools}\SpecialCharTok{::}\FunctionTok{install}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-note-color!10!white, colframe=quarto-callout-note-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
+
+Cloning the repository does not make \texttt{library(rfaR)} available.
+To use the package, install it with \texttt{devtools::install()} or
+\texttt{remotes::install\_github()}, or load the source for development
+with \texttt{devtools::load\_all()}.
+
+\end{tcolorbox}
+
+\section{Dependencies}\label{dependencies}
+
+Required package dependencies are declared in the \texttt{rfaR}
+\texttt{DESCRIPTION} file and are installed automatically during
+installation.
+
+USACE users may encounter package download, installation, or
+compatibility issues because of network controls, repository-access
+restrictions, or locally managed R environments.
+
+To report an installation or version-compatibility issue, open an issue
+in the \href{https://github.com/USACE-RMC/rfaR/issues}{\texttt{rfaR}
+GitHub repository}. Include the R version, operating system,
+installation method, and complete error message when possible. Do not
+include Controlled Unclassified Information (CUI), credentials, access
+tokens, or other nonpublic system information in a GitHub issue.
+
+\section{Verify Installation}\label{verify-installation}
+
+Load \texttt{rfaR} and confirm that the installed version and included
+example data are available:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(rfaR)}
+
+\FunctionTok{packageVersion}\NormalTok{(}\StringTok{"rfaR"}\NormalTok{)}
+
+\FunctionTok{head}\NormalTok{(jmd\_wy1980\_stage)}
+\end{Highlighting}
+\end{Shaded}
+
+If these commands run without error, rfaR is installed and ready to use.
+
+\bookmarksetup{startatroot}
+
+\chapter{Set Up an rfaR Analysis}\label{set-up-an-rfar-analysis}
+
+This chapter will step through best practices to set up, create, and
+execute an \texttt{rfaR} analysis.
+
+\section{Create a Project Directory}\label{create-a-project-directory}
+
+Create a dedicated directory for each \texttt{rfaR} analysis. Store
+project inputs, scripts, and outputs in a location where you have write
+access, such as your user Documents directory. Do not create analysis
+files in protected system directories, such as
+\texttt{C:\textbackslash{}Program\ Files}.
+
+The following example creates an \texttt{rfaR-analysis} directory in the
+current user's home directory and creates subdirectories for input data,
+scripts, and outputs. The commands will create a folder structure to
+support a single rfaR analysis (R \& unix users use the term
+\emph{directory} as opposed to \emph{folder}). Csers can create the same
+folder structure using Windows Explorer.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Set a base directory}
+\CommentTok{\# base\_dir \textless{}{-} file.path("C:/path/to/your/project/")}
+
+\CommentTok{\# Define the project directory (replace path.expand("\textasciitilde{}") with base\_dir)}
+\NormalTok{project\_dir }\OtherTok{\textless{}{-}} \FunctionTok{file.path}\NormalTok{(}\FunctionTok{path.expand}\NormalTok{(}\StringTok{"\textasciitilde{}"}\NormalTok{), }\StringTok{"rfaR{-}analysis"}\NormalTok{)}
+
+\CommentTok{\# Define project subdirectories}
+\NormalTok{project\_dirs }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
+\NormalTok{  project\_dir,}
+  \FunctionTok{file.path}\NormalTok{(project\_dir, }\StringTok{"data"}\NormalTok{),}
+  \FunctionTok{file.path}\NormalTok{(project\_dir, }\StringTok{"data"}\NormalTok{, }\StringTok{"raw"}\NormalTok{),}
+  \FunctionTok{file.path}\NormalTok{(project\_dir, }\StringTok{"data"}\NormalTok{, }\StringTok{"processed"}\NormalTok{),}
+  \FunctionTok{file.path}\NormalTok{(project\_dir, }\StringTok{"output"}\NormalTok{),}
+  \FunctionTok{file.path}\NormalTok{(project\_dir, }\StringTok{"scripts"}\NormalTok{)}
+\NormalTok{)}
+
+\CommentTok{\# Create directories if they do not already exist}
+\FunctionTok{invisible}\NormalTok{(}\FunctionTok{lapply}\NormalTok{(}
+\NormalTok{  project\_dirs,}
+\NormalTok{  dir.create,}
+  \AttributeTok{recursive =} \ConstantTok{TRUE}\NormalTok{,}
+  \AttributeTok{showWarnings =} \ConstantTok{FALSE}
+\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+The resulting directory structure is now:
+
+\begin{verbatim}
+rfaR-analysis/
+├── data/
+│   ├── raw/
+│   └── processed/
+├── output/
+└── scripts/
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Store original source data in \texttt{data/raw/}.
+\item
+  Store cleaned, reformatted, or derived datasets in
+  \texttt{data/processed/}.
+\item
+  Store analysis scripts in \texttt{scripts/}.
+\item
+  Store simulation results, figures, tables, and exported files in
+  \texttt{output/}.
+\end{itemize}
+
+\section{\texorpdfstring{Import Data from Existing RMC-RFA Projects
+using
+\texttt{rfaScrape}}{Import Data from Existing RMC-RFA Projects using rfaScrape}}\label{import-data-from-existing-rmc-rfa-projects-using-rfascrape}
+
+Direct integration between RMC-RFA SQLite project files and
+\texttt{rfaR} is under development. Until that capability is available,
+the recommended approach for extracting organized input data and
+analysis results from an existing RMC-RFA project is to use the
+\href{https://github.com/danmcgraw94/rfaScrape}{\texttt{rfaScrape}}
+package.
+
+\texttt{rfaScrape} extracts data and results from RMC-RFA project files
+with the \texttt{.rfa.sqlite} extension and exports them to organized
+CSV directories. The package is intended to improve the organization,
+transfer, and reporting of RMC-RFA project data for use in downstream
+analyses.
+
+Future \texttt{rfaR} development is expected to incorporate
+functionality that supports more direct use of data from existing
+RMC-RFA projects.
+
+\subsection{R Project}\label{r-project}
+
+Users working in RStudio may optionally create an RStudio Project in the
+\texttt{rfaR-analysis} directory. An RStudio Project helps maintain
+consistent working directory but is not required to run \texttt{rfaR}.
+
+\section{Load Input Data}\label{load-input-data}
+
+\texttt{rfaR} analyses currently use input data stored in
+comma-separated values (CSV) files. Export or save the required input
+datasets as CSV files and store them in the project \texttt{data/raw/}
+directory. This manual uses the base R function \texttt{read.csv()} for
+all examples. Users may instead use \texttt{readr::read\_csv()} if they
+prefer the \texttt{readr} import workflow; however, the resulting data
+must meet the formatting requirements described in the following
+sections.
+
+The example below imports a CSV file from the project input-data
+directory:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Define the path to an input CSV file}
+\NormalTok{input\_file }\OtherTok{\textless{}{-}} \FunctionTok{file.path}\NormalTok{(}
+\NormalTok{  project\_dir,}
+  \StringTok{"data"}\NormalTok{,}
+  \StringTok{"raw"}\NormalTok{,}
+  \StringTok{"example\_input.csv"}
+\NormalTok{)}
+
+\CommentTok{\# Import the CSV file}
+\NormalTok{input\_data }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(input\_file)}
+
+\CommentTok{\# Review the imported data}
+\FunctionTok{head}\NormalTok{(input\_data)}
+\FunctionTok{str}\NormalTok{(input\_data)}
+\end{Highlighting}
+\end{Shaded}
+
+Use \texttt{head()} to review the first rows of the imported dataset.
+Use \texttt{str()} to confirm the number of observations, variable
+names, and R data types.
+
+Users who are new to importing, cleaning, or restructuring data in R may
+find the following resources helpful:
+
+\begin{itemize}
+\tightlist
+\item
+  \href{https://stat.ethz.ch/R-manual/R-devel/library/utils/html/read.table.html}{\texttt{read.csv()}}(\emph{\texttt{read.table()}})
+\item
+  \href{https://r4ds.hadley.nz/data-import.html}{Data Import}
+\item
+  \href{https://r4ds.hadley.nz/data-transform.html}{Data Transform}
+\item
+  \href{https://readr.tidyverse.org/reference/read_delim.html}{\texttt{read\_csv()}}
+\end{itemize}
+
+\section{Input Data}\label{input-data}
+
+The input data and required formatting is included below. This section
+will be updated to reflect on-going package development
+
+\subsection{Inflow Hydrographs}\label{inflow-hydrographs}
+
+Inflow hydrographs define the temporal distribution, or shape, of flood
+inflow events used during simulation. Each hydrograph represents a
+historical, synthetic, design, or other representative flood event.
+During a simulation, \texttt{rfaR} samples a hydrograph shape and scales
+it to the sampled inflow magnitude.
+
+Use \texttt{hydrograph\_setup()} to prepare one or more input
+hydrographs for use in \texttt{rfa\_simulate()}. Input hydrographs may
+be copied directly from RMC-RFA or imported from similarly formatted CSV
+files.
+
+\subsubsection{Required Format}\label{required-format}
+
+Each input hydrograph must be a data frame with the following columns in
+this order:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Column
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Description
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Required format
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{Ordinate} & Sequential row or ordinate number. & Integer or
+numeric. \\
+\texttt{Date} & Date associated with each inflow observation. &
+Character string in month/day/year format, such as
+\texttt{"2/2/2099"}. \\
+\texttt{Time} & Time associated with each inflow observation. &
+Character string in hour:minute format, such as \texttt{"0:00"} or
+\texttt{"13:30"}. \\
+\texttt{Flow} & Inflow discharge for each time step. & Numeric flow in
+cubic feet per second (cfs). Character values containing comma
+separators are also supported. \\
+\end{longtable}
+}
+
+The hydrograph records must be in chronological order and use a regular
+time step. \texttt{hydrograph\_setup()} determines the time step from
+the first two observations in each hydrograph.
+
+The following example shows the format of an example hydrograph
+(\texttt{jmd\_hydro\_pmf}):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{  Ordinate     Date Time Flow}
+\NormalTok{1        1 2/2/2099 0:00 1131}
+\NormalTok{2        2 2/2/2099 1:00 1890}
+\NormalTok{3        3 2/2/2099 2:00 2277}
+\NormalTok{4        4 2/2/2099 3:00 1936}
+\NormalTok{5        5 2/2/2099 4:00 1934}
+\NormalTok{6        6 2/2/2099 5:00 1933}
+\end{Highlighting}
+\end{Shaded}
+
+Although the \texttt{Ordinate} column is retained in the input format
+for consistency with RMC-RFA exports, \texttt{rfaR} uses the
+\texttt{Date}, \texttt{Time}, and \texttt{Flow} columns to construct the
+simulation hydrograph.
+
+\subsubsection{Import Hydrograph Data}\label{import-hydrograph-data}
+
+Store hydrograph CSV files in the project \texttt{data/raw/} directory.
+The following example imports three hydrographs:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{hydro\_pmf }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}
+  \FunctionTok{file.path}\NormalTok{(project\_dir, }\StringTok{"data"}\NormalTok{, }\StringTok{"raw"}\NormalTok{, }\StringTok{"hydro\_pmf.csv"}\NormalTok{),}
+  \AttributeTok{stringsAsFactors =} \ConstantTok{FALSE}
+\NormalTok{)}
+
+\NormalTok{hydro\_jun1965 }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}
+  \FunctionTok{file.path}\NormalTok{(project\_dir, }\StringTok{"data"}\NormalTok{, }\StringTok{"raw"}\NormalTok{, }\StringTok{"hydro\_jun1965.csv"}\NormalTok{),}
+  \AttributeTok{stringsAsFactors =} \ConstantTok{FALSE}
+\NormalTok{)}
+
+\NormalTok{hydro\_may1955 }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}
+  \FunctionTok{file.path}\NormalTok{(project\_dir, }\StringTok{"data"}\NormalTok{, }\StringTok{"raw"}\NormalTok{, }\StringTok{"hydro\_may1955.csv"}\NormalTok{),}
+  \AttributeTok{stringsAsFactors =} \ConstantTok{FALSE}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Review each imported data frame before continuing:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{head}\NormalTok{(hydro\_pmf)}
+\FunctionTok{str}\NormalTok{(hydro\_pmf)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Prepare Hydrographs for
+Simulation}\label{prepare-hydrographs-for-simulation}
+
+Use \texttt{hydrograph\_setup()} to format the imported hydrographs for
+simulation.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{hydrographs }\OtherTok{\textless{}{-}} \FunctionTok{hydrograph\_setup}\NormalTok{(}
+\NormalTok{  hydro\_pmf,}
+\NormalTok{  hydro\_jun1965,}
+\NormalTok{  hydro\_may1955,}
+  \AttributeTok{critical\_duration =} \DecValTok{2}\NormalTok{,}
+  \AttributeTok{routing\_days =} \DecValTok{10}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+The \texttt{critical\_duration} argument specifies the inflow duration,
+in days, used to calculate the critical-duration inflow statistic for
+each hydrograph. The critical duration should align with the duration
+used for the inflow-volume frequency analysis. It must also correspond
+to a whole number of hydrograph time steps.
+
+The \texttt{routing\_days} argument specifies the desired total
+duration, in days, of each hydrograph used in routing. If a hydrograph
+is shorter than the specified routing duration,
+\texttt{hydrograph\_setup()} extends the hydrograph by appending
+zero-flow time steps.
+
+\subsubsection{Hydrograph Sampling
+Weights}\label{hydrograph-sampling-weights}
+
+By default, \texttt{rfaR} assigns equal sampling probability to each
+supplied hydrograph. Use the optional \texttt{weights} argument to
+assign different relative sampling weights.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{hydrographs }\OtherTok{\textless{}{-}} \FunctionTok{hydrograph\_setup}\NormalTok{(}
+\NormalTok{  hydro\_pmf,}
+\NormalTok{  hydro\_jun1965,}
+\NormalTok{  hydro\_may1955,}
+  \AttributeTok{critical\_duration =} \DecValTok{2}\NormalTok{,}
+  \AttributeTok{routing\_days =} \DecValTok{10}\NormalTok{,}
+  \AttributeTok{weights =} \FunctionTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+In this example, \texttt{hydro\_pmf} has three times the relative
+sampling weight of each historical hydrograph. The supplied weights are
+normalized internally to produce sampling probabilities.
+
+View the normalized probabilities with:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{attr}\NormalTok{(hydrographs, }\StringTok{"probs"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Output}\label{output}
+
+\texttt{hydrograph\_setup()} returns a list of formatted hydrograph data
+frames. Each formatted hydrograph includes the following variables:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Variable
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Description
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{datetime} & Date-time value converted to \texttt{POSIXct}. \\
+\texttt{hour} & Elapsed hours from the start of the hydrograph. \\
+\texttt{inflow} & Inflow discharge in cfs. \\
+\texttt{hydrograph\_num} & Numeric identifier used during hydrograph
+sampling. \\
+\end{longtable}
+}
+
+Each hydrograph also stores the following attributes:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Attribute
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Description
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{obs\_vol} & Critical-duration inflow statistic calculated from
+the observed hydrograph. \\
+\texttt{dt} & Hydrograph time step in hours. \\
+\texttt{name} & Name of the input hydrograph object. \\
+\end{longtable}
+}
+
+The returned hydrograph list stores normalized sampling probabilities in
+its \texttt{probs} attribute.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Review the first formatted hydrograph}
+\FunctionTok{head}\NormalTok{(hydrographs[[}\DecValTok{1}\NormalTok{]])}
+
+\CommentTok{\# Review hydrograph attributes}
+\FunctionTok{attributes}\NormalTok{(hydrographs[[}\DecValTok{1}\NormalTok{]])}
+
+\CommentTok{\# Review hydrograph sampling probabilities}
+\FunctionTok{attr}\NormalTok{(hydrographs, }\StringTok{"probs"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{quote}
+\textbf{Note:} \texttt{hydrograph\_setup()} removes trailing rows with
+missing flow values, which can occur when CSV files are exported from
+spreadsheet software. Review the input data before analysis and correct
+missing or malformed values within the hydrograph record.
+\end{quote}
+
+\subsection{Bestfit Parameter Sets}\label{bestfit-parameter-sets}
+
+\subsection{Flood Seasonality}\label{flood-seasonality}
+
+\subsection{Observed Stage Timeseries}\label{observed-stage-timeseries}
+
+\bookmarksetup{startatroot}
+
+\chapter{Methodology}\label{methodology}
+
+\section{Overview}\label{overview}
+
+\texttt{rfaR} implements a two-loop, nested Monte Carlo framework to
+propagate both natural variability and knowledge uncertainty through a
+deterministic flood routing model.
+
+\section{Outer Loop: Parameter
+Uncertainty}\label{outer-loop-parameter-uncertainty}
+
+\section{Inner Loop: Realizations}\label{inner-loop-realizations}
+
+\section{Flood Routing}\label{flood-routing}
+
+\bookmarksetup{startatroot}
+
+\chapter{Workflow}\label{workflow}
+
+\section{Overview}\label{overview-1}
+
+\section{Step 1: Prepare Inputs}\label{step-1-prepare-inputs}
+
+\section{Step 2: Hydrograph Setup}\label{step-2-hydrograph-setup}
+
+\section{Step 3: Sampling}\label{step-3-sampling}
+
+\section{Step 4: Routing}\label{step-4-routing}
+
+\section{Step 5: Running the Full
+Simulation}\label{step-5-running-the-full-simulation}
+
+\section{Step 6: Interpreting
+Results}\label{step-6-interpreting-results}
+
+\bookmarksetup{startatroot}
+
+\chapter{Validation}\label{validation}
+
+\section{Purpose}\label{purpose-1}
+
+\section{Modified Puls Routing}\label{modified-puls-routing}
+
+\section{Stratified Sampling}\label{stratified-sampling}
+
+\section{See Also}\label{see-also}
+
+Detailed validation vignettes are also available on the
+\href{https://usace-rmc.github.io/rfaR/articles/index.html}{pkgdown
+site}.
+
+\bookmarksetup{startatroot}
+
+\chapter{Function Reference}\label{function-reference}
+
+\section{Execute Reservoir Frequency
+Analysis}\label{execute-reservoir-frequency-analysis}
+
+\subsection{\texorpdfstring{\texttt{rfa\_simulate()}}{rfa\_simulate()}}\label{rfa_simulate}
+
+\begin{verbatim}
+RFA Stage-Frequency Simulation
+
+Description:
+
+     Performs reservoir stage frequency analysis using Monte Carlo
+     simulation to develop stage-frequency relationships. Combines
+     stratified flow-frequency sampling, flood seasonality, hydrograph
+     scaling, and Modified Puls reservoir routing to estimate annual
+     exceedance probabilities of reservoir stage.
+
+Usage:
+
+     rfa_simulate(
+       sim_type = "expected",
+       bestfit_params,
+       dist = "LP3",
+       stage_ts,
+       seasonality,
+       hydrographs,
+       resmodel,
+       Nbins = 50,
+       events_per_bin = 200,
+       routing_dt = 1,
+       Ncores = NULL,
+       sim_name = NULL,
+       results_dir = NULL
+     )
+     
+Arguments:
+
+sim_type: Character string specifying the simulation mode. One of
+          ‘"median"’, ‘"expected"’, or ‘"full"’. Default is
+          ‘"expected"’.
+
+bestfit_params: Data frame or matrix of distribution parameters from
+          RMC-BestFit MCMC output. Columns 1-3 are distribution
+          parameters:
+
+            * LP3: mean (log), standard deviation (log), skew (log)
+
+            * GEV: location, scale, shape
+
+          Column 4 is log-likelihood (used only in ‘"median"’ mode to
+          identify the posterior mode). For ‘"expected"’ mode, must
+          have at least ‘Nbins * events_per_bin’ rows. For ‘"full"’
+          mode, each row is treated as an independent realization.
+
+    dist: Character string specifying the frequency distribution.
+          Either ‘"LP3"’ (Log-Pearson Type III, default) or ‘"GEV"’
+          (Generalized Extreme Value).
+
+stage_ts: Data frame of historical reservoir stage with columns ‘date’
+          (character in M/D/YYYY format) and ‘stage’ (numeric, feet).
+
+seasonality: Numeric vector of length 12 giving monthly flood
+          occurrence probabilities (relative frequencies). Used to
+          sample the month of each simulated event, which determines
+          the antecedent pool elevation.
+
+hydrographs: List of hydrograph data frames as returned by
+          ‘hydrograph_setup’. Each element has columns ‘datetime’,
+          ‘hour’, ‘inflow’, and ‘hydrograph_num’, with attributes
+          ‘"obs_vol"’ (observed max n-day volume) and ‘"dt"’ (timestep
+          in hours). The list must have a ‘"probs"’ attribute
+          containing normalized sampling probabilities.
+
+resmodel: Data frame with three columns: elevation (ft), storage
+          (acre-ft), and discharge (cfs). Defines the reservoir model
+          for Modified Puls routing.
+
+   Nbins: Integer. Number of stratified sampling bins in EV1 space.
+          Default is 50.
+
+events_per_bin: Integer. Number of events sampled per bin. Default is
+          200. Total simulations per realization = ‘Nbins *
+          events_per_bin’.
+
+routing_dt: Numeric. Routing timestep in hours. Passed to
+          ‘scale_hydrograph’ to resample hydrographs before routing.
+          Supported values are ‘0.25’ (15-min), ‘1’ (1-hour, default),
+          ‘6’ (6-hour), and ‘24’ (24-hour).
+
+  Ncores: Integer or ‘NULL’. Number of parallel workers for ‘"full"’
+          mode. If ‘NULL’ (default), automatically selects based on
+          available cores (capped at 16). Ignored for ‘"median"’ and
+          ‘"expected"’ modes.
+
+sim_name: Optional character string to label the simulation. Used in
+          the output CSV filename. If ‘NULL’ (default), defaults to
+          ‘"sim"’. Spaces are replaced with underscores in the
+          filename.
+
+results_dir: Optional path to the directory where results are saved. If
+          ‘NULL’ (default), creates an ‘rfaR_results’ folder in the
+          current working directory.
+
+Details:
+
+     Three simulation modes are available:
+
+     ‘"median"’ Single realization using the most likely (posterior
+          mode) parameter set from RMC-BestFit. Produces one
+          stage-frequency curve with no uncertainty bounds. Useful for
+          quick screening or debugging.
+
+     ‘"expected"’ Single realization using expected value sampling,
+          where each stratified flow sample is paired 1-to-1 with a
+          different parameter set from the posterior distribution.
+          Produces one stage-frequency curve representing the expected
+          (mean) result integrated across parameter uncertainty.
+
+     ‘"full"’ Nested Monte Carlo with full uncertainty quantification.
+          The outer loop iterates over all parameter sets (one per row
+          of ‘bestfit_params’), and each inner loop independently
+          samples natural variability via stratified sampling,
+          seasonality, starting pool, and hydrograph shape. Each
+          realization produces an independent stage-frequency curve;
+          curves are combined on a common stage grid to yield expected,
+          median, and 5th/95th percentile confidence bounds. The outer
+          loop is parallelized using the ‘future’ framework.
+
+     For all modes, natural variability is captured through stratified
+     sampling in with ‘Nbins’ bins and ‘events_per_bin’ events per bin,
+     providing reliable coverage from common events down to
+     approximately 1e-8 AEP.
+
+     The stratified sampling approach divides the AEP range (default
+     0.99 to 1e-8) into equal-width bins in EV1 (Gumbel reduced
+     variate) space and samples events uniformly within each bin. This
+     ensures adequate representation of rare flood events that would
+     require orders of magnitude more samples under crude Monte Carlo
+     sampling.
+
+     Post-processing uses the law of total probability via
+     ‘stage_frequency_curve’: for a grid of stage thresholds, the
+     weighted exceedance fraction is computed within each bin and
+     summed across bins.
+
+     In ‘"full"’ mode, each parallel worker independently samples all
+     random inputs (seasonality, starting pool, hydrograph shape, and
+     stratified z-variates) in addition to using its own parameter set.
+     This ensures full Monte Carlo independence across realizations.
+     Each worker post-processes its results into a stage-frequency
+     curve immediately, returning only the curve rather than the full
+     peak stage matrix, keeping memory usage manageable for large
+     numbers of realizations.
+
+     Curves from individual realizations are combined by interpolating
+     each onto a common stage grid (spanning the global min/max across
+     all realizations) in log10(AEP) space, then computing summary
+     statistics across realizations at each stage threshold.
+
+     Results are automatically exported as a CSV file named
+     ‘{sim_name}_{sim_type}_{MM_DD_YY_HHMM}.csv’ in the ‘results_dir’
+     directory. For example, a median simulation named "John McGraw
+     Dam" run on June 4, 2025 at 2:30 PM would produce
+     ‘John_McGraw_Dam_median_06_04_25_1430.csv’.
+
+Value:
+
+     A list whose contents depend on ‘sim_type’:
+
+     For ‘"median"’ and ‘"expected"’:
+
+     stage_frequency Data frame with columns ‘stage’ and ‘AEP’ from
+          ‘stage_frequency_curve’.
+
+     peakStage Matrix of simulated peak stages (‘events_per_bin’ rows
+          by ‘Nbins’ columns).
+
+     peakFlow Matrix of simulated peak discharges (same dimensions).
+
+     weights Stratified sampling bin weights.
+
+     For ‘"full"’:
+
+     stage_frequency Data frame with columns ‘stage’, ‘expected’,
+          ‘median’, ‘lower_05’, and ‘upper_95’ on a common stage grid.
+
+     all_curves List of per-realization stage-frequency data frames
+          (each with ‘stage’ and ‘AEP’ columns).
+
+     aep_matrix Matrix of interpolated AEP values (500 rows by
+          ‘Nrealizations’ columns) on the common stage grid.
+
+     common_stage Numeric vector of the common stage grid (length 500).
+
+     Nrealizations Number of parameter set realizations processed.
+
+     Nsims_per_realiz Number of simulations per realization.
+
+See Also:
+
+     ‘flow_frequency_sampler’, ‘flow_frequency_sampler_expected’,
+     ‘stratified_sampler’, ‘scale_hydrograph’, ‘mod_puls_routing’,
+     ‘stage_frequency_curve’, ‘hydrograph_setup’
+
+Examples:
+
+     ## Not run:
+     
+     # Not run: Expected and Median modes take ~15s; Full uncert
+     # runs ~10,000 parameter realizations and takes 3-4 hours on a
+     # typical machine.
+     
+     # --- Setup ---
+     hydros <- hydrograph_setup(jmd_hydro_apr1999, jmd_hydro_jun1965,
+                                jmd_hydro_may1955, jmd_hydro_pmf,
+                                critical_duration = 2, routing_days = 10)
+     
+     # --- Expected only (default) ---
+     results_exp <- rfa_simulate(
+       sim_type       = "expected",
+       bestfit_params = jmd_bf_parameter_sets,
+       stage_ts       = jmd_wy1980_stage,
+       seasonality    = jmd_seasonality$relative_frequency,
+       hydrographs    = hydros,
+       resmodel       = jmd_resmodel,
+       sim_name       = "jmd"
+     )
+     
+     # --- Median only ---
+     results_med <- rfa_simulate(
+       sim_type       = "median",
+       bestfit_params = jmd_bf_parameter_sets,
+       stage_ts       = jmd_wy1980_stage,
+       seasonality    = jmd_seasonality$relative_frequency,
+       hydrographs    = hydros,
+       resmodel       = jmd_resmodel,
+       sim_name       = "jmd"
+     )
+     
+     # --- Full uncertainty (parallelized) ---
+     results_full <- rfa_simulate(
+       sim_type       = "full",
+       bestfit_params = jmd_bf_parameter_sets,
+       stage_ts       = jmd_wy1980_stage,
+       seasonality    = jmd_seasonality$relative_frequency,
+       hydrographs    = hydros,
+       resmodel       = jmd_resmodel,
+       Ncores         = 4,
+       sim_name       = "jmd"
+     )
+     ## End(Not run)
+     
+\end{verbatim}
+
+\section{Primary RFA Modules}\label{primary-rfa-modules}
+
+\subsection{\texorpdfstring{\texttt{stratified\_sampler()}}{stratified\_sampler()}}\label{stratified_sampler}
+
+\begin{verbatim}
+Stratified Sampler
+
+Description:
+
+     Creates stratified bins in standard normal space for use in
+     stratified sampling. Stratification improves sampling efficiency
+     by ensuring adequate coverage of rare events.
+
+Usage:
+
+     stratified_sampler(
+       minAEP = 1e-08,
+       maxAEP = 0.99,
+       dist = "EV1",
+       Nbins = NULL,
+       Mevents = NULL,
+       verbose = FALSE
+     )
+     
+Arguments:
+
+  minAEP: Minimum annual exceedance probability. Default is ‘1E-8’.
+
+  maxAEP: Maximum annual exceedance probability. Default is ‘0.99’.
+
+    dist: Character. Probability space for stratification.
+          Case-insensitive. Default is ‘"EV1"’. Invalid values trigger
+          a warning and default to ‘"EV1"’.
+
+          ‘"EV1"’ Extreme Value Type I (Gumbel) space. Recommended for
+              flood frequency analysis. Allocates more bins to rare
+              events through the transformation ‘-log(-log(1-AEP))’,
+              improving tail estimation efficiency.
+
+          ‘"Normal"’ Standard normal (z-score) space. Uniform bins in
+              z-space. Use when the underlying phenomenon is normally
+              distributed.
+
+          ‘"Uniform"’ Uniform probability space. Equal probability
+              width per bin. Generally inefficient for rare event
+              estimation.
+
+   Nbins: Number of stratified bins. Default is ‘20’.
+
+ Mevents: Number of events per bin. Default is ‘500’.
+
+ verbose: Logical. If ‘TRUE’, prints a completion message summarizing
+          the stratification. Default is ‘FALSE’.
+
+Details:
+
+     The function divides the probability space into bins using the
+     specified transformation. EV1 transformation is recommended for
+     heavy-tailed distributions common in flood frequency analysis, as
+     it naturally allocates more sampling effort to rare events
+     critical for dam safety assessments.
+
+Value:
+
+     A list containing:
+
+     normOrd Vector of standard normal ordinates spanning all bins
+
+     Weights Vector of probability weights for each bin
+
+     Zlower Vector of lower bounds for each bin (standard normal)
+
+     Zupper Vector of upper bounds for each bin (standard normal)
+
+     Nbins Number of bins
+
+     Mevents Number of events per bin
+
+Examples:
+
+     # Default stratification
+     strat <- stratified_sampler()
+     
+     # Custom bins and events
+     strat <- stratified_sampler(minAEP = 1E-6,
+                                 maxAEP = 0.5,
+                                 dist = "EV1",
+                                 Nbins = 10,
+                                 Mevents = 100)
+     
+     # With verbose message
+     strat <- stratified_sampler(verbose = TRUE)
+     
+\end{verbatim}
+
+\subsection{\texorpdfstring{\texttt{flow\_frequency\_sampler()}}{flow\_frequency\_sampler()}}\label{flow_frequency_sampler}
+
+\begin{verbatim}
+Flow Frequency Sampler
+
+Description:
+
+     Generates a stratified matrix of flow values from a single set of
+     frequency distribution parameters using stratified Monte Carlo
+     sampling. Used internally by ‘rfa_simulate()’ for median-only and
+     full uncertainty modes.
+
+Usage:
+
+     flow_frequency_sampler(
+       bestfit_params,
+       freq_dist = "LP3",
+       strat_dist = "ev1",
+       Nbin = NULL,
+       Mevent = NULL
+     )
+     
+Arguments:
+
+bestfit_params: Numeric vector of length 3 containing distribution
+          parameters. For LP3: ‘c(mean_log, sd_log, skew_log)’. For
+          GEV: ‘c(location, scale, shape)’.
+
+freq_dist: Character. Distribution type. Either ‘"LP3"’ (default) or
+          ‘"GEV"’.
+
+strat_dist: Character. Probability space for stratification bins.
+          Passed to ‘stratified_sampler()’. One of ‘"ev1"’ (default),
+          ‘"normal"’, or ‘"uniform"’. See ‘stratified_sampler()’ for
+          details.
+
+    Nbin: Integer. Number of stratified bins. Default is ‘50’.
+
+  Mevent: Integer. Number of events per bin. Default is ‘200’.
+
+Value:
+
+     A list containing:
+
+     flow Matrix of sampled flow values [Mevent x Nbin]
+
+     nbins Number of stratified bins
+
+     mevents Number of events per bin
+
+     weights Probability weights for each bin from
+          ‘stratified_sampler()’
+
+See Also:
+
+     ‘stratified_sampler()’, ‘qp3()’, ‘rfa_simulate()’
+
+Examples:
+
+     # Single parameter set (posterior mode)
+     params <- c(4.85, 0.39, -0.15)
+     result <- flow_frequency_sampler(params, freq_dist = "LP3",
+                                      Nbin = 20, Mevent = 500)
+     # Dimensions of result
+     dim(result$flow)  # 500 x 20
+     
+     # Distribution of Sampled Flows
+     hist(result$flow)
+     
+\end{verbatim}
+
+\subsection{\texorpdfstring{\texttt{flow\_frequency\_sampler\_expected()}}{flow\_frequency\_sampler\_expected()}}\label{flow_frequency_sampler_expected}
+
+\begin{verbatim}
+Flow Frequency Sampler (Expected Only)
+
+Description:
+
+     Generates a stratified matrix of flow values by pairing each
+     z-ordinate with a different parameter set from the posterior
+     distribution. This collapses the nested Monte Carlo structure into
+     a single pass, simultaneously sampling natural variability (via
+     stratified z-ordinates) and knowledge uncertainty (via varying
+     parameters). Used internally by ‘rfa_simulate()’ for expected-only
+     mode.
+
+Usage:
+
+     flow_frequency_sampler_expected(
+       bestfit_params,
+       freq_dist = "LP3",
+       strat_dist = "ev1",
+       Nbin = NULL,
+       Mevent = NULL
+     )
+     
+Arguments:
+
+bestfit_params: Data frame of distribution parameters from RMC-BestFit.
+          Must have ‘Nbin * Mevent’ rows (one parameter set per
+          z-ordinate). For LP3: columns are mean (log), sd (log), skew
+          (log). For GEV: columns are location, scale, shape.
+
+freq_dist: Character. Distribution type. Either ‘"LP3"’ (default) or
+          ‘"GEV"’.
+
+strat_dist: Character. Probability space for stratification bins.
+          Passed to ‘stratified_sampler()’. One of ‘"ev1"’ (default),
+          ‘"normal"’, or ‘"uniform"’. See ‘stratified_sampler()’ for
+          details.
+
+    Nbin: Integer. Number of stratified bins. Default is ‘50’.
+
+  Mevent: Integer. Number of events per bin. Default is ‘200’.
+
+Value:
+
+     A list containing:
+
+     flow Matrix of sampled flow values [Mevent x Nbin]
+
+     nbins Number of stratified bins
+
+     mevents Number of events per bin
+
+     weights Probability weights for each bin from
+          ‘stratified_sampler()’
+
+See Also:
+
+     ‘stratified_sampler()’, ‘qp3()’, ‘flow_frequency_sampler()’,
+     ‘rfa_simulate()’
+
+Examples:
+
+     # Using a pre-loaded parameter set (all 10,000 parameter sets)
+     result <- flow_frequency_sampler_expected(jmd_bf_parameter_sets,
+                                               Nbin = 20, Mevent = 500)
+     dim(result$flow)  # 500 x 20
+     
+     # Using bootstrapped parameter samples
+     jmd_samples <- bootstrap_vfc(
+       c(jmd_vfc_parameters$mean_log,
+         jmd_vfc_parameters$sd_log,
+         jmd_vfc_parameters$skew_log),
+       dist = "LP3",
+       ERL  = jmd_vfc_parameters$erl)
+     
+     jmd_result <- flow_frequency_sampler_expected(
+       jmd_samples$params,
+       freq_dist = "LP3",
+       Nbin      = 20,
+       Mevent    = 500)
+     
+\end{verbatim}
+
+\subsection{\texorpdfstring{\texttt{hydrograph\_setup()}}{hydrograph\_setup()}}\label{hydrograph_setup}
+
+\begin{verbatim}
+Hydrograph Setup for RFA Simulation
+
+Description:
+
+     Prepares hydrograph data frames copied from RMC-RFA for use in RFA
+     simulation. Converts date/time columns and adds sequential hour
+     and hydrograph ID columns.
+
+Usage:
+
+     hydrograph_setup(
+       ...,
+       critical_duration = NULL,
+       routing_days = NULL,
+       weights = NULL
+     )
+     
+Arguments:
+
+     ...: Data frame representing an input hydrograph with columns:
+          Ord, Date, Time, Flow (cfs). Copied directly from RMC-RFA.
+          Date & Time should be ‘class() = "character"’
+
+critical_duration: Critical duration in days.
+
+routing_days: Desired length of routing simulation in days.
+
+ weights: Optional numeric vector of sampling weights for each
+          hydrograph. Must be the same length as the number of input
+          hydrographs. Weights are normalized to probabilities
+          internally. If NULL (default), all hydrographs are weighted
+          equally.
+
+Value:
+
+     A list of formatted hydrograph data frames, each containing:
+
+     datetime Date-time (POSIXct)
+
+     hour Hours from start of event
+
+     inflow Inflow (cfs)
+
+     hydrograph_num Hydrograph ID number for sampling
+
+     obs_vol Max n-day inflow volume (stored as an attribute of each
+          dataframe)
+
+     dt Hydrograph timestep (delta time, dt) in hours (stored as an
+          attribute of each dataframe)
+
+     The returned list also has a ‘probs’ attribute containing the
+     normalized sampling probabilities derived from ‘weights’.
+
+Examples:
+
+     # Setup with equal weights (default)
+     hydros <- hydrograph_setup(jmd_hydro_apr1999,
+                                jmd_hydro_jun1965,
+                                jmd_hydro_pmf,
+                                critical_duration = 2,
+                                routing_days = 10)
+     
+     # Setup with custom weights (PMF 3x more likely to be sampled)
+     hydros <- hydrograph_setup(jmd_hydro_apr1999,
+                                jmd_hydro_jun1965,
+                                jmd_hydro_pmf,
+                                critical_duration = 2,
+                                routing_days = 10,
+                                weights = c(1, 1, 3))
+     
+     # view normalized probabilities
+     attr(hydros, "probs")
+     
+\end{verbatim}
+
+\subsection{\texorpdfstring{\texttt{scale\_hydrograph()}}{scale\_hydrograph()}}\label{scale_hydrograph}
+
+\begin{verbatim}
+Scale Hydrograph
+
+Description:
+
+     Scales inflow hydrograph given a sampled inflow volume from the
+     volume-frequency curve. Scale factor is defined by the sampled
+     inflow volume and the maximum volume of the corresponding
+     duration. If the native hydrograph timestep differs from the
+     target routing timestep, resampling is applied prior to scaling:
+     finer-to-coarser uses block averaging; coarser-to-finer uses
+     linear interpolation.
+
+Usage:
+
+     scale_hydrograph(
+       hydrograph_shape,
+       observed_volume,
+       sampled_volume,
+       routing_dt = 1
+     )
+     
+Arguments:
+
+hydrograph_shape: Data frame with two columns: time (hours) and inflow
+          (cfs). Must be in that order.
+
+observed_volume: Maximum n-day inflow volume from input hydrograph
+          shape.
+
+sampled_volume: Sampled inflow volume from volume-frequency curve.
+
+routing_dt: Target routing timestep in hours. Supported values are
+          ‘0.25’ (15-min), ‘1’ (1-hour, default), ‘6’ (6-hour), and
+          ‘24’ (24-hour).
+
+Value:
+
+     A data frame with two columns: ‘time_hrs’ and ‘inflow_cfs’, at the
+     target routing timestep, with time starting at hour 0.
+
+Examples:
+
+     # Example hydrograph. Requires pre-processing
+     hydro_example <- hydrograph_setup(jmd_hydro_jun1965_15min, critical_duration = 2, routing_days = 10)
+     hydrograph_shape <- hydro_example[[1]][, 2:3]
+     
+     # Default 1-hour routing timestep
+     scaled <- scale_hydrograph(hydrograph_shape,
+                                observed_volume = 50000,
+                                sampled_volume = 55000)
+     
+     # 15-min input hydrograph, 1-hour routing timestep
+     scaled <- scale_hydrograph(hydrograph_shape,
+                                observed_volume = 50000,
+                                sampled_volume = 55000,
+                                routing_dt = 1)
+     
+\end{verbatim}
+
+\subsection{\texorpdfstring{\texttt{mod\_puls\_routing()}}{mod\_puls\_routing()}}\label{mod_puls_routing}
+
+\begin{verbatim}
+Modified Puls Reservoir Routing
+
+Description:
+
+     Performs Modified Puls (level pool) routing of inflow hydrograph
+     given a defined reservoir geometry (Stage (ft), Storage (ac-ft),
+     Discharge (cfs)).
+
+Usage:
+
+     mod_puls_routing(resmodel_df, inflow_df, initial_elev, full_results = FALSE)
+     
+Arguments:
+
+resmodel_df: Data frame with three columns: elevation/stage (ft),
+          storage (acre-feet), and discharge (cfs). Must be in that
+          order.
+
+inflow_df: Data frame with two columns: time (hours) and inflow (cfs).
+          Must be in that order.
+
+initial_elev: Starting water surface elevation in feet.
+
+full_results: Logical. If ‘FALSE’ (default), returns only peak stage
+          and discharge. If ‘TRUE’, returns the complete routing
+          result.
+
+Value:
+
+     If ‘full_results = FALSE’, a named numeric vector with
+     ‘peak_stage_ft’ and ‘peak_discharge_cfs’. If ‘full_results =
+     TRUE’, a data frame with columns: ‘time_hr’, ‘inflow_cfs’,
+     ‘elevation_ft’, ‘storage_acft’, and ‘outflow_cfs’.
+
+References:
+
+     Chow, V.T. (1959). Open-Channel Hydraulics. McGraw-Hill.
+
+Examples:
+
+     # Example hydrograph. Requires pre-processing
+     hydro_example <- hydrograph_setup(jmd_hydro_jun1965_15min,
+                                        critical_duration = 2,
+                                        routing_days = 10)
+     hydrograph_shape <- hydro_example[[1]][, 2:3]
+     scaled_hydrograph <- scale_hydrograph(hydrograph_shape,
+                                           observed_volume = 50000,
+                                           sampled_volume = 55000)
+     
+     # Peak values only
+     mod_puls_routing(jmd_resmodel, scaled_hydrograph, initial_elev = 3830)
+     
+     # Full routing table
+     jmd_full_routing <- mod_puls_routing(jmd_resmodel,
+                                          scaled_hydrograph,
+                                          initial_elev = 3830,
+                                          full_results = TRUE)
+     head(jmd_full_routing)
+     
+\end{verbatim}
+
+\subsection{\texorpdfstring{\texttt{stage\_frequency\_curve()}}{stage\_frequency\_curve()}}\label{stage_frequency_curve}
+
+\begin{verbatim}
+Compute Stage-Frequency Curve
+
+Description:
+
+     Converts a matrix of routed peak stages into a stage-frequency
+     curve using the law of total probability across stratified bins.
+     For each candidate stage, the conditional exceedance probability
+     within each bin is weighted by the bin probability and summed to
+     produce the unconditional annual exceedance probability (AEP).
+
+Usage:
+
+     stage_frequency_curve(peakStage, weights, stage_bins = 1000)
+     
+Arguments:
+
+peakStage: Matrix of peak stages [Mevents x Nbins] from routing.
+
+ weights: Numeric vector of bin weights from ‘stratified_sampler()’.
+          Must have length equal to ‘ncol(peakStage)’.
+
+stage_bins: Numeric value of exceedance stages used to compute
+          stage-frequency in each bin. Default is 1000.
+
+Value:
+
+     A data frame with columns:
+
+     stage Evaluated stage values
+
+     AEP Annual exceedance probability at each stage
+
+See Also:
+
+     ‘stratified_sampler()’, ‘flow_frequency_sampler()’,
+     ‘rfa_simulate()’
+\end{verbatim}
+
+\section{Rejection Sampling}\label{rejection-sampling}
+
+\subsection{\texorpdfstring{\texttt{pmf\_stage\_lognormal()}}{pmf\_stage\_lognormal()}}\label{pmf_stage_lognormal}
+
+\begin{verbatim}
+Parameterize a Three-Parameter Lognormal PMF for Stage
+
+Description:
+
+     Computes the parameters of a three-parameter lognormal
+     distribution for use as a probabilistic maximum stage (PMF) in
+     rejection sampling. The shift parameter defines the lower or upper
+     bound of the distribution (typically, the lower value). The
+     function supports two modes: (1) supplying a best estimate and
+     assuming sigma, or (2) supplying a best estimate, low, and high to
+     solve for sigma numerically.
+
+Usage:
+
+     pmf_stage_lognormal(
+       pmf_shift,
+       pmf_mean,
+       pmf_sigma = NULL,
+       pmf_low = NULL,
+       pmf_high = NULL
+     )
+     
+Arguments:
+
+pmf_shift: Numeric. Assumed lower-bound of the lognormal distribution.
+          This will define the shift value. Must be less than all of
+          ‘pmf_mean’, ‘pmf_low’, and ‘pmf_high’.
+
+pmf_mean: Numeric. Assumed mean of the shifted PMF stage distribution.
+
+pmf_sigma: Numeric. Assumed standard deviation on the log scale.
+          Required if ‘pmf_low’ and ‘pmf_high’ are not supplied.
+          Defaults to ‘NULL’. Suggested value = 0.5.
+
+ pmf_low: Numeric. Low estimate of PMF stage (assumed 5th percentile).
+          Optional. If supplied, ‘pmf_high’ must also be supplied.
+
+pmf_high: Numeric. High estimate of PMF stage (assumed 95th
+          percentile). Optional. If supplied, ‘pmf_low’ must also be
+          supplied.
+
+Value:
+
+     A named list with the following elements:
+
+     pmf_shift Hard lower bound of the distribution.
+
+     pmf_mean Assumed mean of shifted PMF stage distribution.
+
+     pmf_sigma Standard deviation on the log scale.
+
+     pmf_mu Derived location parameter on the log scale.
+
+     pmf_p05 5th percentile of the PMF stage distribution.
+
+     pmf_p95 95th percentile of the PMF stage distribution.
+
+Examples:
+
+     # Mode 1: assume sigma
+     pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9, pmf_sigma = 0.5)
+     
+     # Mode 2: solve for sigma from low/high estimates
+     pmf <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9,
+                                 pmf_low = 239, pmf_high = 245)
+     
+\end{verbatim}
+
+\subsection{\texorpdfstring{\texttt{rejection\_sampling\_stage()}}{rejection\_sampling\_stage()}}\label{rejection_sampling_stage}
+
+\begin{verbatim}
+Rejection Sampling of Stage Bounded by a Probabilistic Maximum Stage
+
+Description:
+
+     Draws ‘n_samples’ stage values from a stage-frequency curve,
+     rejecting any draws that exceed a probabilistic maximum stage
+     (PMF) sampled from a three-parameter lognormal distribution.
+     Accepted samples are ranked and assigned Weibull plotting
+     positions for use in frequency analysis.
+
+Usage:
+
+     rejection_sampling_stage(
+       pmf_stage_LN,
+       stage_freq_df = NULL,
+       aep = NULL,
+       stage = NULL,
+       n_samples = 1e+07
+     )
+     
+Arguments:
+
+pmf_stage_LN: A named list returned by ‘pmf_stage_lognormal’ containing
+          the lognormal PMF parameters.
+
+stage_freq_df: A data frame with AEP in column 1 and stage in column 2.
+          Mutually exclusive with ‘aep’ and ‘stage’.
+
+     aep: Numeric vector of annual exceedance probabilities. Must be
+          supplied with ‘stage’. Mutually exclusive with
+          ‘stage_freq_df’.
+
+   stage: Numeric vector of stages corresponding to ‘aep’. Must be
+          supplied with ‘aep’. Mutually exclusive with ‘stage_freq_df’.
+
+n_samples: Integer. Number of samples to draw. Defaults to ‘1e7’.
+
+Value:
+
+     A data frame of thinned accepted samples with columns for z-score
+     and stage, suitable for plotting a probabilistically bounded
+     stage-frequency curve. Output is produced by ‘thin_samples()’.
+
+See Also:
+
+     ‘pmf_stage_lognormal’
+
+Examples:
+
+     ## Not run:
+     
+     pmf_ln <- pmf_stage_lognormal(pmf_shift = 239, pmf_mean = 241.9, pmf_sigma = 0.5)
+     
+     result <- rejection_sampling_stage(
+       pmf_stage_LN  = pmf_ln,
+       stage_freq_df = my_stage_freq_df,
+       n_samples     = 1e7
+     )
+     ## End(Not run)
+     
+\end{verbatim}
+
+\section{Additional Utilities}\label{additional-utilities}
+
+\subsection{\texorpdfstring{\texttt{bootstrap\_vfc()}}{bootstrap\_vfc()}}\label{bootstrap_vfc}
+
+\begin{verbatim}
+Bootstrap option for VFC (RFA-style w/ ERL)
+
+Description:
+
+     Generates matrix of parameters using posterior mode/mean and ERL
+
+Usage:
+
+     bootstrap_vfc(bestfit_postmode, dist = "LP3", ERL = 150, Nboots = 10000)
+     
+Arguments:
+
+bestfit_postmode: Vector of distribution parameters from RMC-BestFit.
+          For LP3: columns are mean (log), sd (log), skew (log). For
+          GEV: columns are location, scale, shape.
+
+    dist: Distribution type. Either ‘"LP3"’ (default) or ‘"GEV"’.
+
+     ERL: psuedo effective record length for bootstrapping
+
+  Nboots: number of bootstraps
+
+Value:
+
+     A list containing:
+
+     params Matrix of bootstrapped parameters
+
+     dist Distribution selected (LP3 or GEV)
+
+     postmode Posterior mode parameters provided to bootstrap
+
+     ERL pseudo effective record length provided to bootstrap
+
+See Also:
+
+     ‘flow_frequency_sampler()’
+
+Examples:
+
+     # Sample using JMD VFC parameters
+     jmd_samples <- bootstrap_vfc(c(jmd_vfc_parameters$mean_log,
+                                     jmd_vfc_parameters$sd_log,
+                                     jmd_vfc_parameters$skew_log),
+                                     dist = "LP3",
+                                     ERL = jmd_vfc_parameters$erl)
+     
+     # GEV Example with parent distribution parameters
+     gev_example <- c(3.0, 1.0, -0.1)
+     gev_samples <- bootstrap_vfc(gev_example,
+                                   dist = "GEV",
+                                   ERL = 200,
+                                   Nboots = 5000)
+     hist(gev_samples$params[,1])
+     
+     # LP3 Example with parent distribution parameters
+     lp3_example <- c(3.5, 0.22, 0.1)
+     lp3_samples <- bootstrap_vfc(lp3_example,
+                                   dist = "LP3",
+                                   ERL = 300,
+                                   Nboots = 1000)
+     hist(lp3_samples$params[,3])
+     
+\end{verbatim}
+
+\subsection{\texorpdfstring{\texttt{qp3()}}{qp3()}}\label{qp3}
+
+\begin{verbatim}
+Pearson Type III Inverse CDF (Quantile Function)
+
+Description:
+
+     Computes quantiles from a Pearson Type III distribution given
+     probabilities and distribution parameters (mean, standard
+     deviation, skewness).
+
+Usage:
+
+     qp3(p, mu, sigma, gamma)
+     
+Arguments:
+
+       p: Vector of probabilities (between 0 and 1).
+
+      mu: Mean of the distribution.
+
+   sigma: Standard deviation of the distribution.
+
+   gamma: Skewness coefficient of the distribution.
+
+Details:
+
+     NOTE: This is the non-vectorized version of the function (it will
+     be used in a loop) Vectorized version is part of future
+     development.
+
+     The Pearson Type III distribution is parameterized by mean (‘mu’),
+     standard deviation (‘sigma’), and skewness (‘gamma’). These are
+     converted internally to location, scale, and shape parameters.
+
+     When skewness is near zero (‘abs(gamma) < 1E-3’), the normal
+     distribution is used as an approximation.
+
+Value:
+
+     Vector of quantiles corresponding to the input probabilities.
+
+Examples:
+
+     # Single quantile
+     qp3(0.99, mu = 10, sigma = 2, gamma = 0.5)
+     
+     # Multiple quantiles
+     qp3(c(0.5, 0.9, 0.99), mu = 10, sigma = 2, gamma = 0.5)
+     
+     # Use with JMD volume-frequency parameters
+     qp3(0.99,
+         mu = jmd_vfc_parameters$mean_log,
+         sigma = jmd_vfc_parameters$sd_log,
+         gamma = jmd_vfc_parameters$skew_log)
+     
+\end{verbatim}
+
+\subsection{\texorpdfstring{\texttt{aep2stage()}}{aep2stage()}}\label{aep2stage}
+
+\begin{verbatim}
+Interpolate Stage from AEP
+
+Description:
+
+     Given a stage-frequency curve, interpolates stage values at target
+     AEPs. Interpolation is performed in standard normal (z-variate)
+     space for better behavior across orders of magnitude in AEP.
+
+Usage:
+
+     aep2stage(aep, stage, interp_aep)
+     
+Arguments:
+
+     aep: Numeric vector of annual exceedance probabilities from the
+          known curve.
+
+   stage: Numeric vector of stage values corresponding to ‘aep’.
+
+interp_aep: Numeric vector of target AEPs to interpolate at.
+
+Value:
+
+     Numeric vector of interpolated stage values (same length as
+     ‘interp_aep’).
+
+See Also:
+
+     ‘stage2aep’ for the inverse operation.
+
+Examples:
+
+     # Get stage at the 1.12% and 0.175% AEP
+     aep2stage(jmd_rfa_expected$AEP, jmd_rfa_expected$Expected, c(0.0112,1.75E-3))
+     
+\end{verbatim}
+
+\subsection{\texorpdfstring{\texttt{stage2aep()}}{stage2aep()}}\label{stage2aep}
+
+\begin{verbatim}
+Interpolate AEP from Stage
+
+Description:
+
+     Given a stage-frequency curve, interpolates AEP values at target
+     stages. Interpolation is performed in standard normal (z-variate)
+     space for better behavior across orders of magnitude in AEP.
+
+Usage:
+
+     stage2aep(aep, stage, interp_stage)
+     
+Arguments:
+
+     aep: Numeric vector of annual exceedance probabilities from the
+          known curve.
+
+   stage: Numeric vector of stage values corresponding to ‘aep’.
+
+interp_stage: Numeric vector of target stage values to interpolate at.
+
+Details:
+
+     Stage-frequency curves typically flatten at very rare AEPs once
+     the reservoir reaches the reservoir model discharge capacity. This
+     produces tied stage values. ‘approx()’ handles these by averaging
+     the corresponding AEPs, which may emit a "collapsing to unique 'x'
+     values" warning. This is expected behavior.
+
+Value:
+
+     Numeric vector of interpolated AEP values (same length as
+     ‘interp_stage’).
+
+See Also:
+
+     ‘aep2stage’ for the inverse operation.
+
+Examples:
+
+     # Get AEP at stage 3862.0-ft and 3872-ft
+     stage2aep(jmd_rfa_expected$AEP, jmd_rfa_expected$Expected, c(3862.0, 3872))
+     
+\end{verbatim}
+
+\subsection{\texorpdfstring{\texttt{interpolate\_aep\_matrix()}}{interpolate\_aep\_matrix()}}\label{interpolate_aep_matrix}
+
+\begin{verbatim}
+Interpolate AEPs at Target Stages Across Realizations
+
+Description:
+
+     For each realization's stage-frequency curve, interpolates the AEP
+     at every target stage value. Interpolation is performed in
+     standard normal (z-variate) space.
+
+Usage:
+
+     interpolate_aep_matrix(results_list, target_stages)
+     
+Arguments:
+
+results_list: List of realization data frames, each with columns
+          ‘stage’ and ‘AEP’.
+
+target_stages: Numeric vector of stage values to interpolate at.
+
+Value:
+
+     Matrix of AEP values with rows = target stages and columns =
+     realizations.
+\end{verbatim}
+
+\subsection{\texorpdfstring{\texttt{interpolate\_stage\_matrix()}}{interpolate\_stage\_matrix()}}\label{interpolate_stage_matrix}
+
+\begin{verbatim}
+Interpolate Stages at Target AEPs Across Realizations
+
+Description:
+
+     For each realization's stage-frequency curve, interpolates the
+     stage at every target AEP value. Interpolation is performed in
+     standard normal (z-variate) space.
+
+Usage:
+
+     interpolate_stage_matrix(results_list, target_aeps)
+     
+Arguments:
+
+results_list: List of realization data frames, each with columns
+          ‘stage’ and ‘AEP’.
+
+target_aeps: Numeric vector of AEP values to interpolate at.
+
+Value:
+
+     Matrix of stage values with rows = target AEPs and columns =
+     realizations.
+\end{verbatim}
+
+\subsection{\texorpdfstring{\texttt{power\_function()}}{power\_function()}}\label{power_function}
+
+\begin{verbatim}
+Power Function
+
+Description:
+
+     Raises 10 to the 1st through the nth power
+
+Usage:
+
+     power_function(x)
+     
+Arguments:
+
+       x: Highest power of 10 to use
+
+Value:
+
+     Vector of 10 raised sequentially from the 1st to the nth power.
+\end{verbatim}
+
+\subsection{\texorpdfstring{\texttt{theme\_rfar\_conceptual()}}{theme\_rfar\_conceptual()}}\label{theme_rfar_conceptual}
+
+\begin{verbatim}
+rfaR ggplot2 Theme for Conceptual Plots
+
+Description:
+
+     A custom ‘ggplot2’ theme used in the rfaR conceptual realization
+     vignette. Based on ‘theme_bw’ with tightened text sizes, italic
+     titles, and the legend suppressed. Intended for figures that
+     emphasize curves over annotation density.
+
+Usage:
+
+     theme_rfar_conceptual()
+     
+Value:
+
+     A ‘ggplot2’ theme object that can be added to a ‘ggplot’ via ‘+’.
+
+See Also:
+
+     ‘theme_bw’
+
+Examples:
+
+     library(ggplot2)
+     ggplot(jmd_rfa_expected, aes(x = AEP, y = Expected)) +
+       geom_line() +
+       scale_x_continuous(transform = c("log10", "reverse")) +
+       labs(title = "JMD Expected Stage-Frequency",
+            subtitle = "Demonstrating theme_rfar_conceptual()",
+            x = "AEP", y = "Stage (ft)") +
+       theme_rfar_conceptual()
+     
+\end{verbatim}
+
+\protect\phantomsection\label{refs}
+\begin{CSLReferences}{1}{1}
+\bibitem[\citeproctext]{ref-aven_society_nodate}
+Aven, Terje, Yakov Ben-Haim, Henning Boje Andersen, et al. n.d.
+\emph{Society for {Risk} {Analysis} {Glossary}}.
+
+\bibitem[\citeproctext]{ref-noaa_nws_prsk2_2026}
+National Oceanic and Atmospheric Administration. 2026. \emph{National
+Water Prediction Service: Official Hydrograph for Gauge PRSK2}. National
+Weather Service. \url{https://water.noaa.gov/gauges/prsk2\#hg=official}.
+
+\end{CSLReferences}
+
+
+
+
+\end{document}

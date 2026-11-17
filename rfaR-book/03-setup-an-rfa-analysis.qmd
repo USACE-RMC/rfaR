@@ -1,0 +1,511 @@
+# Set Up an rfaR Analysis
+
+This chapter provides a walkthrough example to set up, create, and execute an `rfaR` analysis.
+
+## Create a Project Directory
+
+Create a dedicated directory[^03-setup-an-rfa-analysis-1] for each `rfaR` analysis. Store project inputs, scripts, and outputs in a location where you have write access, such as your user Documents directory. Do not create analyses in protected system directories, such as `C:\Program Files`.
+
+[^03-setup-an-rfa-analysis-1]: In computing, a *directory* is a file system cataloging structure that contains references to other computer files, and possibly other directories. Windows typically refers to directories as *folders*. References to *directory* should be considered interchangeable with *folder*.
+
+The following example creates an `rfaR-analysis` directory in the current user's home directory and creates subdirectories for input data, scripts, and outputs. The commands will create a folder structure to support a single rfaR analysis. Users can create the same file structure graphically using Windows Explorer.
+
+``` r
+# Set a base directory
+# base_dir <- file.path("C:/path/to/your/project/")
+
+# Define the project directory (replace path.expand("~") with base_dir)
+project_dir <- file.path(path.expand("~"), "rfaR-analysis")
+
+# Define project subdirectories
+project_dirs <- c(
+  project_dir,
+  file.path(project_dir, "data"),
+  file.path(project_dir, "data", "raw"),
+  file.path(project_dir, "data", "processed"),
+  file.path(project_dir, "output"),
+  file.path(project_dir, "scripts")
+)
+
+# Create directories if they do not already exist
+invisible(lapply(
+  project_dirs,
+  dir.create,
+  recursive = TRUE,
+  showWarnings = FALSE
+))
+```
+
+The resulting directory structure is now:
+
+```
+rfaR-analysis/
+├── data/
+│   ├── raw/
+│   └── processed/
+├── output/
+└── scripts/
+```
+
+-   Store original source data in `data/raw/`.
+-   Store cleaned, reformatted, or derived datasets in `data/processed/`.
+-   Store analysis scripts in `scripts/`.
+-   Store simulation results, figures, tables, and exported files in `output/`.
+
+## Import Data from Existing RMC-RFA Projects using `rfaScrape`
+
+Direct integration between RMC-RFA SQLite project files and `rfaR` is under development. Until that capability is available, the recommended approach for extracting organized input data and analysis results from an existing RMC-RFA project is to use the [`rfaScrape`](https://github.com/danmcgraw94/rfaScrape) package.
+
+`rfaScrape` extracts data and results from RMC-RFA project files with the `.rfa.sqlite` extension and exports them to organized CSV directories. The package is intended to improve the organization, transfer, and reporting of RMC-RFA project data for use in downstream analyses. Future `rfaR` development is expected to incorporate functionality that supports more direct use of data from existing RMC-RFA projects.
+
+Note that `rfaScrape` is not required to create required data fo `rfaR` analyses. Users may elect to create and organize data as they see fit.
+
+### R Project
+
+Users working in RStudio may optionally create an RStudio Project in the `rfaR-analysis` directory. An RStudio Project helps maintain consistent working directory but is not required to run `rfaR`.
+
+### Positron
+
+Positron organizes projects around directories and VS code-style workspaces. Users familiar with VS Code my prefer this working structure.
+
+## Load Input Data
+
+`rfaR` analyses currently use input data stored in comma-separated values (CSV) files. Export or save the required input datasets as CSV files and store them in the project `data/raw/` directory. This manual uses the base R function `read.csv()` for all examples. Users may instead use `readr::read_csv()` if they prefer the `readr` import workflow; however, the resulting data must meet the formatting requirements described in the following sections.
+
+The example below imports a CSV file from the project input-data directory. Use `head()` to review the first rows of the imported dataset. Use `str()` to confirm the number of observations, variable names, and R data types.
+
+``` r
+# Define the path to an input CSV file
+input_file <- file.path(
+  project_dir,
+  "data",
+  "raw",
+  "example_input.csv"
+)
+
+# Import the CSV file
+input_data <- read.csv(input_file)
+
+# Review the imported data
+head(input_data)
+str(input_data)
+```
+
+Users who are new to importing, cleaning, or restructuring data in R may find the following resources helpful:
+
+-   Reading `.csv` files using [`read.csv()`](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/read.table.html) or [`readr::read_csv()`](https://readr.tidyverse.org/reference/read_delim.html)
+-   [Data Import](https://r4ds.hadley.nz/data-import.html)
+-   [Data Transform](https://r4ds.hadley.nz/data-transform.html)
+
+## Input Data
+
+Example input data required formatting is included within this section. Updates to reflect on-going package development will be applied as completed.
+
+### Inflow Hydrographs
+
+Inflow hydrographs define the shape[^03-setup-an-rfa-analysis-2] of inflow events. Each hydrograph should represent a historical, synthetic, design, or other representative flood event. During a simulation, `rfaR` samples one of the provided hydrograph shapes and scales the peak to the sampled inflow-volume magnitude.
+
+[^03-setup-an-rfa-analysis-2]: *temporal distribution*
+
+Use `hydrograph_setup()` to prepare one or more input hydrographs for use in `rfa_simulate()`. Input hydrographs can be imported or generated by the user in R.
+
+#### Required Format
+
+Each input hydrograph must be a data frame with the following columns in this order:
+
+| Column | Description | Required format |
+|------------------------|------------------------|------------------------|
+| `Ordinate` | Sequential row or ordinate number. | Integer or numeric. |
+| `Date` | Date associated with each inflow observation. | Character string in month/day/year format, such as `"2/2/2099"`. |
+| `Time` | Time associated with each inflow observation. | Character string in hour:minute format, such as `"0:00"` or `"13:30"`. |
+| `Flow` | Inflow discharge for each time step. | Numeric flow in cubic feet per second (cfs). Character values containing comma separators are also supported. |
+
+The hydrograph records must be in chronological order and use a regular time step. `hydrograph_setup()` determines the time step from the first two observations in each hydrograph.
+
+The following example shows the format of an example hydrograph (`jmd_hydro_pmf`). Although the `Ordinate` column is retained in the input format for consistency with RMC-RFA exports, `rfaR` uses the `Date`, `Time`, and `Flow` columns to construct the simulation hydrograph.
+
+``` text
+  Ordinate     Date Time Flow
+1        1 2/2/2099 0:00 1131
+2        2 2/2/2099 1:00 1890
+3        3 2/2/2099 2:00 2277
+4        4 2/2/2099 3:00 1936
+5        5 2/2/2099 4:00 1934
+6        6 2/2/2099 5:00 1933
+```
+
+#### Import Hydrograph Data from CSV
+
+Store hydrograph CSV files in the project `data/raw/` directory. The following example imports three hydrographs and reviews the contents of the hydrograph data frames.
+
+``` r
+hydro_pmf <- read.csv(
+  file.path(project_dir, "data", "raw", "hydro_pmf.csv"),
+  stringsAsFactors = FALSE
+)
+
+hydro_jun1965 <- read.csv(
+  file.path(project_dir, "data", "raw", "hydro_jun1965.csv"),
+  stringsAsFactors = FALSE
+)
+
+hydro_may1955 <- read.csv(
+  file.path(project_dir, "data", "raw", "hydro_may1955.csv"),
+  stringsAsFactors = FALSE
+)
+
+# Review
+head(hydro_pmf)
+str(hydro_pmf)
+```
+
+#### Prepare Hydrographs for Simulation
+
+Use `hydrograph_setup()` to format the imported hydrographs for simulation.
+
+``` r
+hydrographs <- hydrograph_setup(
+  hydro_pmf,
+  hydro_jun1965,
+  hydro_may1955,
+  critical_duration = 2, # Critical duration in DAYS
+  routing_days = 10
+)
+```
+
+The `critical_duration` argument specifies the inflow duration, in days, used to calculate the critical-duration inflow statistic for each hydrograph. The critical duration should align with the duration used for the inflow-volume frequency analysis. It must also correspond to a whole number of hydrograph time steps.
+
+The `routing_days` argument specifies the desired total duration, in days, of each hydrograph used in routing. If a hydrograph is shorter than the specified routing duration, `hydrograph_setup()` extends the hydrograph by appending zero-flow time steps.
+
+#### Hydrograph Sampling Weights
+
+By default, `rfaR` assigns equal sampling probability to each supplied hydrograph. Use the optional `weights` argument to assign different relative sampling weights.
+
+``` r
+hydrographs <- hydrograph_setup(
+  hydro_pmf,
+  hydro_jun1965,
+  hydro_may1955,
+  critical_duration = 2,
+  routing_days = 10,
+  weights = c(3, 1, 1)
+)
+```
+
+In this example, `hydro_pmf` has three times the relative sampling weight of each historical hydrograph. The supplied weights are normalized internally to produce sampling probabilities. Use `attr` to view the normalized probabilities.
+
+``` r
+attr(hydrographs, "probs")
+```
+
+#### Output
+
+`hydrograph_setup()` returns a list of formatted hydrograph data frames. Each formatted hydrograph includes the following variables:
+
+| Variable         | Description                                         |
+|------------------|-----------------------------------------------------|
+| `datetime`       | Date-time value converted to `POSIXct`.             |
+| `hour`           | Elapsed hours from the start of the hydrograph.     |
+| `inflow`         | Inflow discharge in cfs.                            |
+| `hydrograph_num` | Numeric identifier used during hydrograph sampling. |
+
+The list returned by `hydrograph_setup()` also contains attributes for each provided hydrograph. Attributes are named metadata pairs attached to any object to store extra information.
+
+| Attribute | Description |
+|------------------------------------|------------------------------------|
+| `obs_vol` | Critical-duration inflow statistic calculated from the observed hydrograph. |
+| `dt` | Hydrograph time step in hours. |
+| `name` | Name of the input hydrograph object. |
+| `probs` | (List attribute) Normalized sampling probabilities |
+
+``` r
+# Review the first formatted hydrograph
+head(hydrographs[[1]])
+
+# Review hydrograph attributes
+attributes(hydrographs[[1]])
+
+# Review hydrograph sampling probabilities
+attr(hydrographs, "probs")
+```
+
+> **Note:** `hydrograph_setup()` removes trailing rows with missing flow values, which can occur when CSV files are exported from spreadsheet software. Review the input data before analysis and correct missing or malformed values within the hydrograph record.
+
+### Bestfit Parameter Sets
+
+The U.S. Army Corps of Engineers (USACE) Risk Management Center (RMC), in collaboration with the Engineer Research and Development Center (ERDC) Coastal and Hydraulics Laboratory (CHL), developed the Bayesian estimation and fitting software ([RMC-BestFit](https://usace-rmc.github.io/RMC-Software-Documentation/docs/desktop-applications/rmc-bestfit/users-guide/v1.0/welcome-to-rmc-bestfit)) to enhance and expedite flood hazard assessments within the Flood Risk Management, Planning, and Dam and Levee Safety communities of practice.
+
+The results of a volume-frequency analysis in BestFit result in a quantification of distribution parameter uncertainty. Posterior parameter sets are one of the various outs from BestFit that displays the parameter uncertainty. The BestFit [user manual & technical reference](https://usace-rmc.github.io/RMC-Software-Documentation/docs/desktop-applications/rmc-bestfit/users-guide/v1.0/working-with-rmc-bestfit#bayesian-estimation-analysis) recommend 10,000 parameter sets to ensure accurate 90% credible intervals.
+
+`bestfit_params` contains 10,000 flood-frequency distribution parameter sets used to sample inflow magnitudes during an `rfaR` simulation. Each row represents one set of Bayesian estimated distribution parameters. Collectively, the parameter sets represent uncertainty in the fitted flood-frequency relationship. The included `jmd_bf_parameter_sets` example contains 10,000 Log-Pearson Type III (LP3) parameter sets.
+
+Note that RMC-RFA conducts parameter sampling from bootstrapped volume-frequency curves, represented by the Effective Record Length (ERL) of the Bayesian volume-frequency estimates.
+
+#### Required Format
+
+Provide `bestfit_params` as a data frame. The first three columns must contain the distribution parameters in the order required by the selected distribution. All parameter fields must be numeric.
+
+| Distribution | Required parameter order | Description |
+|------------------------|------------------------|------------------------|
+| LP3 | `mean_log`, `sd_log`, `skew_log` | Mean, standard deviation, and skewness in log space. |
+| GEV | `location`, `scale`, `shape` | Location, scale, and shape parameters of the generalized extreme value distribution. |
+
+The sampling functions use the first three columns by position. For that reason, place the three required parameter fields first, in the order shown above. An optional fourth `log_likelihood` column may be included. `rfaR` does not use this field during sampling.
+
+The included LP3 example has the following structure:
+
+``` r
+head(jmd_bf_parameter_sets)
+```
+
+``` text
+  mean_log    sd_log  skew_log log_likelihood
+1 3.573019 0.3754496 0.5437323      -1093.040
+2 3.560287 0.3599150 0.7516113      -1092.829
+3 3.572810 0.3672706 0.7813260      -1092.882
+4 3.508482 0.3586173 0.7270477      -1093.707
+5 3.559233 0.3890737 0.4078201      -1093.874
+6 3.514285 0.3907049 0.7473218      -1093.999
+```
+
+``` r
+str(jmd_bf_parameter_sets)
+```
+
+``` text
+'data.frame': 10000 obs. of 4 variables:
+ $ mean_log      : num  3.57 3.56 3.57 3.51 3.56 ...
+ $ sd_log        : num  0.375 0.360 0.367 0.359 0.389 ...
+ $ skew_log      : num  0.544 0.752 0.781 0.727 0.408 ...
+ $ log_likelihood: num  -1093 -1093 -1093 -1094 -1094 ...
+```
+
+#### Import Parameter Sets
+
+Store parameter-set CSV files in the project `data/raw/` directory. Import the file with `read.csv()` and preserve the original column order.
+
+``` r
+bestfit_params <- read.csv(
+  file.path(project_dir, "data", "raw", "bestfit_parameter_sets.csv"),
+  stringsAsFactors = FALSE
+)
+
+head(bestfit_params)
+str(bestfit_params)
+```
+
+Before running a simulation, verify that the first three fields are numeric and are in the correct order for the selected distribution:
+
+``` r
+names(bestfit_params)[1:3]
+str(bestfit_params[1:3])
+```
+
+#### Number of Parameter Sets
+
+For an expected-only simulation, `rfaR` pairs each stratified sample with a different parameter set. Therefore, `bestfit_params` must contain at least *N~Bins~* x *Events~PerBin~* rows. The default settings in `rfa_simulate()` use `Nbins = 50` and `events_per_bin = 200`, which require at least 10,000 parameter sets for an expected-only simulation.
+
+``` r
+required_parameter_sets <- 50 * 200
+nrow(bestfit_params) >= required_parameter_sets
+```
+
+The following example uses the included 10,000 LP3 parameter sets with the default number of samples:
+
+``` r
+result <- rfa_simulate(
+  sim_type = "expected",
+  bestfit_params = jmd_bf_parameter_sets,
+  dist = "LP3",
+  stage_ts = jmd_wy1980_stage,
+  seasonality = jmd_seasonality$relative_frequency,
+  hydrographs = jmd_hydrographs,
+  resmodel = jmd_resmodel,
+  Nbins = 50,
+  events_per_bin = 200
+)
+```
+
+#### Distribution Selection
+
+Set the `dist` argument in `rfa_simulate()` to match the parameterization of `bestfit_params`:
+
+``` r
+# LP3 parameter sets: mean_log, sd_log, skew_log
+rfa_simulate(..., bestfit_params = bestfit_params, dist = "LP3")
+
+# GEV parameter sets: location, scale, shape
+rfa_simulate(..., bestfit_params = bestfit_params, dist = "GEV")
+```
+
+Do not use LP3 parameter sets with `dist = "GEV"`, or GEV parameter sets with `dist = "LP3"`. The parameter values may be numeric in both cases, but they have different meanings and are passed to different distribution functions.
+
+> **Note:** The parameter-set input represents uncertainty in the fitted frequency curve. It is not a table of observed flood events. Prepare observed inflow records, hydrograph shapes, and seasonal occurrence data separately.
+
+### Flood Seasonality
+
+Flood seasonality defines the relative likelihood that a simulated flood event occurs in each calendar month. `rfaR` uses these probabilities to sample an event month for every simulated event. It then samples an antecedent reservoir stage from the observed stage record for the corresponding calendar month.
+
+Provide flood seasonality to `rfa_simulate()` through the `seasonality` argument. In most cases, this input is the `relative_frequency` column from a monthly seasonality analysis.
+
+#### Required Format
+
+The `seasonality` argument must be a numeric vector with 12 values. The values must be ordered from January (1) through December (12). Each value represents the relative frequency of a flood occurring during that month. Values must be nonnegative, and at least one value must be greater than zero. The values should normally sum to 1.0. A monthly seasonality table may also include event counts and cumulative probabilities. `rfaR` uses only the vector of monthly relative frequencies. The included `jmd_seasonality` example has the following structure:
+
+``` r
+head(jmd_seasonality)
+```
+
+``` text
+     month frequency relative_frequency cume_rel_frequency
+1  January         0              0.000              0.000
+2 February         0              0.000              0.000
+3    March         0              0.000              0.000
+4    April         1              0.018              0.018
+5      May        14              0.246              0.263
+6     June        17              0.298              0.561
+```
+In the example, the relative frequency is contained within `jmd_seasonality$relative_frequency` column. This shoudl be specified when calling `rfa_simulate()`.
+
+``` r
+seasonality <- jmd_seasonality$relative_frequency
+
+rfa_simulate(
+  sim_type = "expected",
+  bestfit_params = jmd_bf_parameter_sets,
+  stage_ts = jmd_wy1980_stage,
+  seasonality = seasonality,
+  hydrographs = jmd_hydrographs,
+  resmodel = jmd_resmodel
+)
+```
+
+Again, note that the the minimum required input is a numeric vector of 12 values between 0 and 1, where each value represents the relative probability of flood occurrence for a calendar month from January through December. The values should sum to 1.
+
+#### Import Flood Seasonality Data
+
+Store seasonality input data in the project `data/raw/` directory. The following example imports a monthly seasonality table from a CSV file:
+
+``` r
+seasonality_table <- read.csv(
+  file.path(project_dir, "data", "raw", "flood_seasonality.csv"),
+  stringsAsFactors = FALSE
+)
+
+head(seasonality_table)
+str(seasonality_table)
+
+# Extract the  monthly relative-frequency vector
+seasonality <- seasonality_table$relative_frequency
+
+# Check the relative-frequency sums to 1.0
+stopifnot(length(seasonality) == 12)
+stopifnot(all(seasonality >= 0))
+stopifnot(sum(seasonality) > 0)
+
+sum(seasonality)
+```
+
+If rounding causes the total to differ slightly from 1.0, normalize the vector before simulation:
+
+``` r
+seasonality <- seasonality / sum(seasonality)
+```
+
+#### Relationship to the Observed Stage Record
+
+For each sampled event, `rfaR` samples a month using the seasonality relative-frequency. This month is used to randomly sample an antecedent reservoir stage from the observed stage time series during the sampled month. As a result, the observed stage time series must contain valid stage observations for every month with a nonzero seasonality probability.
+
+For example, if June has a nonzero probability, the observed stage record must include valid June stage values. If the seasonality vector assigns nonzero probability to a month that has no corresponding stage observations, `rfaR` cannot draw an appropriate antecedent stage for events sampled in that month.
+
+#### Seasonal Assumptions
+
+The seasonality vector represents the assumed monthly distribution of flood event occurrence. Review the input before simulation to confirm that it is consistent with the flood-event definition, period of record, and inflow-volume frequency analysis used for the study. Months with a probability of zero are never sampled as event months.
+
+### Observed Stage Timeseries
+
+The observed stage time series provides antecedent reservoir conditions used to randomly sample an initial reservoir stage for each simulated flood event. For each simulation, `rfaR` first samples a month using the flood-seasonality probabilities. It then samples an observed reservoir stage from the same calendar month in the stage record. This preserves the relationship between the seasonal timing of floods and observed reservoir stage. The user should provide a stage record that is representative of the reservoir operating conditions and period of analysis. The record should cover all months with a nonzero flood-seasonality probability. A longer record generally provides a larger sample of observed stages for each month.
+
+Note that this differs from the method in RMC-RFA. In RFA, stage-duration curves for each month are generated and the initial reservoir stage is sampled from the selected month's stage-duration. The difference between these methods is considered negligible and an analysis between the two methods is currently on-going.
+
+#### Required Format
+
+The stage time series should be provided as a data frame. The included `jmd_wy1980_stage` example contains four columns:
+
+| Column | Description | Required format |
+|------------------------|------------------------|------------------------|
+| `timestep` | Sequential observation number. | Integer or numeric. This column is retained for traceability but is not used for monthly stage sampling. |
+| `date` | Date associated with each stage observation. | Character string in month/day/year format, such as `"10/1/1979"`. |
+| `time` | Time associated with each stage observation. | Character string in hour:minute format, such as `"0:00"`. |
+| `stage_ft` | Observed reservoir stage. | Numeric stage elevation in feet. Use one consistent vertical datum throughout the analysis. |
+
+The date column is required because `rfaR` derives the calendar month from it. The stage column supplied to `rfa_simulate()` must be named `stage`. If the source data use a different name, such as `stage_ft`, rename that column before running the simulation. The example stage record is daily and begins on October 1, 1979:
+
+``` r
+head(jmd_wy1980_stage)
+```
+
+``` text
+  timestep      date time stage_ft
+1        1 10/1/1979 0:00  3790.68
+2        2 10/2/1979 0:00  3790.64
+3        3 10/3/1979 0:00  3790.60
+4        4 10/4/1979 0:00  3790.60
+5        5 10/5/1979 0:00  3790.61
+6        6 10/6/1979 0:00  3790.61
+```
+
+#### Import and Prepare Stage Data
+
+Store stage data in the project `data/raw/` directory and import the CSV file with `read.csv()`. Confirm or rename the stage/elevation column to `stage`. The resulting data frame must contain at least `date` and `stage` before it is supplied to `rfa_simulate()`
+
+``` r
+stage_ts <- read.csv(
+  file.path(project_dir, "data", "raw", "reservoir_stage.csv"),
+  stringsAsFactors = FALSE
+)
+
+#Rename the stage-elevation column to `stage` when needed
+names(stage_ts)[names(stage_ts) == "stage_ft"] <- "stage"
+
+head(stage_ts)
+str(stage_ts)
+```
+
+#### Data Requirements and Checks
+
+Use a stage time series with a consistent observation interval. Daily values are appropriate for typical reservoir stage-frequency applications (such as the included example). If subdaily observations are used, confirm that the selected observation statistic and time of day appropriately represent antecedent reservoir conditions; `rfaR` samples individual records within each month.
+
+Check that dates can be interpreted as month/day/year values, that stage values are numeric, and that all required months have available stage observations:
+
+``` r
+# Confirm that date values can be parsed as month/day/year dates
+stage_dates <- lubridate::mdy(stage_ts$date)
+stopifnot(!any(is.na(stage_dates)))
+
+# Confirm that stage values are numeric and complete
+stopifnot(is.numeric(stage_ts$stage))
+stopifnot(!any(is.na(stage_ts$stage)))
+
+# Count observations available for each calendar month
+stage_month_counts <- table(lubridate::month(stage_dates))
+print(stage_month_counts)
+```
+
+Before simulation, compare the available months in the stage record with the months assigned nonzero probability in the flood-seasonality vector. Every month with a nonzero seasonality probability must have one or more corresponding stage observations. Otherwise, `rfaR` cannot sample an initial stage for simulated floods occurring in that month.
+
+``` r
+# Identify months with flood probability but no stage observations
+months_with_floods <- which(seasonality > 0)
+months_with_stage <- as.integer(names(stage_month_counts))
+missing_stage_months <- setdiff(months_with_floods, months_with_stage)
+
+if (length(missing_stage_months) > 0) {
+  stop(
+    "The stage record has no observations for month(s): ",
+    paste(missing_stage_months, collapse = ", ")
+  )
+}
+```
+
+> **Note:** The sampled stage values retain the units and vertical datum of the input stage record. Ensure that the stage record and reservoir model use the same stage units and vertical datum before running `rfa_simulate()`.

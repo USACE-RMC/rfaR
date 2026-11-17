@@ -18,17 +18,17 @@ book:
   chapters:
     - index.qmd
     - 01-introduction.qmd
-    - 02-methodology.qmd
-    - 03-installation.qmd
-    - 04-workflow.qmd
-    - 05-function-reference.qmd
-    - 06-simulation-modes.qmd
-    - 07-validation.qmd
+    - 02-installation.qmd
+    - 03-setup-an-rfa-analysis.qmd
+    - 04-methodology.qmd
+    - 05-workflow.qmd
+    - 06-validation.qmd
+    - 07-function-reference.qmd
   sidebar:
     style: docked
     background: light
-  cover-image: cover.png
-  image: cover.png
+  cover-image: stoner_creek_dam.jpeg
+  image: stoner_creek_dam.jpeg
 
 bibliography: references.bib
 
