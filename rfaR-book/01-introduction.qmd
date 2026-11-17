@@ -1,17 +1,17 @@
 # Introduction
 
-`rfaR` is an R implementation of the Risk Management Center Reservoir Frequency Analysis (RMC-RFA) software. This package produces reservoir hydrologic hazard curves with uncertainty bounds by combining deterministic flood routing with a nested Monte Carlo framework. Hydrologic hazard analyses at dam and levee sites support risk assessments in accordance with the USACE Dam & Levee Safety Program (DLS).
+`rfaR` is an R implementation of the Risk Management Center's Reservoir Frequency Analysis software (RMC-RFA). This package produces  hydrologic hazard curves with uncertainty bounds by combining deterministic flood routing with a nested Monte Carlo framework. Hydrologic hazard analyses support risk assessments in accordance with the USACE Dam & Levee Safety Program (DLS).
 
 ## Purpose
 
-The intended use of `rfaR` is to generate hydrologic hazard curves/loading curves[^1], supporting analysis for dam and levee risk analyses. The development of rfaR was primarily to conduct the nested monte carlo frame work using GEV inflow volume-frequency parameters developed from partial duration series in arid locations (RMC-RFA only supports LPIII parameters). Additional development allows for analysis at levees (no reservoir routing), transforming sampled unregulated inflow values to regulated inflow values, and a stage-based probabilistic bounding of hydrologic hazard curves.
+The intended use of `rfaR` is to generate hydrologic hazard curves/loading curves[^1], supporting risk analyses for dams and levees. The development of `rfaR` was primarily to conduct hazard analyses using GEV inflow volume-frequency parameters, developed from partial duration series in arid locations (RMC-RFA only supports LPIII parameters). Additional package development incorporates analysis at levees (no reservoir routing), transforming sampled unregulated inflow values to regulated inflow values, and a stage-based probabilistic bounding of hydrologic hazard curves.
 
 [^1]: In risk analysis, the *hazard* is the risk source where potential consequences relate to harm [@aven_society_nodate]. In the context of dam and levee risk analyses, the source of risk is often defined using a reservoir stage-frequency relationship. The terms *hydrologic loading*, *stage-frequency*, and *hydrologic hazard* are used interchangeably to relate reservoir/river stages to annual exceedance probabilities (AEPs). These relationships are commonly presented as curves and are used as probabilistic loading conditions in dam and levee risk analyses.
 
 
 ## rfaR Analysis Summary
 
-`rfaR` combines deterministic flood routing (Modified Puls) with a nested, two-loop Monte Carlo framework to quantify:
+`rfaR` combines deterministic flood routing (Modified Puls) with a nested, two-loop Monte Carlo framework. The nested framework handles both natural variability and knowledge uncertainty:
 
 - **Natural variability** — simulated in the inner loop as a *realization*. Each realization represents 10,000 indiviual flood events with randomly sampled starting stages, hydrograph shapes, and inflow volumes (from an associated inflow-frequency distribution).
 
@@ -19,10 +19,10 @@ The intended use of `rfaR` is to generate hydrologic hazard curves/loading curve
 
 ## Scope and Limitations
 
-`rfaR` reimplements the core RMC-RFA methodology in open-source R. `rfaR` is intended to serve as an interim capability between the current release of RMC-RFA and the planned second version of RMC-RFA. As of November 2026, users cannot import an existing RMC-RFA model or input file directly into `rfaR`; users must prepare the required inputs separately.
+`rfaR` implements the core RMC-RFA methodology into R, a populatr open-source statisical language. `rfaR` is intended to serve as a bridge between the current release of RMC-RFA and the planned second version of RMC-RFA. As of November 2026, users cannot import an existing RMC-RFA model or input file directly into `rfaR`; users must prepare the required inputs separately.
 
 
-## How This Manual Is Organized
+## User Manual Outline
 
 - **Installation** — System requirements and instructions for installing and
   loading `rfaR`.
@@ -36,6 +36,7 @@ The intended use of `rfaR` is to generate hydrologic hazard curves/loading curve
   results.
 - **Function Reference** — Reference documentation for `rfaR` functions and
   their arguments.
+- **References**
 
 For function-level documentation, also see the
 [pkgdown reference site](https://usace-rmc.github.io/rfaR/).

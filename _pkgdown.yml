@@ -11,8 +11,11 @@ home:
       href: https://www.rmc.usace.army.mil/Software/RMC-RFA/
 navbar:
   structure:
-    left: [intro, reference, articles, news]
+    left: [intro, manual, reference, articles, news]
   components:
+    manual:
+      text: User Manual
+      href: book/
     articles:
       text: Articles
       menu:
